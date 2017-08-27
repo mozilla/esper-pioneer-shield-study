@@ -10,7 +10,6 @@ TMP_DIR=$(mktemp -d)
 DEST="${TMP_DIR}/addon"
 XPI="${XPI:-addon.xpi}"
 
-
 mkdir -p $DEST
 
 # deletes the temp directory
@@ -25,7 +24,7 @@ alias moustache='/node_modules/bin/mustache'
 mustache package.json template/install.rdf.mustache > addon/install.rdf
 mustache package.json template/chrome.manifest.mustache > addon/chrome.manifest
 
-cp -rp addon/* $DEST
+source ./pre-xpi.sh
 
 pushd $DEST
 zip -r $DEST/${XPI} *

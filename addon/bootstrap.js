@@ -1,6 +1,5 @@
 "use strict";
 
-
 /* global  __SCRIPT_URI_SPEC__  */
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/
 
@@ -20,7 +19,10 @@ async function startup(addonData, reason) {
   studyUtils.setup({
     studyName: studyConfig.studyName,
     endings: studyConfig.endings,
-    addon: {id: addonData.id, version: addonData.version},
+    addon: {
+      id: addonData.id,
+      version: addonData.version
+    },
     telemetry: studyConfig.telemetry,
   });
   studyUtils.setLoggingLevel(config.log.studyUtils.level);
@@ -28,7 +30,6 @@ async function startup(addonData, reason) {
   studyUtils.setVariation(variation);
 
   Jsm.import(config.modules);
-
   if ((REASONS[reason]) === "ADDON_INSTALL") {
     studyUtils.firstSeen();  // sends telemetry "enter"
     const eligible = await config.isEligible(); // addon-specific
@@ -45,12 +46,14 @@ async function startup(addonData, reason) {
   console.log(`info ${JSON.stringify(studyUtils.info())}`);
   // if you have code to handle expiration / long-timers, it could go here.
   const webExtension = addonData.webExtension;
-  webExtension.startup().then(api => {
-    const {browser} = api;
-    // messages intended for shieldn:  {shield:true,msg=[info|endStudy|telemetry],data=data}
-    browser.runtime.onMessage.addListener(studyUtils.respondToWebExtensionMessage);
-    //  other message handlers from your addon, if any
-  });
+  if (webExtenion) {
+    webExtension.startup().then(api => {
+      const {browser} = api;
+      // messages intended for shieldn:  {shield:true,msg=[info|endStudy|telemetry],data=data}
+      browser.runtime.onMessage.addListener(studyUtils.respondToWebExtensionMessage);
+      //  other message handlers from your addon, if any
+    });
+  }
   // studyUtils.endStudy("user-disable");
 }
 
