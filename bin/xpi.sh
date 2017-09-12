@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo $@
+echo "$@"
 
 set -eu
 #set -o xtrace
