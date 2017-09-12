@@ -5,6 +5,13 @@ echo "$@"
 set -eu
 #set -o xtrace
 
+<<ABOUT
+How this works:
+
+- all files in the "addon" directory will be copied into $XPI
+ABOUT
+
+
 BASE_DIR="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")"
 TMP_DIR=$(mktemp -d)
 DEST="${TMP_DIR}/addon"
@@ -24,12 +31,14 @@ alias moustache='/node_modules/bin/mustache'
 mustache package.json template/install.rdf.mustache > addon/install.rdf
 mustache package.json template/chrome.manifest.mustache > addon/chrome.manifest
 
-source ./pre-xpi.sh
+cp -rp addon/* $DEST
 
 pushd $DEST
 zip -r $DEST/${XPI} *
 mkdir -p $BASE_DIR/dist
 mv "${XPI}" $BASE_DIR/dist
-echo "xpi at ${BASE_DIR}/dist/${XPI}"
+
+echo
+echo "SUCCESS: xpi at ${BASE_DIR}/dist/${XPI}"
 popd
 
