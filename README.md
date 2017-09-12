@@ -40,3 +40,5 @@ During `bootstrap.js:startup(data, reason)`:
     g.  Feature instruments user button to send `telemetry` and to `endStudy` if the button is clicked enough.
 
 
+
+
