@@ -8,6 +8,7 @@
  * reloading, as the .xpi file has not been recreated.
  */
 
+console.log("Starting up firefox");
 const utils = require("./test/utils");
 const firefox = require("selenium-webdriver/firefox");
 
@@ -16,6 +17,8 @@ const Context = firefox.Context;
 (async() => {
   try {
     const driver = await utils.promiseSetupDriver();
+
+    console.log("Starting up firefox");
 
     //* // add the share-button to the toolbar
     //* await utils.addShareButton(driver);
@@ -30,6 +33,8 @@ const Context = firefox.Context;
 
     // install the addon
     await utils.installAddon(driver);
+    console.log("Load temporary addon.");
+
 
     // navigate to a regular page
     //* driver.setContext(Context.CONTENT);

@@ -5,7 +5,6 @@
   "main": "index.js",
   "repository": "https://github.com/mozilla/template-shield-study.git",
   "scripts": {
-    "lint": "eslint .",
     "eslint": "eslint addon --ext jsm --ext js --ext json --",
     "prebuild": "cp node_modules/shield-studies-addon-utils/dist/StudyUtils.jsm addon/",
     "build": "XPI=shield-embedded-web-extension.xpi bash ./bin/xpi.sh",
@@ -24,7 +23,8 @@
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.5.0",
     "eslint-plugin-json": "^1.2.0",
-    "eslint-plugin-mozilla": "^0.3.2",
+    "eslint-plugin-mozilla": "^0.4.3",
+    "eslint-plugin-no-unsanitized": "^2.0.1",
     "fs-extra": "^3.0.1",
     "fx-runner": "^1.0.6",
     "geckodriver": "^1.7.1",

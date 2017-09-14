@@ -9,15 +9,16 @@ Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const CONFIGPATH = `${__SCRIPT_URI_SPEC__}/../Config.jsm`;
-const STUDYUTILSPATH = `${__SCRIPT_URI_SPEC__}/../${studyConfig.studyUtilsPath}`;
-
 const { config } = Cu.import(CONFIGPATH, {});
-const { study: studyConfig} = config;
+const studyConfig = config.study;
+
+const STUDYUTILSPATH = `${__SCRIPT_URI_SPEC__}/../${studyConfig.studyUtilsPath}`;
 const { studyUtils } = Cu.import(STUDYUTILSPATH, {});
 
 const REASONS = studyUtils.REASONS;
 
-const log = createLog(studyConfig.study.studyName, config.log.bootstrap.level);  // defined below.
+//var log = createLog(studyConfig.study.studyName, config.log.bootstrap.level);  // defined below.
+//log("LOG started!");
 
 /* Example addon-specific module imports.  Remember to Unload.
    Ideally, put ALL your feature code in a Feature.jsm file,
@@ -33,14 +34,14 @@ const log = createLog(studyConfig.study.studyName, config.log.bootstrap.level); 
 
 async function startup(addonData, reason) {
   // addonData: Array [ "id", "version", "installPath", "resourceURI", "instanceID", "webExtension" ]  bootstrap.js:48
-  log("startup", REASONS[reason] || reason);
+  console.log("startup", REASONS[reason] || reason);
 
   // setup the studyUtils so that Telemetry is valid
   studyUtils.setup({
     study: {
       studyName: studyConfig.studyName,
       endings: studyConfig.endings
-    }
+    },
     addon: {
       id: addonData.id,
       version: addonData.version
@@ -55,7 +56,7 @@ async function startup(addonData, reason) {
   const variation = (studyConfig.forceVariation ||
     await studyUtils.deterministicVariation(
       studyConfig.weightedVariations
-    );
+    )
   );
   studyUtils.setVariation(variation);
 
@@ -134,13 +135,13 @@ function install(addonData, reason) {
 /** CONSTANTS and other bootstrap.js utilities */
 
 // logging
-function createLog(name, levelWord) {
-  Cu.import("resource://gre/modules/Log.jsm");
-  var L = Log.repository.getLogger(name);
-  L.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
-  L.level = Log.Level[levelWord] || Log.Level.Debug; // should be a config / pref
-  return L;
-}
+//function createLog(name, levelWord) {
+//  Cu.import("resource://gre/modules/Log.jsm");
+//  var L = Log.repository.getLogger(name);
+//  L.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
+//  L.level = Log.Level[levelWord] || Log.Level.Debug; // should be a config / pref
+//  return L;
+//}
 
 // jsm loader / unloader
 class Jsm {
