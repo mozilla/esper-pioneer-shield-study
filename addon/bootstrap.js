@@ -16,7 +16,7 @@ const STUDYUTILSPATH = `${__SCRIPT_URI_SPEC__}/../${studyConfig.studyUtilsPath}`
 const { studyUtils } = Cu.import(STUDYUTILSPATH, {});
 
 const REASONS = studyUtils.REASONS;
-
+console.log("reasons:",REASONS)
 //var log = createLog(studyConfig.study.studyName, config.log.bootstrap.level);  // defined below.
 //log("LOG started!");
 
@@ -38,18 +38,8 @@ async function startup(addonData, reason) {
 
   // setup the studyUtils so that Telemetry is valid
   studyUtils.setup({
-    study: {
-      studyName: studyConfig.studyName,
-      endings: studyConfig.endings
-    },
-    addon: {
-      id: addonData.id,
-      version: addonData.version
-    },
-    telemetry: studyConfig.telemetry,
-    log: {
-      level: config.log.studyUtils.level
-    }
+    ...config,
+    addon: { id: addonData.id, version: addonData.version },
   });
 
   // choose the variation for this particular user, then set it.
@@ -60,8 +50,6 @@ async function startup(addonData, reason) {
   );
   studyUtils.setVariation(variation);
 
-  // Actually, define a function that does this, per study
-  Jsm.import(config.modules);
 
   // addon_install:  note first seen, check eligible
   if ((REASONS[reason]) === "ADDON_INSTALL") {
@@ -88,7 +76,7 @@ async function startup(addonData, reason) {
 
   // If your study has an embedded webExtension, start it.
   const webExtension = addonData.webExtension;
-  if (webExtenion) {
+  if (webExtension) {
     webExtension.startup().then(api => {
       const {browser} = api;
       /* spec for messages intended for Shield =>
