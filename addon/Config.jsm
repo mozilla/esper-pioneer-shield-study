@@ -10,12 +10,10 @@
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(config|EXPORTED_SYMBOLS)" }]*/
 var EXPORTED_SYMBOLS = ["config"];
 
-// var slug = "shield-example-addon"; // should match chrome.manifest;
-
 var config = {
   "study": {
     "studyName": "mostImportantExperiment", // no spaces, for all the reasons
-    "variation": {
+    "forceVariation": {
       "name": "kittens",
     }, // optional, use to override/decide
     "weightedVariations": [
@@ -60,6 +58,7 @@ var config = {
       "removeTestingFlag": false,  // Marks pings as testing, set true for actual release
       // TODO "onInvalid": "throw"  // invalid packet for schema?  throw||log
     },
+    // relative to bootstrap.js in the xpi
     "studyUtilsPath": `./StudyUtils.jsm`,
   },
   "isEligible": async function() {
@@ -67,11 +66,6 @@ var config = {
     // Cu.import can see 'firefox things', but not package things.
     return true;
   },
-  // addon-specific modules to load/unload during `startup`, `shutdown`
-  "modules": [
-    // can use ${slug} here for example
-  ],
-  // sets the logging for BOTH the bootstrap file AND shield-study-utils
   "log": {
     // Fatal: 70, Error: 60, Warn: 50, Info: 40, Config: 30, Debug: 20, Trace: 10, All: -1,
     "bootstrap":  {

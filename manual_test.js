@@ -17,25 +17,26 @@ const Context = firefox.Context;
   try {
     const driver = await utils.promiseSetupDriver();
 
-    // add the share-button to the toolbar
-    await utils.addShareButton(driver);
-    // set the treatment
-    await driver.executeAsyncScript((typeArg, callback) => {
-      Components.utils.import("resource://gre/modules/Preferences.jsm");
-      if (typeArg !== null) {
-        Preferences.set("extensions.sharebuttonstudy.treatment", typeArg);
-      }
-      callback();
-    }, "doorhangerAskToAdd");
+    //* // add the share-button to the toolbar
+    //* await utils.addShareButton(driver);
+    //* // set the treatment
+    //* await driver.executeAsyncScript((typeArg, callback) => {
+    //*   Components.utils.import("resource://gre/modules/Preferences.jsm");
+    //*   if (typeArg !== null) {
+    //*     Preferences.set("extensions.sharebuttonstudy.treatment", typeArg);
+    //*   }
+    //*   callback();
+    //* }, "doorhangerAskToAdd");
+
     // install the addon
     await utils.installAddon(driver);
 
     // navigate to a regular page
-    driver.setContext(Context.CONTENT);
-    await driver.get("http://github.com/mozilla");
-    driver.setContext(Context.CHROME);
+    //* driver.setContext(Context.CONTENT);
+    //* await driver.get("http://github.com/mozilla");
+    //* driver.setContext(Context.CHROME);
 
-    await utils.copyUrlBar(driver);
+    //* await utils.copyUrlBar(driver);
   } catch (e) {
     console.error(e); // eslint-disable-line no-console
   }
