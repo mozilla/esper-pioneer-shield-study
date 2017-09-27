@@ -39,7 +39,8 @@ const Context = firefox.Context;
     // navigate to a regular page
     //* driver.setContext(Context.CONTENT);
     //* await driver.get("http://github.com/mozilla");
-    //* driver.setContext(Context.CHROME);
+    // driver.setContext(Context.CHROME);
+
 
     //* await utils.copyUrlBar(driver);
   } catch (e) {

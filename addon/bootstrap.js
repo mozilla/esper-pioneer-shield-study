@@ -3,7 +3,7 @@
 /* global  __SCRIPT_URI_SPEC__  */
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/
 
-const { interfaces: Ci, utils: Cu } = Components;
+const { utils: Cu } = Components;
 Cu.import("resource://gre/modules/Console.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -16,9 +16,9 @@ const STUDYUTILSPATH = `${__SCRIPT_URI_SPEC__}/../${studyConfig.studyUtilsPath}`
 const { studyUtils } = Cu.import(STUDYUTILSPATH, {});
 
 const REASONS = studyUtils.REASONS;
-console.log("reasons:",REASONS)
-//var log = createLog(studyConfig.study.studyName, config.log.bootstrap.level);  // defined below.
-//log("LOG started!");
+
+// var log = createLog(studyConfig.study.studyName, config.log.bootstrap.level);  // defined below.
+// log("LOG started!");
 
 /* Example addon-specific module imports.  Remember to Unload.
    Ideally, put ALL your feature code in a Feature.jsm file,
@@ -53,7 +53,7 @@ async function startup(addonData, reason) {
 
   // addon_install:  note first seen, check eligible
   if ((REASONS[reason]) === "ADDON_INSTALL") {
-    studyUtils.firstSeen();  // sends telemetry "enter"
+    studyUtils.firstSeen(); // sends telemetry "enter"
     const eligible = await config.isEligible(); // addon-specific
     if (!eligible) {
       // uses config.endings.ineligible.url if any,
@@ -72,7 +72,7 @@ async function startup(addonData, reason) {
 
 
   // if you have code to handle expiration / long-timers, it could go here
-  ;
+
 
   // If your study has an embedded webExtension, start it.
   const webExtension = addonData.webExtension;
@@ -85,7 +85,7 @@ async function startup(addonData, reason) {
       browser.runtime.onMessage.addListener(studyUtils.respondToWebExtensionMessage);
 
       // other browser.runtime.onMessage handlers for your addon, if any
-      ;
+
     });
   }
 }
@@ -104,10 +104,17 @@ function shutdown(addonData, reason) {
     }
     // normal shutdown, or 2nd uninstall request
     console.log("Jsms unloading");
-    Jsm.unload([CONFIGPATH, STUDYUTILSPATH]);
+
 
     // QA NOTE:  unload addon specific modules here.
-    ;
+
+
+
+    // clean up our modules.
+    Cu.unload(CONFIGPATH);
+    Cu.unload(STUDYUTILSPATH);
+
+
   }
 }
 
@@ -123,26 +130,11 @@ function install(addonData, reason) {
 /** CONSTANTS and other bootstrap.js utilities */
 
 // logging
-//function createLog(name, levelWord) {
+// function createLog(name, levelWord) {
 //  Cu.import("resource://gre/modules/Log.jsm");
 //  var L = Log.repository.getLogger(name);
 //  L.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
 //  L.level = Log.Level[levelWord] || Log.Level.Debug; // should be a config / pref
 //  return L;
-//}
+// }
 
-// jsm loader / unloader
-class Jsm {
-  static import(modulesArray) {
-    for (const module of modulesArray) {
-      log.debug(`loading ${module}`);
-      Cu.import(module);
-    }
-  }
-  static unload(modulesArray) {
-    for (const module of modulesArray) {
-      log.debug(`Unloading ${module}`);
-      Cu.unload(module);
-    }
-  }
-}
