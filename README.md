@@ -6,6 +6,59 @@ The most up to date [Shield Study](https://wiki.mozilla.org/Firefox/Shield/Shiel
 # Directory Structure and Files
 
 
+```
+├── .circleci/            # setup for .circle ci integration
+├── .eslintignore
+├── .eslintrc.js          # mozilla, json
+├── .git/
+├── .gitignore
+├── README.md             # (this file)
+├── TELEMETRY.md          # Telemetry examples for this addon
+├── TESTPLAN.md           # Manual QA test plan
+├── addon                 # Files that will go into the addon
+│   ├── Config.jsm
+│   ├── StudyUtils.jsm    # (copied in during `prebuild`)
+│   ├── bootstrap.js      # LEGACY Bootstrap.js
+│   ├── chrome.manifest   # (derived from templates)
+│   ├── install.rdf       # (derived from templates)
+│   │
+│   ├── lib               # JSM (Firefox modules)
+│   │   └── AddonPrefs.jsm
+│   └── webextension      # modern, embedded webextesion
+│       ├── .eslintrc.json
+│       ├── background.js
+│       └── manifest.json
+│
+├── bin                   # Scripts / commands
+│   └── xpi.sh            # build the XPI
+│
+├── dist                  # built xpis (addons)
+│   ├── @template-shield-study.mozilla.com-1.1.0.xpi
+│   └── linked-addon.xpi -> @template-shield-study.mozilla.com-1.1.0.xpi
+│
+├── package-lock.json
+├── package.json
+├── run-firefox.js        # command
+├── sign/                 # "LEGACY-SIGNED" addons.  used by `npm sign`
+│
+│
+├── templates             # mustache templates, filled from `package.json`
+│   ├── chrome.manifest.mustache
+│   └── install.rdf.mustache
+│
+│
+└── test                  # Automated tests `npm test` and circle
+    ├── Dockerfile
+    ├── docker_setup.sh
+    ├── functional_tests.js
+    ├── test-share-study.js
+    ├── test_harness.js
+    ├── test_printer.py
+    └── utils.js
+
+```
+
+(based on results from:  `tree -a -L 2 -I node_modules`)
 
 # Similar repositories
 

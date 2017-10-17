@@ -1,6 +1,6 @@
 {
   "name": "template-shield-study",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Template Shield Study",
   "main": "index.js",
   "repository": "https://github.com/mozilla/template-shield-study.git",
@@ -14,7 +14,7 @@
     "watch": "onchange 'addon/**' 'package.json' 'template/**' -e addon/install.rdf -e addon/chrome.manifest -e addon/StudyUtils.jsm -- npm run build -- '{{event}} {{changed}} $(date)'",
     "sign": "echo 'TBD, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1407757'"
   },
-  "keywords": [],
+  "keywords": ["shield-study", "mozilla"],
   "author": "Gregg Lind <glind@mozilla.com>",
   "license": "ISC",
   "devDependencies": {
