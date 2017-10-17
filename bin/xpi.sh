@@ -2,10 +2,11 @@
 
 ## Things that will happen.
 #
-# Create addon/{install.rdf,chrome.manifest} from templates,
+# - Create addon/{install.rdf,chrome.manifest} from templates,
 #   using data from package.json
-# Move all files in 'addon/' to a tmp dir
+# -
 # Create dist/{$XPI_NAME,linked-addon.xpi}
+
 
 
 echo "$@"
@@ -14,17 +15,10 @@ set -eu
 #set -o xtrace
 
 BASE_DIR="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")"
-TMP_DIR="$(mktemp -d)"
-DEST="${TMP_DIR}/addon"
-XPI_NAME=$(node -p -e "require('./package.json').addon.xpi_name")
-
-mkdir -p "${DEST}"
-
-# deletes the temp directory, TRAPPED so it runs on exit
-function cleanup {
-  rm -rf "${TMP_DIR}"
-}
-trap cleanup EXIT
+ADDON_VERSION=$(node -p -e "require('./package.json').version");
+ADDON_ID=$(node -p -e "require('./package.json').addon.id")
+DEFAULT_XPI_NAME="${ADDON_ID}-${ADDON_VERSION}".xpi
+XPI_NAME="${XPI_NAME:-${DEFAULT_XPI_NAME}}"
 
 # fill templates, could be fancier
 mustache='./node_modules/.bin/mustache'
@@ -34,25 +28,23 @@ $mustache package.json templates/chrome.manifest.mustache > addon/chrome.manifes
 
 echo 'Copying all files in `addon/` into the xpi...'
 
-cp -rp addon/* "${DEST}"
+# xpi all of 'addon' to 'dist'
+pushd addon > /dev/null
+zip -r  "../dist/${XPI_NAME}" .
+popd > /dev/null
 
-echo 'Zipping files into the XPI (addon)...'
 
-pushd "${DEST}" > /dev/null
-zip -r "${DEST}"/"${XPI_NAME}" *
-mkdir -p "${BASE_DIR}"/dist
-
-echo 'Moving the XPI to dist...'
-mv "${XPI_NAME}" "${BASE_DIR}"/dist
-
-# also link 'addon.xpi' to it.
-cd "${BASE_DIR}"/dist
+# also link 'dist/linked-adddon.xpi' to  it.
+pushd "${BASE_DIR}"/dist > /dev/null
 rm -f linked-addon.xpi
 ln -s "${XPI_NAME}" linked-addon.xpi
+
+popd > /dev/null
+
 
 echo
 echo "SUCCESS: xpi at ${BASE_DIR}/dist/${XPI_NAME}"
 echo "SUCCESS: symlinked xpi at ${BASE_DIR}/dist/linked-addon.xpi"
 
-popd > /dev/null
+ls -alF "${BASE_DIR}"/dist
 

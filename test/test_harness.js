@@ -1,9 +1,12 @@
 /* eslint-env node */
 /* eslint no-console: "off" */
 
-/* This is a test harness for repeating the test suite many times
+/* DO NOT MODIFY THIS FILE.
+ *
+ * This is a test harness for repeating the test suite many times
  * in order to determine which tests are inconsistent and fail then
  * most.
+ *
  */
 const fs = require("fs");
 const { spawn } = require("child_process");
