@@ -1,6 +1,6 @@
 "use strict";
 
-/* global  __SCRIPT_URI_SPEC__  */
+/* global  __SCRIPT_URI_SPEC__, StudyTelemetryCollector  */
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/
 
 const { utils: Cu } = Components;
@@ -14,6 +14,11 @@ const studyConfig = config.study;
 
 const STUDYUTILSPATH = `${__SCRIPT_URI_SPEC__}/../${studyConfig.studyUtilsPath}`;
 const { studyUtils } = Cu.import(STUDYUTILSPATH, {});
+
+const STUDYTELEMETRYCOLLECTORPATH = `${__SCRIPT_URI_SPEC__}/.././lib/StudyTelemetryCollector.jsm`;
+XPCOMUtils.defineLazyModuleGetter(this, "StudyTelemetryCollector", STUDYTELEMETRYCOLLECTORPATH);
+// Not using the below since ends up with "StudyTelemetryCollector is not a constructor"
+// const { StudyTelemetryCollector } = Cu.import(STUDYTELEMETRYCOLLECTORPATH, {});
 
 const REASONS = studyUtils.REASONS;
 
@@ -90,6 +95,9 @@ async function startup(addonData, reason) {
 
     });
   }
+
+  // Fire this, then we are done.
+  new StudyTelemetryCollector(studyUtils, variation).start();
 }
 
 
@@ -115,6 +123,7 @@ function shutdown(addonData, reason) {
     // clean up our modules.
     Cu.unload(CONFIGPATH);
     Cu.unload(STUDYUTILSPATH);
+    Cu.unload(STUDYTELEMETRYCOLLECTORPATH);
     // Cu.unload(FEATUREPATH);
     // Cu.unload(SOMEEXPORTEDSYMBOLPATH);
 
