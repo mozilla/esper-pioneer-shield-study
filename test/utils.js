@@ -173,7 +173,13 @@ module.exports.getTelemetryPings = async(driver, options) => {
     Components.utils.import("resource://gre/modules/TelemetryArchive.jsm");
     // {type, id, timestampCreated}
     let pings = await TelemetryArchive.promiseArchivedPingList();
-    if (type) pings = pings.filter(p => p.type === type);
+    if (type) {
+      if (!(type instanceof Array)) {
+        type = [type];  // Array-ify if it's a string
+      }
+    }
+    if (type) pings = pings.filter(p => type.includes(p.type));
+
     if (timestamp) pings = pings.filter(p => p.timestampCreated > timestamp);
 
     pings.sort((a, b) => b.timestampCreated - a.timestampCreated);
