@@ -53,7 +53,7 @@ const minimistHandler = {
 
   try {
     const driver = await promiseSetupDriver();
-    console.log("Starting up firefox");
+    console.log("Firefox started");
 
     // install the addon
     if (process.env.XPI) {
@@ -66,6 +66,8 @@ const minimistHandler = {
     // navigate to a regular page
     driver.setContext(Context.CONTENT);
     driver.get("about:debugging");
+
+    console.log("The addon should now be loaded and you should be able to interact with the addon in the newly opened Firefox instance.");
 
   } catch (e) {
     console.error(e); // eslint-disable-line no-console
