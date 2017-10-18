@@ -14,7 +14,10 @@
     "watch": "onchange 'addon/**' 'package.json' 'template/**' -e addon/install.rdf -e addon/chrome.manifest -e addon/StudyUtils.jsm -- npm run build -- '{{event}} {{changed}} $(date)'",
     "sign": "echo 'TBD, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1407757'"
   },
-  "keywords": ["shield-study", "mozilla"],
+  "keywords": [
+    "shield-study",
+    "mozilla"
+  ],
   "author": "Gregg Lind <glind@mozilla.com>",
   "license": "ISC",
   "devDependencies": {
@@ -42,6 +45,7 @@
     "__DOC__": "the variables fill the moustache templates",
     "id": "@template-shield-study.mozilla.com",
     "name": "Shield Bootstrap Example",
+    "version": "0.0.1",
     "minVersion": "57.0",
     "maxVersion": "*",
     "multiprocessCompatible": true,
