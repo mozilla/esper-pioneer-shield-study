@@ -162,7 +162,7 @@ module.exports.printPings = async(pings) => {
     `
 // common fields
 
-branch        ${p0.branch}        // should describe Question text
+branch        ${p0.branch}
 study_name    ${p0.study_name}
 addon_version ${p0.addon_version}
 version       ${p0.version}
