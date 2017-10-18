@@ -177,6 +177,15 @@ version       ${p0.version}
 
 };
 
+module.exports.writePingsJson = async(pings, filepath = "./pings.json") => {
+  try {
+    return await Fs.outputFile(filepath,
+      JSON.stringify(pings, null, '\t'));
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports.takeScreenshot = async(driver, filepath = "./screenshot.png") => {
   try {
     const data = await driver.takeScreenshot();

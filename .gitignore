@@ -4,3 +4,4 @@ install.rdf
 node_modules
 addon/StudyUtils.jsm
 screenshot.png
+pings.json

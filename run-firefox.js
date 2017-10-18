@@ -28,7 +28,8 @@ const {
   promiseSetupDriver,
   getTelemetryPings,
   printPings,
-  takeScreenshot
+  takeScreenshot,
+  writePingsJson
 } = require("./test/utils");
 
 
@@ -82,6 +83,9 @@ const minimistHandler = {
     const pings = await getTelemetryPings(driver, telemetryPingsFilterOptions);
     console.log("Shield study telemetry pings: ");
     printPings(pings);
+
+    writePingsJson(pings);
+    console.log("Shield study telemetry pings written to pings.json");
 
   } catch (e) {
     console.error(e); // eslint-disable-line no-console
