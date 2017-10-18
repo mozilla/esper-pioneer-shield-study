@@ -151,6 +151,11 @@ module.exports.searchTelemetry = (conditionArray, telemetryArray) => {
 
 module.exports.printPings = async(pings) => {
 
+  if (pings.length === 0) {
+    console.log('No pings');
+    return;
+  }
+
   const p0 = pings[0].payload;
   // print common fields
   console.log(

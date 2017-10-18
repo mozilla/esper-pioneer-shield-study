@@ -25,7 +25,9 @@ const until = webdriver.until;
 const {
   promiseActualBinary,
   installAddon,
-  promiseSetupDriver
+  promiseSetupDriver,
+  getTelemetryPings,
+  printPings
 } = require("./test/utils");
 
 
@@ -68,6 +70,14 @@ const minimistHandler = {
     driver.get("about:debugging");
 
     console.log("The addon should now be loaded and you should be able to interact with the addon in the newly opened Firefox instance.");
+
+    const telemetryPingsFilterOptions = {
+      type: [ "shield-study", "shield-study-addon" ],
+      headersOnly: false,
+    };
+    const pings = await getTelemetryPings(driver, telemetryPingsFilterOptions);
+    console.log("Shield study telemetry pings: ");
+    printPings(pings);
 
   } catch (e) {
     console.error(e); // eslint-disable-line no-console
