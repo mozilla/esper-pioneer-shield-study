@@ -20,13 +20,15 @@ const REASONS = studyUtils.REASONS;
 // var log = createLog(studyConfig.study.studyName, config.log.bootstrap.level);  // defined below.
 // log("LOG started!");
 
-/* Example addon-specific module imports.  Remember to Unload.
+/* Example addon-specific module imports.  Remember to Unload during shutdown() below.
    Ideally, put ALL your feature code in a Feature.jsm file,
    NOT in this bootstrap.js.
 
-  const BASE=`template-shield-study`;
-  XPCOMUtils.defineLazyModuleGetter(this, "SomeExportedSymbol",
-    `resource://${BASE}/SomeModule.jsm");
+  const FEATUREPATH = `${__SCRIPT_URI_SPEC__}/../Feature.jsm`;
+  const { feature } = Cu.import(FEATUREPATH, {});
+
+  const SOMEEXPORTEDSYMBOLPATH = `${__SCRIPT_URI_SPEC__}/../SomeExportedSymbol.jsm`;
+  const { someExportedSymbol } = Cu.import(SOMEEXPORTEDSYMBOLPATH, {});
 
   XPCOMUtils.defineLazyModuleGetter(this, "Preferences",
     "resource://gre/modules/Preferences.jsm");
@@ -113,7 +115,8 @@ function shutdown(addonData, reason) {
     // clean up our modules.
     Cu.unload(CONFIGPATH);
     Cu.unload(STUDYUTILSPATH);
-
+    //Cu.unload(FEATUREPATH);
+    //Cu.unload(SOMEEXPORTEDSYMBOLPATH);
 
   }
 }
