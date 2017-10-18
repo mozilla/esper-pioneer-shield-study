@@ -97,16 +97,20 @@ Note: `linked-addon.xpi` is a symbolic link to the extension's true XPI, which i
 
 # Loading the Web Extension in Firefox
 
-Open (preferably) the [Developer Edition of Firefox](https://www.mozilla.org/firefox/developer/). You can load the `.xpi` using the following steps:
+You can have Firefox automatically launched and the add-on installed by running:
 
-* Navigate to *about:config* and set `extensions.legacy.enabled` to `true`. This permits the loading of the embedded WebExtension since new versions of Firefox are becoming restricted to pure Web  Extensions only.
+`$ npm run firefox`
+
+To lead the extension manually instead, open (preferably) the [Developer Edition of Firefox](https://www.mozilla.org/firefox/developer/) and load the `.xpi` using the following steps:
+
+* Navigate to *about:config* and set `extensions.legacy.enabled` to `true`. This permits the loading of the embedded Web Extension since new versions of Firefox are becoming restricted to pure Web Extensions only.
 * Navigate to *about:debugging* in your URL bar
 * Select "Load Temporary Add-on"
 * Find and select the `linked-addon.xpi` file you just built.
 
-To debug installation and loading of extensions loaded in this manner, use the Browser Console which can be open from Firefox's top toolbar in `Tools > Web Developer > Browser Console`. This will display Shield (loading/telemetry) and `console.log()` output from the extensions that we build.
-
 # Seeing the add-on in action
+
+To debug installation and loading of extensions, use the Browser Console which can be open from Firefox's top toolbar in `Tools > Web Developer > Browser Console`. This will display Shield (loading/telemetry) and `console.log()` output from the extensions that we build.
 
 You should see a green puzzle piece icon in the browser address bar. You should also see the following in the Browser Console (`Tools > Web Developer > Browser Console`), which comes from this add-on:
 
