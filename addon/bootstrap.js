@@ -115,8 +115,8 @@ function shutdown(addonData, reason) {
     // clean up our modules.
     Cu.unload(CONFIGPATH);
     Cu.unload(STUDYUTILSPATH);
-    //Cu.unload(FEATUREPATH);
-    //Cu.unload(SOMEEXPORTEDSYMBOLPATH);
+    // Cu.unload(FEATUREPATH);
+    // Cu.unload(SOMEEXPORTEDSYMBOLPATH);
 
   }
 }
