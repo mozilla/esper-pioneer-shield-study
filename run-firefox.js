@@ -27,7 +27,8 @@ const {
   installAddon,
   promiseSetupDriver,
   getTelemetryPings,
-  printPings
+  printPings,
+  takeScreenshot
 } = require("./test/utils");
 
 
@@ -70,6 +71,9 @@ const minimistHandler = {
     driver.get("about:debugging");
 
     console.log("The addon should now be loaded and you should be able to interact with the addon in the newly opened Firefox instance.");
+
+    await takeScreenshot(driver);
+    console.log("Screenshot dumped");
 
     const telemetryPingsFilterOptions = {
       type: [ "shield-study", "shield-study-addon" ],
