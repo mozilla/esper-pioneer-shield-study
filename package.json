@@ -1,9 +1,9 @@
 {
-  "name": "template-shield-study",
+  "name": "esper-pioneer-shield-study",
   "version": "1.2.0",
-  "description": "Template Shield Study",
+  "description": "The ESPER experiment - Firefox Pioneer Study",
   "main": "index.js",
-  "repository": "https://github.com/mozilla/template-shield-study.git",
+  "repository": "https://github.com/motin/esper-pioneer-shield-study.git",
   "scripts": {
     "eslint": "eslint addon --ext jsm --ext js --ext json",
     "prebuild": "cp node_modules/shield-studies-addon-utils/dist/StudyUtils.jsm addon/",
@@ -16,9 +16,10 @@
   },
   "keywords": [
     "shield-study",
+    "pioneer",
     "mozilla"
   ],
-  "author": "Gregg Lind <glind@mozilla.com>",
+  "author": "Fredrik Wollsén <fwollsen@mozilla.com>",
   "license": "ISC",
   "devDependencies": {
     "ajv": "^5.1.1",
@@ -43,16 +44,16 @@
   },
   "addon": {
     "__DOC__": "the variables fill the moustache templates",
-    "id": "@template-shield-study.mozilla.com",
-    "name": "Shield Bootstrap Example",
+    "id": "esper-pioneer-shield-study@shield.mozilla.com",
+    "name": "esper-pioneer-shield-study",
     "version": "0.0.1",
     "minVersion": "57.0",
     "maxVersion": "*",
     "multiprocessCompatible": true,
-    "hasEmbeddedWebExtension": true,
-    "chromeResource": "template-shield-study",
-    "creator": "Gregg Lind <glind@mozilla.com>",
-    "description": "template shield study to serve a as base",
+    "hasEmbeddedWebExtension": false,
+    "chromeResource": "esper-pioneer-shield-study",
+    "creator": "Fredrik Wollsén <fwollsen@mozilla.com>",
+    "description": "The ESPER experiment - Firefox Pioneer Study",
     "bugzilla": "<tbd: bug to attach for signing>"
   },
   "dependencies": {}

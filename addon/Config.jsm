@@ -12,17 +12,13 @@ var EXPORTED_SYMBOLS = ["config"];
 
 var config = {
   "study": {
-    "studyName": "mostImportantExperiment", // no spaces, for all the reasons
+    "studyName": "esper-pioneer-shield-study", // no spaces, for all the reasons
     "forceVariation": {
-      "name": "kittens",
+      "name": "pioneer",
     }, // optional, use to override/decide
     "weightedVariations": [
-      {"name": "control",
-        "weight": 1},
-      {"name": "kittens",
-        "weight": 1.5},
-      {"name": "puppers",
-        "weight": 2},  // we want more puppers in our sample
+      {"name": "pioneer",
+        "weight": 1}
     ],
     /** **endings**
       * - keys indicate the 'endStudy' even that opens these.
@@ -33,25 +29,7 @@ var config = {
       */
     "endings": {
       /** standard endings */
-      "user-disable": {
-        "baseUrl": "data:,You uninstalled",
-      },
-      "ineligible": {
-        "baseUrl": "http://www.example.com/?reason=ineligible",
-      },
-      "expired": {
-        "baseUrl": "http://www.example.com/?reason=expired",
-      },
-      /** User defined endings */
-      "too-popular": {
-        // data uri made using `datauri-cli`
-        "baseUrl": "data:text/html;base64,PGh0bWw+CiAgPGJvZHk+CiAgICA8cD5Zb3UgYXJlIHVzaW5nIHRoaXMgZmVhdHVyZSA8c3Ryb25nPlNPIE1VQ0g8L3N0cm9uZz4gdGhhdCB3ZSBrbm93IHlvdSBsb3ZlIGl0IQogICAgPC9wPgogICAgPHA+VGhlIEV4cGVyaW1lbnQgaXMgb3ZlciBhbmQgd2UgYXJlIFVOSU5TVEFMTElORwogICAgPC9wPgogIDwvYm9keT4KPC9odG1sPgo=",
-        "study_state": "ended-positive",  // neutral is default
-      },
-      "a-non-url-opening-ending": {
-        "study_state": "ended-neutral",
-        "baseUrl":  null,
-      },
+      // NONE, this study has no surveys
     },
     "telemetry": {
       "send": true, // assumed false. Actually send pings?
