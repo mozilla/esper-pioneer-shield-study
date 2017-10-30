@@ -18,7 +18,7 @@ var config = {
     }, // optional, use to override/decide
     "weightedVariations": [
       {"name": "pioneer",
-        "weight": 1}
+        "weight": 1},
     ],
     /** **endings**
       * - keys indicate the 'endStudy' even that opens these.
