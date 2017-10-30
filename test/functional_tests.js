@@ -49,11 +49,16 @@ describe("basic functional tests", function() {
 
   let driver;
   let addonId;
+  let pings;
 
   before(async() => {
     driver = await utils.promiseSetupDriver();
     // install the addon
     addonId = await utils.installAddon(driver);
+    // allow our shield study addon some time to start
+    await driver.sleep(1000);
+    // collect sent pings
+    pings = await utils.getTelemetryPings(driver, ["shield-study", "shield-study-addon"]);
   });
 
   after(async() => driver.quit());
@@ -62,15 +67,25 @@ describe("basic functional tests", function() {
 
   it("should send shield telemetry pings", async() => {
 
-    // allow our shield study addon some time to start
-    await driver.sleep(1000);
-
-    const pings = await utils.getTelemetryPings(driver, ["shield-study", "shield-study-addon"]);
     assert(pings.length > 0, "at least one shield telemetry ping");
+
+  });
+
+  it("at least one shield-study telemetry ping with study_state=installed", async() => {
+
     const foundPings = utils.searchTelemetry([
-      ping => ping.payload.data.study_state === "enter",
+      ping => ping.type === "shield-study" && ping.payload.data.study_state === "installed",
     ], pings);
-    assert(foundPings.length > 0, "at least one shield telemetry ping with study_state=enter");
+    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=installed");
+
+  });
+
+  it("at least one shield-study telemetry ping with study_state=enter", async() => {
+
+    const foundPings = utils.searchTelemetry([
+      ping => ping.type === "shield-study" && ping.payload.data.study_state === "enter",
+    ], pings);
+    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=enter");
 
   });
 
