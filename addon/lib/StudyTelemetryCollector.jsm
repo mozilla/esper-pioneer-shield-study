@@ -50,12 +50,27 @@ class StudyTelemetryCollector {
 
   collectAndSendTelemetry() {
 
+    const shieldPingPayload = {
+      event: "telemetry-payload",
+    };
+
     const shieldPingAttributes = this.collectShieldPingAttributes();
 
-    this.studyUtils.telemetry({
-      event: "telemetry-payload",
-      ...shieldPingAttributes,
-    });
+    // shield ping attributes must be strings
+    for (const attribute in shieldPingAttributes) {
+      let attributeValue = shieldPingAttributes[attribute];
+      if (typeof attributeValue === 'object') {
+        attributeValue = JSON.stringify(attributeValue);
+      }
+      if (typeof attributeValue !== 'string') {
+        attributeValue = String(attributeValue);
+      }
+      shieldPingPayload[attribute] = attributeValue;
+    }
+
+    console.log("shieldPingPayload", shieldPingPayload);
+
+    this.studyUtils.telemetry(shieldPingPayload);
 
   }
 
@@ -69,7 +84,7 @@ class StudyTelemetryCollector {
     console.log("telemetrySessionPayload", telemetrySessionPayload);
 
     const shieldPingAttributes = {
-      completeTelemetrySessionPayload: JSON.stringify(telemetrySessionPayload),
+      completeTelemetrySessionPayload: telemetrySessionPayload,
     };
 
     shieldPingAttributes.uptime = telemetrySessionPayload.simpleMeasurements.uptime;
@@ -78,9 +93,9 @@ class StudyTelemetryCollector {
     shieldPingAttributes.subsession_start_date = telemetrySessionPayload.info.subsessionStartDate;
     shieldPingAttributes.timezone_offset = telemetrySessionPayload.info.timezoneOffset;
 
-    shieldPingAttributes.places_bookmarks_count = JSON.stringify(telemetrySessionPayload.processes.content.histograms.PLACES_BOOKMARKS_COUNT);
-    shieldPingAttributes.places_pages_count = JSON.stringify(telemetrySessionPayload.processes.content.histograms.PLACES_PAGES_COUNT);
-    shieldPingAttributes.search_counts = JSON.stringify(telemetrySessionPayload.processes.content.histograms.SEARCH_COUNT);
+    shieldPingAttributes.places_bookmarks_count = telemetrySessionPayload.processes.content.histograms.PLACES_BOOKMARKS_COUNT;
+    shieldPingAttributes.places_pages_count = telemetrySessionPayload.processes.content.histograms.PLACES_PAGES_COUNT;
+    shieldPingAttributes.search_counts = telemetrySessionPayload.processes.content.histograms.SEARCH_COUNT;
 
     shieldPingAttributes.scalar_parent_browser_engagement_window_open_event_count = telemetrySessionPayload.processes.parent.scalars["browser.engagement.window_open_event_count"];
     shieldPingAttributes.scalar_parent_browser_engagement_total_uri_count = telemetrySessionPayload.processes.parent.scalars["browser.engagement.total_uri_count"];
@@ -95,11 +110,6 @@ class StudyTelemetryCollector {
     shieldPingAttributes.scalar_parent_browser_engagement_unfiltered_uri_count = telemetrySessionPayload.processes.parent.scalars["browser.engagement.unfiltered_uri_count"];
 
     console.log("shieldPingAttributes", shieldPingAttributes);
-
-    // shield ping attributes must be strings
-    for (const attribute in shieldPingAttributes) {
-      shieldPingAttributes[attribute] = String(shieldPingAttributes[attribute]);
-    }
 
     return shieldPingAttributes;
 
