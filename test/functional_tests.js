@@ -109,40 +109,46 @@ describe("basic functional tests", function() {
 
     assert(ping.payload.shield_version === "4.1.0", "expected shield-study-utils version");
 
-    const assertion = value => {
+    // no undefined expected attributes
+
+    const notUndefined = value => {
       return value !== "undefined"
     };
 
-    const expected = {
-      "completeTelemetrySessionPayload": true,
-      "uptime": true,
-      "total_time": true,
-      "profile_subsession_counter": true,
-      "subsession_start_date": true,
-      "timezone_offset": true,
-      "places_bookmarks_count": true,
-      "places_pages_count": true,
-      "search_counts": true,
-      "scalar_parent_browser_engagement_window_open_event_count": true,
-      "scalar_parent_browser_engagement_total_uri_count": true,
-      "scalar_parent_browser_engagement_navigation_urlbar": true,
-      "scalar_parent_browser_engagement_navigation_contextmenu": true,
-      "scalar_parent_browser_engagement_tab_open_event_count": true,
-      "scalar_parent_browser_engagement_navigation_searchbar": true,
-      "scalar_parent_browser_engagement_navigation_about_newtab": true,
-      "scalar_parent_browser_engagement_unique_domains_count": true,
-      "scalar_parent_browser_engagement_max_concurrent_window_count": true,
-      "scalar_parent_browser_engagement_max_concurrent_tab_count": true,
-      "scalar_parent_browser_engagement_unfiltered_uri_count": true,
+    const assertionsByAttribute = {
+      "completeTelemetrySessionPayload": notUndefined,
+      "uptime": notUndefined,
+      "total_time": notUndefined,
+      "profile_subsession_counter": notUndefined,
+      "subsession_start_date": notUndefined,
+      "timezone_offset": notUndefined,
+      "places_bookmarks_count": notUndefined,
+      "places_pages_count": notUndefined,
+      "search_counts": notUndefined,
+      "scalar_parent_browser_engagement_window_open_event_count": notUndefined,
+      "scalar_parent_browser_engagement_total_uri_count": notUndefined,
+      "scalar_parent_browser_engagement_navigation_urlbar": notUndefined,
+      "scalar_parent_browser_engagement_navigation_contextmenu": notUndefined,
+      "scalar_parent_browser_engagement_tab_open_event_count": notUndefined,
+      "scalar_parent_browser_engagement_navigation_searchbar": notUndefined,
+      "scalar_parent_browser_engagement_navigation_about_newtab": notUndefined,
+      "scalar_parent_browser_engagement_unique_domains_count": notUndefined,
+      "scalar_parent_browser_engagement_max_concurrent_window_count": notUndefined,
+      "scalar_parent_browser_engagement_max_concurrent_tab_count": notUndefined,
+      "scalar_parent_browser_engagement_unfiltered_uri_count": notUndefined,
     };
 
+    const expected = {};
     const actual = {};
 
-    for (const attribute in expected) {
-      actual[attribute] = assertion(ping.payload.data.attributes[attribute]);
+    for (const attribute in assertionsByAttribute) {
+      expected[attribute] = true;
+      const assertion = assertionsByAttribute[attribute];
+      const actualValue = ping.payload.data.attributes[attribute];
+      actual[attribute] = assertion(actualValue);
     }
 
-    assert.deepEqual(expected, actual, "no attributes should be 'undefined'");
+    assert.deepEqual(expected, actual, "no expected attributes should be 'undefined'");
 
   });
 
