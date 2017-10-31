@@ -40,6 +40,14 @@ async function postTestReset(driver) {
   });
 }
 
+const notUndefined = value => {
+  return value !== "undefined"
+};
+
+const undefined = value => {
+  return value === "undefined"
+};
+
 
 /* Part 2:  The Tests */
 
@@ -109,13 +117,20 @@ describe("basic functional tests", function() {
 
     assert(ping.payload.shield_version === "4.1.0", "expected shield-study-utils version");
 
-    // no undefined expected attributes
-
-    const notUndefined = value => {
-      return value !== "undefined"
-    };
+    // no unexpected data attributes
 
     const assertionsByAttribute = {
+      "default_search_engine": notUndefined,
+      "locale": notUndefined,
+      "os": notUndefined,
+      "normalized_channel": notUndefined,
+      "profile_creation_date": notUndefined,
+      "app_version": notUndefined,
+      "system.memory_mb": notUndefined,
+      "system_cpu.cores": notUndefined,
+      "system_cpu.speed_mhz": notUndefined,
+      "os_version": notUndefined,
+      "system_gfx.monitors[1].screen_width": notUndefined,
       "completeTelemetrySessionPayload": notUndefined,
       "uptime": notUndefined,
       "total_time": notUndefined,
@@ -125,17 +140,17 @@ describe("basic functional tests", function() {
       "places_bookmarks_count": notUndefined,
       "places_pages_count": notUndefined,
       "search_counts": notUndefined,
-      "scalar_parent_browser_engagement_window_open_event_count": notUndefined,
-      "scalar_parent_browser_engagement_total_uri_count": notUndefined,
-      "scalar_parent_browser_engagement_navigation_urlbar": notUndefined,
-      "scalar_parent_browser_engagement_navigation_contextmenu": notUndefined,
-      "scalar_parent_browser_engagement_tab_open_event_count": notUndefined,
-      "scalar_parent_browser_engagement_navigation_searchbar": notUndefined,
-      "scalar_parent_browser_engagement_navigation_about_newtab": notUndefined,
-      "scalar_parent_browser_engagement_unique_domains_count": notUndefined,
       "scalar_parent_browser_engagement_max_concurrent_window_count": notUndefined,
       "scalar_parent_browser_engagement_max_concurrent_tab_count": notUndefined,
+      "scalar_parent_browser_engagement_tab_open_event_count": notUndefined,
+      "scalar_parent_browser_engagement_window_open_event_count": notUndefined,
+      "scalar_parent_browser_engagement_unique_domains_count": notUndefined,
+      "scalar_parent_browser_engagement_total_uri_count": notUndefined,
       "scalar_parent_browser_engagement_unfiltered_uri_count": notUndefined,
+      "scalar_parent_browser_engagement_navigation_about_newtab": notUndefined,
+      "scalar_parent_browser_engagement_navigation_contextmenu": notUndefined,
+      "scalar_parent_browser_engagement_navigation_searchbar": notUndefined,
+      "scalar_parent_browser_engagement_navigation_urlbar": notUndefined,
     };
 
     const expected = {};
