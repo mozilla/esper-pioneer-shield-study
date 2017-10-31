@@ -47,7 +47,7 @@ class StudyTelemetryCollector {
     TelemetrySession.delayedInit().then(() => {
 
       // Wait for the gather-telemetry notification before we gather telemetry
-      let gatherPromise = PromiseUtils.defer();
+      const gatherPromise = PromiseUtils.defer();
       Services.obs.addObserver(gatherPromise.resolve, "gather-telemetry");
       TelemetrySession.observe(null, "idle-daily", null);
       gatherPromise.promise.then(() => {
@@ -82,7 +82,7 @@ class StudyTelemetryCollector {
 
     StudyTelemetryCollector.collectPlacesDbBasedAttributes().then((placesDbBasedAttributes) => {
 
-      console.log('placesDbBasedAttributes', placesDbBasedAttributes);
+      console.log("placesDbBasedAttributes", placesDbBasedAttributes);
 
       const shieldPingAttributes = {
         event: "telemetry-payload",
@@ -109,10 +109,10 @@ class StudyTelemetryCollector {
     // shield ping attributes must be strings
     for (const attribute in shieldPingAttributes) {
       let attributeValue = shieldPingAttributes[attribute];
-      if (typeof attributeValue === 'object') {
+      if (typeof attributeValue === "object") {
         attributeValue = JSON.stringify(attributeValue);
       }
-      if (typeof attributeValue !== 'string') {
+      if (typeof attributeValue !== "string") {
         attributeValue = String(attributeValue);
       }
       shieldPingPayload[attribute] = attributeValue;
@@ -147,7 +147,7 @@ class StudyTelemetryCollector {
       "os_version": environment.system.os.version,
       "system_gfx.monitors[1].screen_width": environment.system.gfx.monitors[0] ? environment.system.gfx.monitors[0].screenWidth : undefined,
       "system_gfx.monitors[1].screen_width_zero_indexed": environment.system.gfx.monitors[1] ? environment.system.gfx.monitors[1].screenWidth : undefined,
-    }
+    };
 
   }
 
@@ -215,7 +215,7 @@ class StudyTelemetryCollector {
           places_bookmarks_count: placesDbTelemetryResults[1][1],
         });
 
-      });
+      }).catch(ex => reject(ex));
 
     });
 
@@ -228,14 +228,10 @@ class StudyTelemetryCollector {
    */
   static async queryPlacesDbTelemetry() {
 
-    // This will be populated with one integer property for each probe result,
-    // using the histogram name as key.
-    let probeValues = {};
-
-    let probes = [
+    const probes = [
       {
         histogram: "PLACES_PAGES_COUNT",
-        query: "SELECT count(*) FROM moz_places"
+        query: "SELECT count(*) FROM moz_places",
       },
 
       {
@@ -243,26 +239,26 @@ class StudyTelemetryCollector {
         query: `SELECT count(*) FROM moz_bookmarks b
                     JOIN moz_bookmarks t ON t.id = b.parent
                     AND t.parent <> :tags_folder
-                    WHERE b.type = :type_bookmark`
+                    WHERE b.type = :type_bookmark`,
       },
 
     ];
 
-    let params = {
+    const params = {
       tags_folder: PlacesUtils.tagsFolderId,
       type_folder: PlacesUtils.bookmarks.TYPE_FOLDER,
       type_bookmark: PlacesUtils.bookmarks.TYPE_BOOKMARK,
-      places_root: PlacesUtils.placesRootId
+      places_root: PlacesUtils.placesRootId,
     };
 
     const promises = [];
 
     for (let i = 0; i < probes.length; i++) {
-      let probe = probes[i];
+      const probe = probes[i];
 
-      let promiseDone = new Promise((resolve, reject) => {
-        let filteredParams = {};
-        for (let p in params) {
+      const promiseDone = new Promise((resolve, reject) => {
+        const filteredParams = {};
+        for (const p in params) {
           if (probe.query.includes(`:${p}`)) {
             filteredParams[p] = params[p];
           }
@@ -270,7 +266,7 @@ class StudyTelemetryCollector {
         PlacesUtils.promiseDBConnection()
           .then(db => db.execute(probe.query, filteredParams))
           .then(rows => resolve([probe, rows[0].getResultByIndex(0)]))
-          .catch(ex => reject(new Error("Unable to get telemetry from database.")));
+          .catch(() => reject(new Error("Unable to get telemetry from database.")));
       });
 
       promises.push(promiseDone);
