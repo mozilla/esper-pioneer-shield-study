@@ -145,7 +145,8 @@ class StudyTelemetryCollector {
       "system_cpu.cores": environment.system.cpu.cores,
       "system_cpu.speed_mhz": environment.system.cpu.speedMHz,
       "os_version": environment.system.os.version,
-      "system_gfx.monitors[1].screen_width": environment.system.gfx.monitors[0].screenWidth,
+      "system_gfx.monitors[1].screen_width": environment.system.gfx.monitors[0] ? environment.system.gfx.monitors[0].screenWidth : undefined,
+      "system_gfx.monitors[1].screen_width_zero_indexed": environment.system.gfx.monitors[1] ? environment.system.gfx.monitors[1].screenWidth : undefined,
     }
 
   }
