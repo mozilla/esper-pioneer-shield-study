@@ -46,7 +46,7 @@
     "__DOC__": "the variables fill the moustache templates",
     "id": "esper-pioneer-shield-study@shield.mozilla.com",
     "name": "esper-pioneer-shield-study",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "minVersion": "57.0",
     "maxVersion": "*",
     "multiprocessCompatible": true,

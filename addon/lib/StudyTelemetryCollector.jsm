@@ -25,6 +25,7 @@ const BASERESOURCE = "esper-pioneer-shield-study";
 // telemetry utils
 const { TelemetryController } = Cu.import("resource://gre/modules/TelemetryController.jsm", null);
 const { TelemetrySession } = Cu.import("resource://gre/modules/TelemetrySession.jsm", null);
+const { TelemetryEnvironment } = Cu.import("resource://gre/modules/TelemetryEnvironment.jsm", null);
 
 XPCOMUtils.defineLazyModuleGetter(this, "PlacesUtils",
   "resource://gre/modules/PlacesUtils.jsm");
@@ -44,7 +45,10 @@ class StudyTelemetryCollector {
     this.studyUtils.telemetry({ event: "esper-init" });
 
     // Ensure that we collect telemetry payloads only after it is fully initiated
-    TelemetrySession.delayedInit().then(() => {
+    Promise.all([
+      TelemetryEnvironment.onInitialized(),
+      TelemetrySession.delayedInit(),
+    ]).then(() => {
 
       // Wait for the gather-telemetry notification before we gather telemetry
       const gatherPromise = PromiseUtils.defer();

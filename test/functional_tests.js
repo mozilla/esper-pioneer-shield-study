@@ -124,7 +124,7 @@ describe("basic functional tests", function() {
       "locale": notUndefined,
       "os": notUndefined,
       "normalized_channel": notUndefined,
-      "profile_creation_date": undefined,
+      "profile_creation_date": notUndefined,
       "app_version": notUndefined,
       "system.memory_mb": notUndefined,
       "system_cpu.cores": notUndefined,
