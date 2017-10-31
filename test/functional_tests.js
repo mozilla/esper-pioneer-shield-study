@@ -106,7 +106,7 @@ describe("basic functional tests", function() {
 
   });
 
-  it("one proper shield-study-addon telemetry ping for the telemetry-payload event", async() => {
+  it("one proper shield-study-addon telemetry ping for the telemetry-payload event as expected at startup with a clean profile", async() => {
 
     const foundPings = utils.searchTelemetry([
       ping => ping.type === "shield-study-addon" && ping.payload.data.attributes.event === "telemetry-payload",
@@ -120,11 +120,11 @@ describe("basic functional tests", function() {
     // no unexpected data attributes
 
     const assertionsByAttribute = {
-      "default_search_engine": notUndefined,
+      "default_search_engine": undefined,
       "locale": notUndefined,
       "os": notUndefined,
       "normalized_channel": notUndefined,
-      "profile_creation_date": notUndefined,
+      "profile_creation_date": undefined,
       "app_version": notUndefined,
       "system.memory_mb": notUndefined,
       "system_cpu.cores": notUndefined,
@@ -139,18 +139,18 @@ describe("basic functional tests", function() {
       "timezone_offset": notUndefined,
       "places_bookmarks_count": notUndefined,
       "places_pages_count": notUndefined,
-      "search_counts": notUndefined,
+      "search_counts": undefined,
       "scalar_parent_browser_engagement_max_concurrent_window_count": notUndefined,
       "scalar_parent_browser_engagement_max_concurrent_tab_count": notUndefined,
-      "scalar_parent_browser_engagement_tab_open_event_count": notUndefined,
-      "scalar_parent_browser_engagement_window_open_event_count": notUndefined,
-      "scalar_parent_browser_engagement_unique_domains_count": notUndefined,
-      "scalar_parent_browser_engagement_total_uri_count": notUndefined,
-      "scalar_parent_browser_engagement_unfiltered_uri_count": notUndefined,
-      "scalar_parent_browser_engagement_navigation_about_newtab": notUndefined,
-      "scalar_parent_browser_engagement_navigation_contextmenu": notUndefined,
-      "scalar_parent_browser_engagement_navigation_searchbar": notUndefined,
-      "scalar_parent_browser_engagement_navigation_urlbar": notUndefined,
+      "scalar_parent_browser_engagement_tab_open_event_count": undefined,
+      "scalar_parent_browser_engagement_window_open_event_count": undefined,
+      "scalar_parent_browser_engagement_unique_domains_count": undefined,
+      "scalar_parent_browser_engagement_total_uri_count": undefined,
+      "scalar_parent_browser_engagement_unfiltered_uri_count": undefined,
+      "scalar_parent_browser_engagement_navigation_about_newtab": undefined,
+      "scalar_parent_browser_engagement_navigation_contextmenu": undefined,
+      "scalar_parent_browser_engagement_navigation_searchbar": undefined,
+      "scalar_parent_browser_engagement_navigation_urlbar": undefined,
     };
 
     const expected = {};
