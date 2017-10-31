@@ -98,7 +98,7 @@ addon_version 0.0.1
 version       3
 
 
-2017-10-31T10:21:41.203Z shield-study-addon
+2017-10-31T11:35:39.973Z shield-study-addon
 {
   "attributes": {
     "app_version": "58.0a1",
@@ -126,27 +126,28 @@ version       3
     "scalar_parent_browser_engagement_unique_domains_count": "undefined",
     "scalar_parent_browser_engagement_window_open_event_count": "undefined",
     "search_counts": "undefined",
-    "subsession_start_date": "2017-10-31T12:00:00.0+02:00",
+    "subsession_start_date": "2017-10-31T13:00:00.0+02:00",
     "system.memory_mb": "16384",
     "system_cpu.cores": "4",
     "system_cpu.speed_mhz": "2500",
     "system_gfx.monitors[1].screen_width": "1680",
+    "system_gfx.monitors[1].screen_width_zero_indexed": "undefined",
     "timezone_offset": "120",
     "total_time": "3",
     "uptime": "0"
   }
 }
-2017-10-31T10:21:40.688Z shield-study
+2017-10-31T11:35:39.887Z shield-study
 {
   "study_state": "installed"
 }
-2017-10-31T10:21:40.688Z shield-study-addon
+2017-10-31T11:35:39.887Z shield-study-addon
 {
   "attributes": {
     "event": "esper-init"
   }
 }
-2017-10-31T10:21:40.687Z shield-study
+2017-10-31T11:35:39.886Z shield-study
 {
   "study_state": "enter"
 }
