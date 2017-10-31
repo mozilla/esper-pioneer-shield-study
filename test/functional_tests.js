@@ -40,12 +40,12 @@ async function postTestReset(driver) {
   });
 }
 
-const notUndefined = value => {
-  return value !== "undefined"
+const notNullAssertion = value => {
+  return value !== "null"
 };
 
-const undefined = value => {
-  return value === "undefined"
+const nullAssertion = value => {
+  return value === "null"
 };
 
 
@@ -120,37 +120,37 @@ describe("basic functional tests", function() {
     // no unexpected data attributes
 
     const assertionsByAttribute = {
-      "default_search_engine": undefined,
-      "locale": notUndefined,
-      "os": notUndefined,
-      "normalized_channel": notUndefined,
-      "profile_creation_date": notUndefined,
-      "app_version": notUndefined,
-      "system.memory_mb": notUndefined,
-      "system_cpu.cores": notUndefined,
-      "system_cpu.speed_mhz": notUndefined,
-      "os_version": notUndefined,
-      "system_gfx.monitors[1].screen_width": notUndefined,
-      "completeTelemetrySessionPayload": notUndefined,
-      "uptime": notUndefined,
-      "total_time": notUndefined,
-      "profile_subsession_counter": notUndefined,
-      "subsession_start_date": notUndefined,
-      "timezone_offset": notUndefined,
-      "places_bookmarks_count": notUndefined,
-      "places_pages_count": notUndefined,
-      "search_counts": undefined,
-      "scalar_parent_browser_engagement_max_concurrent_window_count": notUndefined,
-      "scalar_parent_browser_engagement_max_concurrent_tab_count": notUndefined,
-      "scalar_parent_browser_engagement_tab_open_event_count": undefined,
-      "scalar_parent_browser_engagement_window_open_event_count": undefined,
-      "scalar_parent_browser_engagement_unique_domains_count": undefined,
-      "scalar_parent_browser_engagement_total_uri_count": undefined,
-      "scalar_parent_browser_engagement_unfiltered_uri_count": undefined,
-      "scalar_parent_browser_engagement_navigation_about_newtab": undefined,
-      "scalar_parent_browser_engagement_navigation_contextmenu": undefined,
-      "scalar_parent_browser_engagement_navigation_searchbar": undefined,
-      "scalar_parent_browser_engagement_navigation_urlbar": undefined,
+      "default_search_engine": nullAssertion,
+      "locale": notNullAssertion,
+      "os": notNullAssertion,
+      "normalized_channel": notNullAssertion,
+      "profile_creation_date": notNullAssertion,
+      "app_version": notNullAssertion,
+      "system.memory_mb": notNullAssertion,
+      "system_cpu.cores": notNullAssertion,
+      "system_cpu.speed_mhz": notNullAssertion,
+      "os_version": notNullAssertion,
+      "system_gfx.monitors[1].screen_width": notNullAssertion,
+      "completeTelemetrySessionPayload": notNullAssertion,
+      "uptime": notNullAssertion,
+      "total_time": notNullAssertion,
+      "profile_subsession_counter": notNullAssertion,
+      "subsession_start_date": notNullAssertion,
+      "timezone_offset": notNullAssertion,
+      "places_bookmarks_count": notNullAssertion,
+      "places_pages_count": notNullAssertion,
+      "search_counts": nullAssertion,
+      "scalar_parent_browser_engagement_max_concurrent_window_count": notNullAssertion,
+      "scalar_parent_browser_engagement_max_concurrent_tab_count": notNullAssertion,
+      "scalar_parent_browser_engagement_tab_open_event_count": nullAssertion,
+      "scalar_parent_browser_engagement_window_open_event_count": nullAssertion,
+      "scalar_parent_browser_engagement_unique_domains_count": nullAssertion,
+      "scalar_parent_browser_engagement_total_uri_count": nullAssertion,
+      "scalar_parent_browser_engagement_unfiltered_uri_count": nullAssertion,
+      "scalar_parent_browser_engagement_navigation_about_newtab": nullAssertion,
+      "scalar_parent_browser_engagement_navigation_contextmenu": nullAssertion,
+      "scalar_parent_browser_engagement_navigation_searchbar": nullAssertion,
+      "scalar_parent_browser_engagement_navigation_urlbar": nullAssertion,
     };
 
     const expected = {};
@@ -163,7 +163,7 @@ describe("basic functional tests", function() {
       actual[attribute] = assertion(actualValue);
     }
 
-    assert.deepEqual(expected, actual, "no expected attributes should be 'undefined'");
+    assert.deepEqual(expected, actual, "no expected attributes encountered");
 
   });
 

@@ -76,6 +76,8 @@ geo_country
 geo_city
 ``` 
 
+When a certain probe is not set in the current telemetry environment, the string "null" is set instead. 
+
 ### Peculiarities
 
 1. The places_bookmarks_count_histogram and places_pages_count_histogram attributes are only available occasionally in the telemetry session due to performance reasons. We collect both the histograms as present in the current telemetry session (using the attributes places_bookmarks_count_histogram and places_pages_count_histogram) as well as the actual values that telemetry occasionally would collect. The places_bookmarks_count and places_pages_count attributes will always include the values based on the current database contents.
@@ -94,11 +96,11 @@ These are the `payload` fields from all pings in the `shield-study` and `shield-
 
 branch        pioneer
 study_name    esper-pioneer-shield-study
-addon_version 0.0.1
+addon_version 0.0.3
 version       3
 
 
-2017-10-31T15:00:03.391Z shield-study-addon
+2017-10-31T21:49:14.334Z shield-study-addon
 {
   "attributes": {
     "app_version": "58.0a1",
@@ -109,45 +111,45 @@ version       3
     "os": "Darwin",
     "os_version": "16.7.0",
     "places_bookmarks_count": "10",
-    "places_bookmarks_count_histogram": "undefined",
+    "places_bookmarks_count_histogram": "null",
     "places_pages_count": "10",
-    "places_pages_count_histogram": "undefined",
+    "places_pages_count_histogram": "null",
     "profile_creation_date": "17470",
     "profile_subsession_counter": "1",
     "scalar_parent_browser_engagement_max_concurrent_tab_count": "1",
     "scalar_parent_browser_engagement_max_concurrent_window_count": "1",
-    "scalar_parent_browser_engagement_navigation_about_newtab": "undefined",
-    "scalar_parent_browser_engagement_navigation_contextmenu": "undefined",
-    "scalar_parent_browser_engagement_navigation_searchbar": "undefined",
-    "scalar_parent_browser_engagement_navigation_urlbar": "undefined",
-    "scalar_parent_browser_engagement_tab_open_event_count": "undefined",
-    "scalar_parent_browser_engagement_total_uri_count": "undefined",
+    "scalar_parent_browser_engagement_navigation_about_newtab": "null",
+    "scalar_parent_browser_engagement_navigation_contextmenu": "null",
+    "scalar_parent_browser_engagement_navigation_searchbar": "null",
+    "scalar_parent_browser_engagement_navigation_urlbar": "null",
+    "scalar_parent_browser_engagement_tab_open_event_count": "null",
+    "scalar_parent_browser_engagement_total_uri_count": "null",
     "scalar_parent_browser_engagement_unfiltered_uri_count": "1",
-    "scalar_parent_browser_engagement_unique_domains_count": "undefined",
-    "scalar_parent_browser_engagement_window_open_event_count": "undefined",
-    "search_counts": "undefined",
-    "subsession_start_date": "2017-10-31T17:00:00.0+02:00",
+    "scalar_parent_browser_engagement_unique_domains_count": "null",
+    "scalar_parent_browser_engagement_window_open_event_count": "null",
+    "search_counts": "null",
+    "subsession_start_date": "2017-10-31T23:00:00.0+02:00",
     "system.memory_mb": "16384",
     "system_cpu.cores": "4",
     "system_cpu.speed_mhz": "2500",
     "system_gfx.monitors[1].screen_width": "1680",
-    "system_gfx.monitors[1].screen_width_zero_indexed": "undefined",
+    "system_gfx.monitors[1].screen_width_zero_indexed": "null",
     "timezone_offset": "120",
     "total_time": "4",
     "uptime": "0"
   }
 }
-2017-10-31T15:00:02.660Z shield-study
+2017-10-31T21:49:13.602Z shield-study
 {
   "study_state": "installed"
 }
-2017-10-31T15:00:02.660Z shield-study-addon
+2017-10-31T21:49:13.602Z shield-study-addon
 {
   "attributes": {
     "event": "esper-init"
   }
 }
-2017-10-31T15:00:02.659Z shield-study
+2017-10-31T21:49:13.601Z shield-study
 {
   "study_state": "enter"
 }

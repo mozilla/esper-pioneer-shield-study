@@ -113,6 +113,9 @@ class StudyTelemetryCollector {
     // shield ping attributes must be strings
     for (const attribute in shieldPingAttributes) {
       let attributeValue = shieldPingAttributes[attribute];
+      if (typeof attributeValue === "undefined") {
+        attributeValue = "null";
+      }
       if (typeof attributeValue === "object") {
         attributeValue = JSON.stringify(attributeValue);
       }
