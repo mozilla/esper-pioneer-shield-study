@@ -18,8 +18,8 @@ subset of telemetry fields for the cohort of users participating in the Firefox 
 normal telemetry variables for this cohort in conjunction with the extended data collection unique to Pioneer will 
 allow both quantitative and qualitative comparison of the Pioneer cohort to the Firefox release population. 
 
-Telemetry fields are collected after add-on install as soon as telemetry delayed init has run and a "idle-daily" event has been observed. 
-This makes it more likely that the telemetry session payload contains the indicators that we are collecting. 
+At start-up, the add-on will send a "esper-init" event and then wait for Telemetry to be fully initialized 
+(which can take over a minute), and then collect the relevant telemetry and send a ping with that payload.
 
 ### Attributes
 

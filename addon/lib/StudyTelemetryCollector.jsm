@@ -44,33 +44,19 @@ class StudyTelemetryCollector {
 
     this.studyUtils.telemetry({ event: "esper-init" });
 
-    // Ensure that we collect telemetry payloads only after it is fully initiated
-    Promise.all([
-      TelemetryEnvironment.onInitialized(),
-      TelemetrySession.delayedInit(),
-    ]).then(() => {
+    // Ensure that we collect telemetry payloads only after it is fully initialized
+    // See http://searchfox.org/mozilla-central/rev/423b2522c48e1d654e30ffc337164d677f934ec3/toolkit/components/telemetry/TelemetryController.jsm#295
+    TelemetryController.promiseInitialized().then(() => {
 
-      // Wait for the gather-telemetry notification before we gather telemetry
-      const gatherPromise = PromiseUtils.defer();
-      Services.obs.addObserver(gatherPromise.resolve, "gather-telemetry");
-      TelemetrySession.observe(null, "idle-daily", null);
-      gatherPromise.promise.then(() => {
+      try {
 
-        console.log("Received gather-telemetry notification.");
-        Services.obs.removeObserver(gatherPromise.resolve, "gather-telemetry");
+        this.collectAndSendTelemetry();
 
-        try {
-
-          this.collectAndSendTelemetry();
-
-        } catch (ex) {
-          // TODO: how are errors during study execution reported?
-          // this.studyUtils.telemetryError();
-          Components.utils.reportError(ex);
-        }
-
-
-      });
+      } catch (ex) {
+        // TODO: how are errors during study execution reported?
+        // this.studyUtils.telemetryError();
+        Components.utils.reportError(ex);
+      }
 
     });
 
