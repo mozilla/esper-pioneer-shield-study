@@ -28,7 +28,7 @@ You can have Firefox automatically launched and the add-on installed by running:
 
 `$ npm run firefox`
 
-To lead the extension manually instead, open (preferably) the [Developer Edition of Firefox](https://www.mozilla.org/firefox/developer/) and load the `.xpi` using the following steps:
+To load the extension manually instead, open (preferably) the [Developer Edition of Firefox](https://www.mozilla.org/firefox/developer/) and load the `.xpi` using the following steps:
 
 * Navigate to *about:config* and set `extensions.legacy.enabled` to `true`. This permits the loading of the embedded Web Extension since new versions of Firefox are becoming restricted to pure Web Extensions only.
 * Navigate to *about:debugging* in your URL bar

@@ -2,7 +2,7 @@
 
 ## Automated Testing
 
-`npm test` verifies the telemetry payload as expected at startup with a clean profile.
+`npm test` verifies the telemetry payload as expected at firefox startup and add-on installation in a clean profile.
 
 Code at [./test/functional_test.js].
 
@@ -12,4 +12,4 @@ See `README.md` for instructions on how to build, install and run this add-on.
 
 ### Note: checking "Correct Pings"
 
-See `TELEMETRY.md`, especially it's EXAMPLE SEQUENCE section at the bottom.)
+See `TELEMETRY.md`, especially it's EXAMPLE SEQUENCE section at the bottom.
