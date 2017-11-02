@@ -167,7 +167,7 @@ class StudyTelemetryCollector {
     attributes.places_pages_count_histogram = payload.processes.content.histograms.PLACES_PAGES_COUNT;
 
     // firefox/browser/modules/BrowserUsageTelemetry.jsm
-    attributes.search_counts = payload.processes.content.histograms.SEARCH_COUNTS;
+    attributes.search_counts = payload.histograms.SEARCH_COUNTS;
     attributes.scalar_parent_browser_engagement_max_concurrent_window_count = payload.processes.parent.scalars["browser.engagement.max_concurrent_window_count"];
     attributes.scalar_parent_browser_engagement_max_concurrent_tab_count = payload.processes.parent.scalars["browser.engagement.max_concurrent_tab_count"];
     attributes.scalar_parent_browser_engagement_tab_open_event_count = payload.processes.parent.scalars["browser.engagement.tab_open_event_count"];
