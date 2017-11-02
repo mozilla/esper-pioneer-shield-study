@@ -7,6 +7,8 @@
   but NOT for addon-specific libs
 */
 
+// Note: do not change "var" to "const" or Cu.import will end up with config undefined
+
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(config|EXPORTED_SYMBOLS)" }]*/
 var EXPORTED_SYMBOLS = ["config"];
 
