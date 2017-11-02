@@ -63,7 +63,9 @@ describe("basic functional tests", function() {
     driver = await utils.promiseSetupDriver();
     // install the addon
     addonId = await utils.installAddon(driver);
-    // allow our shield study addon some time to start
+    // 1 minute wait for telemetry to be fully initialized
+    await driver.sleep(60000);
+    // allow our shield study addon some time to send initial pings
     await driver.sleep(1000);
     // collect sent pings
     pings = await utils.getTelemetryPings(driver, ["shield-study", "shield-study-addon"]);
