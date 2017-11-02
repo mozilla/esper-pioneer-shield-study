@@ -96,7 +96,7 @@ These are the `payload` fields from all pings in the `shield-study` and `shield-
 
 branch        pioneer
 study_name    esper-pioneer-shield-study
-addon_version 0.0.3
+addon_version 0.0.4
 version       3
 
 
@@ -154,4 +154,11 @@ version       3
   "study_state": "enter"
 }
 
+```
+
+To trigger the search_counts data, you'll need to have performed at least one search using the firefox search bar and then reload the addon. 
+The sent attribute may look like this:
+
+```
+"search_counts":"{\"ddg.searchbar\":{\"range\":[1,2],\"bucket_count\":3,\"histogram_type\":4,\"values\":{\"0\":1,\"1\":0},\"sum\":1}}"
 ```

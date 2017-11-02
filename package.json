@@ -1,6 +1,6 @@
 {
   "name": "esper-pioneer-shield-study",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "The ESPER experiment - Firefox Pioneer Study",
   "main": "index.js",
   "repository": "https://github.com/motin/esper-pioneer-shield-study.git",
