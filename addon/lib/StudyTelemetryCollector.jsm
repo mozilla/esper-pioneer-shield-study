@@ -64,10 +64,10 @@ class StudyTelemetryCollector {
 
   async collectAndSendTelemetry() {
 
-    const telemetryPingEnvelopeBasedAttributes = StudyTelemetryCollector.collectTelemetryPingEnvelopeBasedAttributes();
+    const telemetryEnvironmentBasedAttributes = StudyTelemetryCollector.collectTelemetryEnvironmentBasedAttributes();
     const telemetrySubsessionPayloadBasedAttributes = StudyTelemetryCollector.collectTelemetrySubsessionPayloadBasedAttributes();
 
-    console.log("telemetryPingEnvelopeBasedAttributes", telemetryPingEnvelopeBasedAttributes);
+    console.log("telemetryEnvironmentBasedAttributes", telemetryEnvironmentBasedAttributes);
     console.log("telemetrySubsessionPayloadBasedAttributes", telemetrySubsessionPayloadBasedAttributes);
 
     StudyTelemetryCollector.collectPlacesDbBasedAttributes().then((placesDbBasedAttributes) => {
@@ -76,7 +76,7 @@ class StudyTelemetryCollector {
 
       const shieldPingAttributes = {
         event: "telemetry-payload",
-        ...telemetryPingEnvelopeBasedAttributes,
+        ...telemetryEnvironmentBasedAttributes,
         ...telemetrySubsessionPayloadBasedAttributes,
         ...placesDbBasedAttributes,
       };
@@ -119,21 +119,18 @@ class StudyTelemetryCollector {
    * These attributes are already sent as part of the telemetry ping envelope
    * @returns {{}}
    */
-  static collectTelemetryPingEnvelopeBasedAttributes() {
+  static collectTelemetryEnvironmentBasedAttributes() {
 
-    const telemetrySessionCurrentPingData = TelemetryController.getCurrentPingData();
-    console.log("telemetrySessionCurrentPingData", telemetrySessionCurrentPingData);
-
-    const environment = telemetrySessionCurrentPingData.environment;
-    const application = telemetrySessionCurrentPingData.application;
+    const environment = TelemetryEnvironment.currentEnvironment;
+    console.log("TelemetryEnvironment.currentEnvironment", environment);
 
     return {
       "default_search_engine": environment.settings.defaultSearchEngine,
       "locale": environment.settings.locale,
       "os": environment.system.os.name,
-      "normalized_channel": application.channel,
+      "normalized_channel": environment.settings.update.channel,
       "profile_creation_date": environment.profile.creationDate,
-      "app_version": application.version,
+      "app_version": environment.build.version,
       "system.memory_mb": environment.system.memoryMB,
       "system_cpu.cores": environment.system.cpu.cores,
       "system_cpu.speed_mhz": environment.system.cpu.speedMHz,
