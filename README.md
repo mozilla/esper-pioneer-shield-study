@@ -51,6 +51,14 @@ You can automatically build recent changes and package them into a `.xpi` by run
 
 Now, anytime a file is changed and saved, node will repackage the add-on. You must reload the add-on as before, or by clicking the "Reload" under the add-on in *about:debugging*. Note that a hard re-load is recommended to clear local storage. To do this, simply remove the add-on and reload as before.
 
+# Functional testing
+
+Run the following to run the example set of functional tests:
+
+`$ npm test`
+
+Note: The functional tests are using async/await, so make sure you are running Node 7.6+
+
 # Description of what goes on when this addon is started
 
 During `bootstrap.js:startup(data, reason)`:
@@ -67,12 +75,4 @@ Tip: It is particularly useful to compare the source code of previously deployed
 
 # Getting Data
 
-Telemetry pings are loaded into S3 and re:dash. You can use this [Example Query](https://sql.telemetry.mozilla.org/queries/46999/source#table) as a starting point.
-
-# Testing
-
-Run the following to run the example set of functional tests:
-
-`$ npm test`
-
-Note: The functional tests are using async/await, so make sure you are running Node 7.6+
+Telemetry pings are loaded into S3 and re:dash. See `TELEMETRY.md` for more details.

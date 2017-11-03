@@ -18,12 +18,12 @@ subset of telemetry fields for the cohort of users participating in the Firefox 
 normal telemetry variables for this cohort in conjunction with the extended data collection unique to Pioneer will 
 allow both quantitative and qualitative comparison of the Pioneer cohort to the Firefox release population. 
 
-At start-up, the add-on will send a "esper-init" event and then wait for Telemetry to be fully initialized 
-(which can take over a minute), and then collect the relevant telemetry and send a ping with that payload.
+At add-on installation, the add-on will send a "esper-init" event, wait for Telemetry to be fully initialized 
+(which can take over a minute if Firefox was just started), and finally collect the relevant telemetry and send a ping with that payload.
 
 ### Attributes
 
-Collected from the current telemetry session ping envelope:
+Collected from the current telemetry environment:
 
 ```
 default_search_engine
@@ -48,6 +48,8 @@ total_time
 profile_subsession_counter
 subsession_start_date
 timezone_offset
+places_bookmarks_count_histogram
+places_pages_count_histogram
 search_counts
 scalar_parent_browser_engagement_window_open_event_count
 scalar_parent_browser_engagement_total_uri_count
@@ -161,4 +163,66 @@ The sent attribute may look like this:
 
 ```
 "search_counts":"{\"ddg.searchbar\":{\"range\":[1,2],\"bucket_count\":3,\"histogram_type\":4,\"values\":{\"0\":1,\"1\":0},\"sum\":1}}"
+```
+
+# Retrieving data for analysis
+
+Telemetry pings are loaded into S3 and re:dash. 
+
+[Sample query to retrieve the complete dataset](https://sql.telemetry.mozilla.org/queries/48557/source):
+
+```
+with esper as (
+select 
+client_id,
+environment.settings.locale, 
+metadata.geo_country,
+metadata.geo_city,
+payload.branch,
+payload.addon_version,
+payload.testing,
+payload.data.attributes['event'] as event,
+payload.data.attributes['default_search_engine'] as default_search_engine,
+payload.data.attributes['locale'] as locale,
+payload.data.attributes['os'] as os,
+payload.data.attributes['normalized_channel'] as normalized_channel,
+payload.data.attributes['profile_creation_date'] as profile_creation_date,
+payload.data.attributes['app_version'] as app_version,
+payload.data.attributes['system.memory_mb'] as system_memory_mb,
+payload.data.attributes['system_cpu.cores'] as system_cpu_cores,
+payload.data.attributes['system_cpu.speed_mhz'] as system_cpu_speed_mhz,
+payload.data.attributes['os_version'] as os_version,
+payload.data.attributes['system_gfx.monitors[1].screen_width'] as system_gfx_monitors_1_screen_width,
+payload.data.attributes['system_gfx.monitors[1].screen_width_zero_indexed'] as system_gfx_monitors_1_screen_width_zero_indexed,
+payload.data.attributes['uptime'] as uptime,
+payload.data.attributes['total_time'] as total_time,
+payload.data.attributes['profile_subsession_counter'] as profile_subsession_counter,
+payload.data.attributes['subsession_start_date'] as subsession_start_date,
+payload.data.attributes['timezone_offset'] as timezone_offset,
+payload.data.attributes['places_bookmarks_count'] as places_bookmarks_count,
+payload.data.attributes['places_bookmarks_count_histogram'] as places_bookmarks_count_histogram,
+payload.data.attributes['places_pages_count'] as places_pages_count,
+payload.data.attributes['places_pages_count_histogram'] as places_pages_count_histogram,
+payload.data.attributes['search_counts'] as search_counts,
+payload.data.attributes['scalar_parent_browser_engagement_window_open_event_count'] as scalar_parent_browser_engagement_window_open_event_count,
+payload.data.attributes['scalar_parent_browser_engagement_total_uri_count'] as scalar_parent_browser_engagement_total_uri_count,
+payload.data.attributes['scalar_parent_browser_engagement_navigation_urlbar'] as scalar_parent_browser_engagement_navigation_urlbar,
+payload.data.attributes['scalar_parent_browser_engagement_navigation_contextmenu'] as scalar_parent_browser_engagement_navigation_contextmenu,
+payload.data.attributes['scalar_parent_browser_engagement_tab_open_event_count'] as scalar_parent_browser_engagement_tab_open_event_count,
+payload.data.attributes['scalar_parent_browser_engagement_navigation_searchbar'] as scalar_parent_browser_engagement_navigation_searchbar,
+payload.data.attributes['scalar_parent_browser_engagement_navigation_about_newtab'] as scalar_parent_browser_engagement_navigation_about_newtab,
+payload.data.attributes['scalar_parent_browser_engagement_unique_domains_count'] as scalar_parent_browser_engagement_unique_domains_count,
+payload.data.attributes['scalar_parent_browser_engagement_max_concurrent_window_count'] as scalar_parent_browser_engagement_max_concurrent_window_count,
+payload.data.attributes['scalar_parent_browser_engagement_max_concurrent_tab_count'] as scalar_parent_browser_engagement_max_concurrent_tab_count,
+payload.data.attributes['scalar_parent_browser_engagement_unfiltered_uri_count'] as scalar_parent_browser_engagement_unfiltered_uri_count,
+
+submission
+from telemetry_shield_study_addon_parquet
+where payload.study_name = 'esper-pioneer-shield-study'
+and payload.addon_version IN ('0.0.1', '0.0.2', '0.0.3', '0.0.4', '0.0.5')
+and payload.testing = false
+and submission >= '20171102'
+)
+
+select * from esper limit 10
 ```
