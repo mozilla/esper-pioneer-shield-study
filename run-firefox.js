@@ -80,7 +80,7 @@ const minimistHandler = {
     await takeScreenshot(driver);
     console.log("Screenshot dumped");
 
-    // 1 minute wait for telemetry to be fully initialized
+    // wait for telemetry to be fully initialized
     await driver.sleep(60000);
 
     const telemetryPingsFilterOptions = {

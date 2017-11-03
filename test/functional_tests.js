@@ -41,7 +41,7 @@ async function postTestReset(driver) {
 }
 
 const notNullAssertion = value => {
-  return value !== "null"
+  return value !== "null" && typeof value !== "undefined"
 };
 
 const nullAssertion = value => {
@@ -53,7 +53,7 @@ const nullAssertion = value => {
 
 describe("basic functional tests", function() {
   // This gives Firefox time to start, and us a bit longer during some of the tests.
-  this.timeout(15000);
+  this.timeout(65000);
 
   let driver;
   let addonId;
@@ -63,12 +63,15 @@ describe("basic functional tests", function() {
     driver = await utils.promiseSetupDriver();
     // install the addon
     addonId = await utils.installAddon(driver);
-    // 1 minute wait for telemetry to be fully initialized
-    await driver.sleep(60000);
     // allow our shield study addon some time to send initial pings
-    await driver.sleep(1000);
+    await driver.sleep(2000);
+    // wait for telemetry to be fully initialized
+    await driver.sleep(60000);
     // collect sent pings
     pings = await utils.getTelemetryPings(driver, ["shield-study", "shield-study-addon"]);
+    // print sent pings
+    console.log("Shield study telemetry pings: ");
+    utils.printPings(pings);
   });
 
   after(async() => driver.quit());
@@ -122,7 +125,7 @@ describe("basic functional tests", function() {
     // no unexpected data attributes
 
     const assertionsByAttribute = {
-      "default_search_engine": nullAssertion,
+      "default_search_engine": notNullAssertion,
       "locale": notNullAssertion,
       "os": notNullAssertion,
       "normalized_channel": notNullAssertion,
@@ -133,14 +136,16 @@ describe("basic functional tests", function() {
       "system_cpu.speed_mhz": notNullAssertion,
       "os_version": notNullAssertion,
       "system_gfx.monitors[1].screen_width": notNullAssertion,
-      "completeTelemetrySessionPayload": notNullAssertion,
+      // "system_gfx.monitors[1].screen_width_zero_indexed": nullAssertion, // we make no assertion since we can't assume that the tester doesn't have an extra monitor connected
       "uptime": notNullAssertion,
       "total_time": notNullAssertion,
       "profile_subsession_counter": notNullAssertion,
       "subsession_start_date": notNullAssertion,
       "timezone_offset": notNullAssertion,
       "places_bookmarks_count": notNullAssertion,
+      "places_bookmarks_count_histogram": nullAssertion,
       "places_pages_count": notNullAssertion,
+      "places_pages_count_histogram": nullAssertion,
       "search_counts": nullAssertion,
       "scalar_parent_browser_engagement_max_concurrent_window_count": notNullAssertion,
       "scalar_parent_browser_engagement_max_concurrent_tab_count": notNullAssertion,
@@ -165,7 +170,7 @@ describe("basic functional tests", function() {
       actual[attribute] = assertion(actualValue);
     }
 
-    assert.deepEqual(expected, actual, "no expected attributes encountered");
+    assert.deepEqual(expected, actual, "only expected attributes encountered");
 
   });
 
