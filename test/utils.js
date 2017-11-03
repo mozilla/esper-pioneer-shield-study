@@ -33,6 +33,10 @@ const FIREFOX_PREFERENCES = {
   // NECESSARY for all 57+ builds
   "extensions.legacy.enabled": true,
 
+  // Set telemetry to initiate earlier than 60 seconds
+  // TODO: figure out why setting this preference leads to profile_creation_date and default_search_engine not being set
+  //"toolkit.telemetry.initDelay": 1,
+
   /** WARNING: gecko webdriver sets many additional prefs at:
     * https://dxr.mozilla.org/mozilla-central/source/testing/geckodriver/src/prefs.rs
     *

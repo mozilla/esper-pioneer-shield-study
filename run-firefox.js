@@ -80,6 +80,9 @@ const minimistHandler = {
     await takeScreenshot(driver);
     console.log("Screenshot dumped");
 
+    // wait for telemetry to be fully initialized
+    await driver.sleep(60000);
+
     const telemetryPingsFilterOptions = {
       type: [ "shield-study", "shield-study-addon" ],
       headersOnly: false,

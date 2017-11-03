@@ -7,6 +7,8 @@
   but NOT for addon-specific libs
 */
 
+// Note: do not change "var" to "const" or Cu.import will end up with config undefined
+
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(config|EXPORTED_SYMBOLS)" }]*/
 var EXPORTED_SYMBOLS = ["config"];
 
@@ -33,7 +35,7 @@ var config = {
     },
     "telemetry": {
       "send": true, // assumed false. Actually send pings?
-      "removeTestingFlag": false,  // Marks pings as testing, set true for actual release
+      "removeTestingFlag": true,  // Marks pings as testing, set true for actual release
       // TODO "onInvalid": "throw"  // invalid packet for schema?  throw||log
     },
     // relative to bootstrap.js in the xpi
@@ -46,10 +48,10 @@ var config = {
   },
   "log": {
     // Fatal: 70, Error: 60, Warn: 50, Info: 40, Config: 30, Debug: 20, Trace: 10, All: -1,
-    "bootstrap":  {
+    "bootstrap": {
       "level": "Debug",
     },
-    "studyUtils":  {
+    "studyUtils": {
       "level": "Trace",
     },
   },
