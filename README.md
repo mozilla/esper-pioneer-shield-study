@@ -41,7 +41,7 @@ To debug installation and loading of extensions, use the Browser Console which c
 
 You should not see any UI element from this add-on, only log output in the Browser Console (`Tools > Web Developer > Browser Console`), which comes from shield utilities in general and this add-on.
 
-At start-up, the add-on will send a "esper-init" event and then wait for Telemetry to be fully initialized (which can take over a minute), and then collect the relevant telemetry and send a ping with that payload. See `TELEMETRY.md` for more details.  
+See `TELEMETRY.md` for details on telemetry sent by the add-on.  
 
 # Developing
 

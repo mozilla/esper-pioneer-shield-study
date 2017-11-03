@@ -219,7 +219,7 @@ payload.data.attributes['scalar_parent_browser_engagement_unfiltered_uri_count']
 submission
 from telemetry_shield_study_addon_parquet
 where payload.study_name = 'esper-pioneer-shield-study'
-and payload.addon_version IN ('0.0.1', '0.0.2', '0.0.3', '0.0.4', '0.0.5')
+and payload.addon_version IN ('0.0.4', '0.1.0')
 and payload.testing = false
 and submission >= '20171102'
 )
