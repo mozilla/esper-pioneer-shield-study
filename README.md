@@ -14,9 +14,10 @@ First, make sure you are on NPM 5+ installed so that the proper dependencies are
 
 After cloning the repo, you can run the following commands from the top level directory, one after another:
 
-`$ npm install`
-
-`$ npm run build`
+```
+$ npm install
+$ npm run build
+```
 
 This packages the add-on into `linked-addon.xpi` which is stored in `dist/`. This file is what you load into Firefox.
 

@@ -76,7 +76,7 @@ Not collected by the add-on, but is added by server-side telemetry processing ba
 ```
 geo_country
 geo_city
-``` 
+```
 
 When a certain probe is not set in the current telemetry environment, the string "null" is set instead. 
 
@@ -85,7 +85,7 @@ When a certain probe is not set in the current telemetry environment, the string
 1. The places_bookmarks_count_histogram and places_pages_count_histogram attributes are only available occasionally in the telemetry session due to performance reasons. We collect both the histograms as present in the current telemetry session (using the attributes places_bookmarks_count_histogram and places_pages_count_histogram) as well as the actual values that telemetry occasionally would collect. The places_bookmarks_count and places_pages_count attributes will always include the values based on the current database contents.
 1. Contrary to what the [documentation](https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/telemetry/data/main-ping.html) states ("Flag and count histograms are always created and submitted, with their default value being respectively false and 0. Other histogram types (see Choosing a Histogram Type) are not created nor submitted if no data was added to them."), the search_counts histogram is empty until a search has been executed.
 1. Scalars and most histograms are only submitted if data was added to them.
-1. Config/preference-related attributes are generally only defined if the defer from the browser default preferences
+1. Config/preference-related attributes are generally only defined if they defer from the browser default preferences.
 1. Regarding `system_gfx.monitors[1].screen_width`, we want to collect the screen widthof the user's primary monitor. During collection, the primary monitor values are found at `environment.system.gfx.monitors[0].screenWidth` but the assumption is that this value ends up at `system_gfx.monitors[1].screen_width` in Re:dash after data processing. To be able to verify this assumption, the `system_gfx.monitors[1].screen_width_zero_indexed` is also submitted, corresponding to `environment.system.gfx.monitors[1].screenWidth` (Example of values when a Macbook is connected to an external display, which is set as the primary display: [Screenshot](https://www.dropbox.com/s/u3hs2uy3sald4yr/Screenshot%202017-11-03%2014.05.06.png?dl=0))
 
 ## Example sequence
@@ -169,5 +169,5 @@ The sent attribute may look like this:
 
 Telemetry pings are loaded into S3 and re:dash. Published queries:
 
-[ESPER Pioneer Shield Study - All Telemetry Payloads](https://sql.telemetry.mozilla.org/queries/48557/source):
-[ESPER Pioneer Shield Study - Number of clients](https://sql.telemetry.mozilla.org/queries/48440/source)
+* [ESPER Pioneer Shield Study - All Telemetry Payloads](https://sql.telemetry.mozilla.org/queries/48557/source)
+* [ESPER Pioneer Shield Study - Number of clients](https://sql.telemetry.mozilla.org/queries/48440/source)
