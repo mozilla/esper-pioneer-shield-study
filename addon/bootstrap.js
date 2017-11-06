@@ -96,8 +96,10 @@ async function startup(addonData, reason) {
     });
   }
 
-  // Fire this, then we are done.
-  new StudyTelemetryCollector(studyUtils, variation).start();
+  // Fire this once (only during INSTALL), then we are done.
+  if (REASONS[reason] === "ADDON_INSTALL") {
+    new StudyTelemetryCollector(studyUtils, variation).start();
+  }
 }
 
 
