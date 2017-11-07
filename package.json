@@ -1,6 +1,6 @@
 {
   "name": "esper-pioneer-shield-study",
-  "description": "The ESPER experiment - Firefox Pioneer Study",
+  "description": "The ESPER Experiment - Firefox Pioneer Study",
   "version": "0.2.0",
   "author": "Fredrik Wollsén <fwollsen@mozilla.com>",
   "addon": {
@@ -13,8 +13,8 @@
     "hasEmbeddedWebExtension": false,
     "chromeResource": "esper-pioneer-shield-study",
     "creator": "Fredrik Wollsén <fwollsen@mozilla.com>",
-    "description": "The ESPER experiment - Firefox Pioneer Study",
-    "bugzilla": "<tbd: bug to attach for signing>"
+    "description": "The ESPER Experiment - Firefox Pioneer Study",
+    "bugzilla": "https://bugzilla.mozilla.org/show_bug.cgi?id=1414900"
   },
   "bugs": {
     "url": "https://github.com/motin/esper-pioneer-shield-study/issues"
