@@ -1,10 +1,10 @@
-# The ESPER experiment - Firefox Pioneer Study
+# The ESPER Experiment - Firefox Pioneer Study
 
 Evaluating Similarity of Pioneers as Exemplars of Release
 
 Assess the degree and sense in which users in opt-in cohort of Firefox Pioneer differ from the Firefox release channel population. This should be a one time collection of data that focuses on fields for which we have aggregate statistics pertaining to the firefox release population in Telemetry.
 
-For more information, see [https://docs.google.com/document/d/1y3MSF_azfrAoKdj00_GEhC_o8sGetEuLLnloYBpVtNo/edit?ts=59ccadd2&pli=1]()
+For more information, see [the ESPER Product Hypothesis Doc](https://docs.google.com/document/d/1AhPGfCUs8lafrs9EznhL80NmiL0z4tUKb7HCMXlPxH8/edit)
 
 # Getting started
 
@@ -14,9 +14,10 @@ First, make sure you are on NPM 5+ installed so that the proper dependencies are
 
 After cloning the repo, you can run the following commands from the top level directory, one after another:
 
-`$ npm install`
-
-`$ npm run build`
+```
+$ npm install
+$ npm run build
+```
 
 This packages the add-on into `linked-addon.xpi` which is stored in `dist/`. This file is what you load into Firefox.
 
@@ -41,7 +42,7 @@ To debug installation and loading of extensions, use the Browser Console which c
 
 You should not see any UI element from this add-on, only log output in the Browser Console (`Tools > Web Developer > Browser Console`), which comes from shield utilities in general and this add-on.
 
-At start-up, the add-on will send a "esper-init" event and then wait for Telemetry to be fully initialized (which can take over a minute), and then collect the relevant telemetry and send a ping with that payload. See `TELEMETRY.md` for more details.  
+See `TELEMETRY.md` for details on telemetry sent by the add-on.  
 
 # Developing
 

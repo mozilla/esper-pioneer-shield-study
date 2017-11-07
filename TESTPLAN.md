@@ -6,6 +6,10 @@ First, make sure you are on NPM 5+ installed so that the proper dependencies are
 
 `$ npm install -g npm`
 
+Clone the repo:
+
+`$ git clone https://github.com/motin/esper-pioneer-shield-study.git -b prepare-for-qa`
+
 After cloning the repo, you can run the following commands from the top level directory, one after another:
 
 `$ npm install`
@@ -31,7 +35,9 @@ Install the signed version of [the QA Shield Study Helper Add-on](https://bugzil
 
 Click on the QA Shield Study Helper Add-on to see the sent pings. 
 
-At start-up, the add-on will send a "esper-init" event and then wait for Telemetry to be fully initialized (which can take over a minute), and then collect the relevant telemetry and send a ping with that payload. See `TELEMETRY.md` for more details. 
+At add-on installation, the add-on will send a "esper-init" event, wait for Telemetry to be fully initialized 
+(which can take over a minute if Firefox was just started), and finally collect the relevant telemetry and send a ping with that payload.
+See [TELEMETRY.md](./TELEMETRY.md) for more details. 
 
 ### Example of how it appears when testing in Firefox
 
@@ -43,6 +49,6 @@ At start-up, the add-on will send a "esper-init" event and then wait for Telemet
 
 `npm test` verifies the telemetry payload as expected at firefox startup and add-on installation in a clean profile.
 
-Code at [./test/functional_test.js].
+Code at [./test/functional_test.js](./test/functional_test.js).
 
 Note: Both of these run in recently created profiles, leading to behavior-dependent such as browser engagement and search count telemetry not being available.  
