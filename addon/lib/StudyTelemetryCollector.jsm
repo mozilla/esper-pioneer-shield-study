@@ -29,6 +29,8 @@ const { TelemetryEnvironment } = Cu.import("resource://gre/modules/TelemetryEnvi
 
 XPCOMUtils.defineLazyModuleGetter(this, "PlacesUtils",
   "resource://gre/modules/PlacesUtils.jsm");
+XPCOMUtils.defineLazyServiceGetter(this, "Telemetry",
+  "@mozilla.org/base/telemetry;1", "nsITelemetry");
 
 /**
  * Note: Setting studyUtils in this constructor due to above comments
@@ -66,9 +68,11 @@ class StudyTelemetryCollector {
 
     const telemetryEnvironmentBasedAttributes = StudyTelemetryCollector.collectTelemetryEnvironmentBasedAttributes();
     const telemetrySubsessionPayloadBasedAttributes = StudyTelemetryCollector.collectTelemetrySubsessionPayloadBasedAttributes();
+    const telemetryScalarBasedAttributes = StudyTelemetryCollector.collectTelemetryScalarBasedAttributes();
 
     console.log("telemetryEnvironmentBasedAttributes", telemetryEnvironmentBasedAttributes);
     console.log("telemetrySubsessionPayloadBasedAttributes", telemetrySubsessionPayloadBasedAttributes);
+    console.log("telemetryScalarBasedAttributes", telemetryScalarBasedAttributes);
 
     StudyTelemetryCollector.collectPlacesDbBasedAttributes().then((placesDbBasedAttributes) => {
 
@@ -78,6 +82,7 @@ class StudyTelemetryCollector {
         event: "telemetry-payload",
         ...telemetryEnvironmentBasedAttributes,
         ...telemetrySubsessionPayloadBasedAttributes,
+        ...telemetryScalarBasedAttributes,
         ...placesDbBasedAttributes,
       };
 
@@ -168,17 +173,90 @@ class StudyTelemetryCollector {
 
     // firefox/browser/modules/BrowserUsageTelemetry.jsm
     attributes.search_counts = payload.keyedHistograms.SEARCH_COUNTS;
-    attributes.scalar_parent_browser_engagement_max_concurrent_window_count = payload.processes.parent.scalars["browser.engagement.max_concurrent_window_count"];
-    attributes.scalar_parent_browser_engagement_max_concurrent_tab_count = payload.processes.parent.scalars["browser.engagement.max_concurrent_tab_count"];
-    attributes.scalar_parent_browser_engagement_tab_open_event_count = payload.processes.parent.scalars["browser.engagement.tab_open_event_count"];
-    attributes.scalar_parent_browser_engagement_window_open_event_count = payload.processes.parent.scalars["browser.engagement.window_open_event_count"];
-    attributes.scalar_parent_browser_engagement_unique_domains_count = payload.processes.parent.scalars["browser.engagement.unique_domains_count"];
-    attributes.scalar_parent_browser_engagement_total_uri_count = payload.processes.parent.scalars["browser.engagement.total_uri_count"];
-    attributes.scalar_parent_browser_engagement_unfiltered_uri_count = payload.processes.parent.scalars["browser.engagement.unfiltered_uri_count"];
-    attributes.scalar_parent_browser_engagement_navigation_about_newtab = payload.processes.parent.scalars["browser.engagement.navigation_about_newtab"];
-    attributes.scalar_parent_browser_engagement_navigation_contextmenu = payload.processes.parent.scalars["browser.engagement.navigation_contextmenu"];
-    attributes.scalar_parent_browser_engagement_navigation_searchbar = payload.processes.parent.scalars["browser.engagement.navigation_searchbar"];
-    attributes.scalar_parent_browser_engagement_navigation_urlbar = payload.processes.parent.scalars["browser.engagement.navigation_urlbar"];
+
+    return attributes;
+
+  }
+
+  static collectTelemetryScalarBasedAttributes() {
+
+    const attributes = {};
+
+    // firefox/browser/modules/test/browser/head.js
+
+    function getParentProcessScalars(aChannel, aKeyed = false, aClear = false) {
+      const scalars = aKeyed ?
+        Services.telemetry.snapshotKeyedScalars(aChannel, aClear).parent :
+        Services.telemetry.snapshotScalars(aChannel, aClear).parent;
+      return scalars || {};
+    }
+
+    // firefox/browser/modules/test/browser/browser_UsageTelemetry.js
+
+    const MAX_CONCURRENT_TABS = "browser.engagement.max_concurrent_tab_count";
+    const TAB_EVENT_COUNT = "browser.engagement.tab_open_event_count";
+    const MAX_CONCURRENT_WINDOWS = "browser.engagement.max_concurrent_window_count";
+    const WINDOW_OPEN_COUNT = "browser.engagement.window_open_event_count";
+    const TOTAL_URI_COUNT = "browser.engagement.total_uri_count";
+    const UNIQUE_DOMAINS_COUNT = "browser.engagement.unique_domains_count";
+    const UNFILTERED_URI_COUNT = "browser.engagement.unfiltered_uri_count";
+
+    const scalars = getParentProcessScalars(Telemetry.DATASET_RELEASE_CHANNEL_OPTIN);
+
+    function getScalar(scalars, scalarName) {
+      if (!(scalarName in scalars)) {
+        console.log(`Scalar ${scalarName} is not set`);
+        return;
+      }
+      return scalars[scalarName];
+    }
+
+    console.log('scalars', scalars);
+
+    attributes.scalar_parent_browser_engagement_max_concurrent_window_count = getScalar(scalars, MAX_CONCURRENT_WINDOWS);
+    attributes.scalar_parent_browser_engagement_max_concurrent_tab_count = getScalar(scalars, MAX_CONCURRENT_TABS);
+    attributes.scalar_parent_browser_engagement_tab_open_event_count = getScalar(scalars, TAB_EVENT_COUNT);
+    attributes.scalar_parent_browser_engagement_window_open_event_count = getScalar(scalars, WINDOW_OPEN_COUNT);
+    attributes.scalar_parent_browser_engagement_unique_domains_count = getScalar(scalars, UNIQUE_DOMAINS_COUNT);
+    attributes.scalar_parent_browser_engagement_total_uri_count = getScalar(scalars, TOTAL_URI_COUNT);
+    attributes.scalar_parent_browser_engagement_unfiltered_uri_count = getScalar(scalars, UNFILTERED_URI_COUNT);
+
+    function getKeyedScalar(scalars, scalarName, key) {
+      if (!(scalarName in scalars)) {
+        console.log(`Keyed scalar ${scalarName} is not set`);
+        return;
+      }
+      if (!(key in scalars[scalarName])) {
+        console.log(`Keyed scalar ${scalarName} has not key ${key}`);
+        return;
+      }
+      return scalars[scalarName][key];
+    }
+
+    const keyedScalars = getParentProcessScalars(Telemetry.DATASET_RELEASE_CHANNEL_OPTIN, true, false);
+
+    console.log('keyedScalars', keyedScalars);
+
+    // firefox/browser/modules/test/browser/browser_UsageTelemetry_searchbar.js
+
+    const SCALAR_SEARCHBAR = "browser.engagement.navigation.searchbar";
+
+    attributes.scalar_parent_browser_engagement_navigation_searchbar = getKeyedScalar(keyedScalars, SCALAR_SEARCHBAR, "search_enter");
+
+    // firefox/browser/modules/test/browser/browser_UsageTelemetry_content.js
+
+    const BASE_PROBE_NAME = "browser.engagement.navigation.";
+    const SCALAR_CONTEXT_MENU = BASE_PROBE_NAME + "contextmenu";
+    const SCALAR_ABOUT_NEWTAB = BASE_PROBE_NAME + "about_newtab";
+
+    attributes.scalar_parent_browser_engagement_navigation_about_newtab = getKeyedScalar(keyedScalars, SCALAR_ABOUT_NEWTAB, "search_enter");
+    attributes.scalar_parent_browser_engagement_navigation_contextmenu = getKeyedScalar(keyedScalars, SCALAR_CONTEXT_MENU, "search");
+
+    // firefox/browser/modules/test/browser/browser_UsageTelemetry_urlbar.js
+
+    const SCALAR_URLBAR = "browser.engagement.navigation.urlbar";
+
+    attributes.scalar_parent_browser_engagement_navigation_urlbar = getKeyedScalar(keyedScalars, SCALAR_URLBAR, "search_enter");
 
     return attributes;
 
