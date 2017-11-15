@@ -6,6 +6,7 @@
 const { utils: Cu } = Components;
 Cu.import("resource://gre/modules/Console.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
+Cu.import("resource://gre/modules/Preferences.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/PromiseUtils.jsm");
 
@@ -44,7 +45,7 @@ class StudyTelemetryCollector {
 
   async start() {
 
-    this.studyUtils.telemetry({ event: "esper-init" });
+    this.telemetry({ event: "esper-init" });
 
     // Ensure that we collect telemetry payloads only after it is fully initialized
     // See http://searchfox.org/mozilla-central/rev/423b2522c48e1d654e30ffc337164d677f934ec3/toolkit/components/telemetry/TelemetryController.jsm#295
@@ -61,6 +62,52 @@ class StudyTelemetryCollector {
       }
 
     });
+
+  }
+
+  telemetry(payload) {
+    if (StudyTelemetryCollector.allowedToSendTelemetry()) {
+      this.studyUtils.telemetry(payload);
+    } else {
+      console.log('ESPER telemetry not sent due to privacy preferences', payload);
+    }
+  }
+
+  static allowedToSendTelemetry() {
+
+    // Main Telemetry preference that determines whether Telemetry data is collected and uploaded.
+    const basicTelemetryEnabled = Preferences.get("datareporting.healthreport.uploadEnabled", false);
+
+    console.log('allowedToSendTelemetry: basicTelemetryEnabled', basicTelemetryEnabled);
+
+    // This preference determines the build. True means pre-release version of Firefox, false means release version of Firefox.
+    const extendedTelemetryEnabled = Preferences.get("toolkit.telemetry.enabled", false);
+
+    console.log('allowedToSendTelemetry: extendedTelemetryEnabled', extendedTelemetryEnabled);
+
+    // Allow shield studies
+    const shieldStudiesTelemetryEnabled = Preferences.get("app.shield.optoutstudies.enabled", false);
+
+    console.log('allowedToSendTelemetry: shieldStudiesTelemetryEnabled', shieldStudiesTelemetryEnabled);
+
+    // do not run study if basic telemetry is disabled
+    if (basicTelemetryEnabled !== true) {
+      return false;
+    }
+
+    // do not care if extended telemetry is disabled or enabled
+    /*
+    if (extendedTelemetryEnabled !== true) {
+      return false;
+    }
+    */
+
+    // do not run study if shield studies are disabled
+    if (shieldStudiesTelemetryEnabled !== true) {
+      return false;
+    }
+
+    return true;
 
   }
 
@@ -90,7 +137,7 @@ class StudyTelemetryCollector {
 
       console.log("shieldPingPayload", shieldPingPayload);
 
-      this.studyUtils.telemetry(shieldPingPayload);
+      this.telemetry(shieldPingPayload);
 
     });
 

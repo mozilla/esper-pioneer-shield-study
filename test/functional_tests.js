@@ -51,9 +51,149 @@ const nullAssertion = value => {
 
 /* Part 2:  The Tests */
 
+describe("no esper-specific telemetry should be sent if basic telemetry is disabled in preferences", function() {
+  // This gives Firefox time to start, and us a bit longer during some of the tests.
+  this.timeout(15000);
+
+  let driver;
+  let addonId;
+  let pings;
+
+  before(async() => {
+    driver = await utils.promiseSetupDriver();
+    await utils.disableBasicTelemetry(driver);
+    // install the addon
+    addonId = await utils.installAddon(driver);
+    // allow our shield study addon some time to send initial pings
+    await driver.sleep(2000);
+    // collect sent pings
+    pings = await utils.getTelemetryPings(driver, ["shield-study", "shield-study-addon"]);
+    // print sent pings
+    console.log("Shield study telemetry pings: ");
+    utils.printPings(pings);
+  });
+
+  after(async() => driver.quit());
+
+  afterEach(async() => postTestReset(driver));
+
+  it("should send shield telemetry pings", async() => {
+
+    assert(pings.length > 0, "at least one shield telemetry ping");
+
+  });
+
+  it("at least one shield-study telemetry ping with study_state=installed", async() => {
+
+    const foundPings = utils.searchTelemetry([
+      ping => ping.type === "shield-study" && ping.payload.data.study_state === "installed",
+    ], pings);
+    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=installed");
+
+  });
+
+  it("at least one shield-study telemetry ping with study_state=enter", async() => {
+
+    const foundPings = utils.searchTelemetry([
+      ping => ping.type === "shield-study" && ping.payload.data.study_state === "enter",
+    ], pings);
+    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=enter");
+
+  });
+
+  it("no shield-study-addon telemetry ping for the esper-init event", async() => {
+
+    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled", false);
+    console.log('basicTelemetryEnabled', basicTelemetryEnabled);
+
+    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled", false);
+    console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
+
+    try {
+      const foundPings = utils.searchTelemetry([
+        ping => ping.type === "shield-study-addon" && ping.payload.data.attributes.event === "esper-init",
+      ], pings);
+    } catch (e) {
+      assert(e.name === 'SearchError');
+    }
+
+  });
+
+});
+
+describe("no esper-specific telemetry should be sent if shield studies telemetry is disabled in preferences", function() {
+  // This gives Firefox time to start, and us a bit longer during some of the tests.
+  this.timeout(15000);
+
+  let driver;
+  let addonId;
+  let pings;
+
+  before(async() => {
+    driver = await utils.promiseSetupDriver();
+    await utils.disableShieldStudiesTelemetry(driver);
+    // install the addon
+    addonId = await utils.installAddon(driver);
+    // allow our shield study addon some time to send initial pings
+    await driver.sleep(2000);
+    // collect sent pings
+    pings = await utils.getTelemetryPings(driver, ["shield-study", "shield-study-addon"]);
+    // print sent pings
+    console.log("Shield study telemetry pings: ");
+    utils.printPings(pings);
+  });
+
+  after(async() => driver.quit());
+
+  afterEach(async() => postTestReset(driver));
+
+  it("should send shield telemetry pings", async() => {
+
+    assert(pings.length > 0, "at least one shield telemetry ping");
+
+  });
+
+  it("at least one shield-study telemetry ping with study_state=installed", async() => {
+
+    const foundPings = utils.searchTelemetry([
+      ping => ping.type === "shield-study" && ping.payload.data.study_state === "installed",
+    ], pings);
+    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=installed");
+
+  });
+
+  it("at least one shield-study telemetry ping with study_state=enter", async() => {
+
+    const foundPings = utils.searchTelemetry([
+      ping => ping.type === "shield-study" && ping.payload.data.study_state === "enter",
+    ], pings);
+    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=enter");
+
+  });
+
+  it("no shield-study-addon telemetry ping for the esper-init event", async() => {
+
+    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled", false);
+    console.log('basicTelemetryEnabled', basicTelemetryEnabled);
+
+    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled", false);
+    console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
+
+    try {
+      const foundPings = utils.searchTelemetry([
+        ping => ping.type === "shield-study-addon" && ping.payload.data.attributes.event === "esper-init",
+      ], pings);
+    } catch (e) {
+      assert(e.name === 'SearchError');
+    }
+
+  });
+
+});
+
 describe("basic functional tests", function() {
   // This gives Firefox time to start, and us a bit longer during some of the tests.
-  this.timeout(65000);
+  this.timeout(75000);
 
   let driver;
   let addonId;

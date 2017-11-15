@@ -33,6 +33,10 @@ const FIREFOX_PREFERENCES = {
   // NECESSARY for all 57+ builds
   "extensions.legacy.enabled": true,
 
+  // Enabled basic telemetry + shield studies by default when running tests
+  "datareporting.healthreport.uploadEnabled": true,
+  "app.shield.optoutstudies.enabled": true,
+
   // Set telemetry to initiate earlier than 60 seconds
   // TODO: figure out why setting this preference leads to profile_creation_date and default_search_engine not being set
   //"toolkit.telemetry.initDelay": 1,
@@ -87,6 +91,30 @@ module.exports.promiseSetupDriver = async() => {
   driver.setContext(Context.CHROME);
 
   return driver;
+};
+
+module.exports.disableBasicTelemetry = async(driver) => {
+  return await module.exports.setPreference(driver, "datareporting.healthreport.uploadEnabled", false);
+};
+
+module.exports.disableShieldStudiesTelemetry = async(driver) => {
+  return await module.exports.setPreference(driver, "app.shield.optoutstudies.enabled", false);
+};
+
+module.exports.setPreference = async(driver, prefName, prefValue) => {
+  return await driver.executeAsyncScript((prefName, prefValue, callback) => {
+    Components.utils.import("resource://gre/modules/Preferences.jsm");
+    Preferences.set(prefName, prefValue);
+    callback();
+  }, prefName, prefValue);
+};
+
+module.exports.getPreference = async(driver, prefName, defaultValue) => {
+  return await driver.executeAsyncScript((prefName, defaultValue, callback) => {
+    Components.utils.import("resource://gre/modules/Preferences.jsm");
+    const value = Preferences.get(prefName, defaultValue);
+    callback(value);
+  }, prefName, defaultValue);
 };
 
 module.exports.installAddon = async(driver, fileLocation) => {
