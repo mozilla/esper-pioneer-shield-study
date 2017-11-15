@@ -59,7 +59,7 @@ async function startup(addonData, reason) {
 
 
   // addon_install:  note first seen, check eligible
-  if ((REASONS[reason]) === "ADDON_INSTALL") {
+  if ((REASONS[reason]) === "ADDON_INSTALL" || REASONS[reason] === "ADDON_UPGRADE") {
     studyUtils.firstSeen(); // sends telemetry "enter"
     const eligible = await config.isEligible(); // addon-specific
     if (!eligible) {
@@ -97,7 +97,7 @@ async function startup(addonData, reason) {
   }
 
   // Fire this once (only during INSTALL), then we are done.
-  if (REASONS[reason] === "ADDON_INSTALL") {
+  if (REASONS[reason] === "ADDON_INSTALL" || REASONS[reason] === "ADDON_UPGRADE") {
     new StudyTelemetryCollector(studyUtils, variation).start();
   }
 }
