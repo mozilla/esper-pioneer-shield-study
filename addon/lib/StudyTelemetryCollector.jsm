@@ -76,34 +76,34 @@ class StudyTelemetryCollector {
   static allowedToSendTelemetry() {
 
     // Main Telemetry preference that determines whether Telemetry data is collected and uploaded.
-    const basicTelemetryEnabled = Preferences.get("datareporting.healthreport.uploadEnabled", false);
+    const basicTelemetryEnabled = Preferences.get("datareporting.healthreport.uploadEnabled");
 
     console.log('allowedToSendTelemetry: basicTelemetryEnabled', basicTelemetryEnabled);
 
     // This preference determines the build. True means pre-release version of Firefox, false means release version of Firefox.
-    const extendedTelemetryEnabled = Preferences.get("toolkit.telemetry.enabled", false);
+    const extendedTelemetryEnabled = Preferences.get("toolkit.telemetry.enabled");
 
     console.log('allowedToSendTelemetry: extendedTelemetryEnabled', extendedTelemetryEnabled);
 
     // Allow shield studies
-    const shieldStudiesTelemetryEnabled = Preferences.get("app.shield.optoutstudies.enabled", false);
+    const shieldStudiesTelemetryEnabled = Preferences.get("app.shield.optoutstudies.enabled");
 
     console.log('allowedToSendTelemetry: shieldStudiesTelemetryEnabled', shieldStudiesTelemetryEnabled);
 
     // do not run study if basic telemetry is disabled
-    if (basicTelemetryEnabled !== true) {
+    if (basicTelemetryEnabled === false) {
       return false;
     }
 
     // do not care if extended telemetry is disabled or enabled
     /*
-    if (extendedTelemetryEnabled !== true) {
+    if (extendedTelemetryEnabled === false) {
       return false;
     }
     */
 
     // do not run study if shield studies are disabled
-    if (shieldStudiesTelemetryEnabled !== true) {
+    if (shieldStudiesTelemetryEnabled === false) {
       return false;
     }
 

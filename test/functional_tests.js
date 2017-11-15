@@ -51,6 +51,53 @@ const nullAssertion = value => {
 
 /* Part 2:  The Tests */
 
+describe("preferences behavior tests", function() {
+  // This gives Firefox time to start, and us a bit longer during some of the tests.
+  this.timeout(5000);
+
+  let driver;
+  let addonId;
+  let pings;
+
+  before(async() => {
+    driver = await utils.promiseSetupDriver();
+    await utils.disableBasicTelemetry(driver);
+  });
+
+  after(async() => driver.quit());
+
+  afterEach(async() => postTestReset(driver));
+
+  it("preferences get behavior should be as expected", async() => {
+
+    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled");
+    console.log('basicTelemetryEnabled', basicTelemetryEnabled);
+    assert(basicTelemetryEnabled === false);
+
+    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled");
+    console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
+    assert(extendedTelemetryEnabled === true);
+
+    const nonExistantPreference = await utils.getPreference(driver, "foo.bar");
+    console.log('nonExistantPreference', nonExistantPreference);
+    assert(nonExistantPreference === null);
+
+    const basicTelemetryEnabledWithTrueAsDefault = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled", true);
+    console.log('basicTelemetryEnabledWithTrueAsDefault', basicTelemetryEnabledWithTrueAsDefault);
+    assert(basicTelemetryEnabledWithTrueAsDefault === false);
+
+    const extendedTelemetryEnabledWithTrueAsDefault = await utils.getPreference(driver, "toolkit.telemetry.enabled", true);
+    console.log('extendedTelemetryEnabledWithTrueAsDefault', extendedTelemetryEnabledWithTrueAsDefault);
+    assert(extendedTelemetryEnabledWithTrueAsDefault === true);
+
+    const nonExistantPreferenceWithTrueAsDefault = await utils.getPreference(driver, "foo.bar", true);
+    console.log('nonExistantPreferenceWithTrueAsDefault', nonExistantPreferenceWithTrueAsDefault);
+    assert(nonExistantPreferenceWithTrueAsDefault === true);
+
+  });
+
+});
+
 describe("no esper-specific telemetry should be sent if basic telemetry is disabled in preferences", function() {
   // This gives Firefox time to start, and us a bit longer during some of the tests.
   this.timeout(15000);
