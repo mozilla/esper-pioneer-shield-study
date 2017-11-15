@@ -98,11 +98,11 @@ These are the `payload` fields from all pings in the `shield-study` and `shield-
 
 branch        pioneer
 study_name    esper-pioneer-shield-study
-addon_version 0.2.0
+addon_version 0.4.0
 version       3
 
 
-2017-11-06T10:11:28.819Z shield-study-addon
+2017-11-15T14:29:55.206Z shield-study-addon
 {
   "attributes": {
     "app_version": "58.0a1",
@@ -116,7 +116,7 @@ version       3
     "places_bookmarks_count_histogram": "null",
     "places_pages_count": "10",
     "places_pages_count_histogram": "null",
-    "profile_creation_date": "17476",
+    "profile_creation_date": "17485",
     "profile_subsession_counter": "1",
     "scalar_parent_browser_engagement_max_concurrent_tab_count": "1",
     "scalar_parent_browser_engagement_max_concurrent_window_count": "1",
@@ -130,28 +130,28 @@ version       3
     "scalar_parent_browser_engagement_unique_domains_count": "null",
     "scalar_parent_browser_engagement_window_open_event_count": "null",
     "search_counts": "null",
-    "subsession_start_date": "2017-11-06T12:00:00.0+02:00",
+    "subsession_start_date": "2017-11-15T16:00:00.0+02:00",
     "system.memory_mb": "16384",
     "system_cpu.cores": "4",
     "system_cpu.speed_mhz": "2500",
     "system_gfx.monitors[1].screen_width": "1680",
     "system_gfx.monitors[1].screen_width_zero_indexed": "null",
     "timezone_offset": "120",
-    "total_time": "60",
+    "total_time": "61",
     "uptime": "1"
   }
 }
-2017-11-06T10:10:30.947Z shield-study-addon
+2017-11-15T14:28:57.495Z shield-study-addon
 {
   "attributes": {
     "event": "esper-init"
   }
 }
-2017-11-06T10:10:30.946Z shield-study
+2017-11-15T14:28:57.487Z shield-study
 {
   "study_state": "installed"
 }
-2017-11-06T10:10:30.942Z shield-study
+2017-11-15T14:28:57.417Z shield-study
 {
   "study_state": "enter"
 }
