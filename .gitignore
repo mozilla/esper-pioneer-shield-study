@@ -3,5 +3,6 @@ install.rdf
 *.xpi
 node_modules
 addon/StudyUtils.jsm
+addon/PioneerUtils.jsm
 screenshot.png
 pings.json
