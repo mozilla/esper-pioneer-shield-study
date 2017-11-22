@@ -61,9 +61,9 @@ class StudyTelemetryCollector {
 
   }
 
-  async telemetry(payload) {
+  async telemetry(schemaReference, payload) {
     if (await this.allowedToSendTelemetry()) {
-      await this.pioneerUtils.submitEncryptedPing("esper-study-telemetry", 1, payload);
+      await this.pioneerUtils.submitEncryptedPing(schemaReference, 1, payload);
     } else {
       console.log('ESPER Telemetry not sent due to privacy preferences', payload);
     }
@@ -122,7 +122,6 @@ class StudyTelemetryCollector {
       console.log("placesDbBasedAttributes", placesDbBasedAttributes);
 
       const shieldPingAttributes = {
-        event: "telemetry-payload",
         ...telemetryEnvironmentBasedAttributes,
         ...telemetrySubsessionPayloadBasedAttributes,
         ...telemetryScalarBasedAttributes,
@@ -133,7 +132,7 @@ class StudyTelemetryCollector {
 
       console.log("shieldPingPayload", shieldPingPayload);
 
-      this.telemetry(shieldPingPayload);
+      this.telemetry("esper-study-telemetry", shieldPingPayload);
 
     });
 
