@@ -93,7 +93,7 @@ When a certain probe is not set in the current telemetry environment, the string
 
 ## Example sequence
 
-These are the `payload` fields from all pings in the `shield-study` and `shield-study-addon` buckets. (Reversed chronological order)
+These are the `payload` fields from all pings sent encrypted via pioneer utils. (Reversed chronological order)
 
 ```
 

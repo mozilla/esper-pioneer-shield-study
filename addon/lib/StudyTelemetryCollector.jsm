@@ -1,6 +1,5 @@
 "use strict";
 
-/* global studyUtils */
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(EXPORTED_SYMBOLS|StudyTelemetryCollector)" }]*/
 
 const { utils: Cu } = Components;
@@ -38,42 +37,39 @@ XPCOMUtils.defineLazyServiceGetter(this, "Telemetry",
  */
 class StudyTelemetryCollector {
 
-  constructor(studyUtils, variation) {
-    this.variation = variation;
-    this.studyUtils = studyUtils;
+  constructor(pioneerUtils) {
+    this.pioneerUtils = pioneerUtils;
   }
 
   async start() {
 
-    this.telemetry({ event: "esper-init" });
+    console.log('ESPER Study init. Will now await full telemetry initialization before collecting the payload for this study.');
 
     // Ensure that we collect telemetry payloads only after it is fully initialized
     // See http://searchfox.org/mozilla-central/rev/423b2522c48e1d654e30ffc337164d677f934ec3/toolkit/components/telemetry/TelemetryController.jsm#295
-    TelemetryController.promiseInitialized().then(() => {
+    await TelemetryController.promiseInitialized();
 
-      try {
+    try {
 
-        this.collectAndSendTelemetry();
+      this.collectAndSendTelemetry();
 
-      } catch (ex) {
-        // TODO: how are errors during study execution reported?
-        // this.studyUtils.telemetryError();
-        Components.utils.reportError(ex);
-      }
-
-    });
+    } catch (ex) {
+      // TODO: how are errors during study execution reported?
+      // this.pioneerUtils.telemetryError();
+      Components.utils.reportError(ex);
+    }
 
   }
 
-  telemetry(payload) {
-    if (StudyTelemetryCollector.allowedToSendTelemetry()) {
-      this.studyUtils.telemetry(payload);
+  async telemetry(payload) {
+    if (await this.allowedToSendTelemetry()) {
+      await this.pioneerUtils.submitEncryptedPing("esper-study-telemetry", 1, payload);
     } else {
-      console.log('ESPER telemetry not sent due to privacy preferences', payload);
+      console.log('ESPER Telemetry not sent due to privacy preferences', payload);
     }
   }
 
-  static allowedToSendTelemetry() {
+  async allowedToSendTelemetry() {
 
     // Main Telemetry preference that determines whether Telemetry data is collected and uploaded.
     const basicTelemetryEnabled = Preferences.get("datareporting.healthreport.uploadEnabled");
@@ -85,10 +81,10 @@ class StudyTelemetryCollector {
 
     console.log('allowedToSendTelemetry: extendedTelemetryEnabled', extendedTelemetryEnabled);
 
-    // Allow shield studies
-    const shieldStudiesTelemetryEnabled = Preferences.get("app.shield.optoutstudies.enabled");
+    // Allow pioneer studies
+    const isEligible = await this.pioneerUtils.isUserOptedIn();
 
-    console.log('allowedToSendTelemetry: shieldStudiesTelemetryEnabled', shieldStudiesTelemetryEnabled);
+    console.log('allowedToSendTelemetry: isEligible', isEligible);
 
     // do not run study if basic telemetry is disabled
     if (basicTelemetryEnabled === false) {
@@ -103,7 +99,7 @@ class StudyTelemetryCollector {
     */
 
     // do not run study if shield studies are disabled
-    if (shieldStudiesTelemetryEnabled === false) {
+    if (isEligible === false) {
       return false;
     }
 
@@ -143,7 +139,7 @@ class StudyTelemetryCollector {
 
   }
 
-  // TODO: @glind: move to shield study utils?
+  // TODO: @glind: move to shield study utils / pioneer utils?
   static createShieldPingPayload(shieldPingAttributes) {
 
     const shieldPingPayload = {};
