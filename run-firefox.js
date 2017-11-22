@@ -59,6 +59,9 @@ const minimistHandler = {
     const driver = await promiseSetupDriver();
     console.log("Firefox started");
 
+    // install the pioneer opt-in add-on
+    await installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
+
     // install the addon
     if (process.env.XPI) {
       const fileLocation = path.join(process.cwd(), process.env.XPI);

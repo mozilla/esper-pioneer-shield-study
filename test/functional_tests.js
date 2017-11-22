@@ -12,6 +12,7 @@ const assert = require("assert");
 const utils = require("./utils");
 const webdriver = require("selenium-webdriver");
 const firefox = require("selenium-webdriver/firefox");
+const path = require("path");
 
 const By = webdriver.By;
 const Context = firefox.Context;
@@ -109,6 +110,8 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
   before(async() => {
     driver = await utils.promiseSetupDriver();
     await utils.disableBasicTelemetry(driver);
+    // install the pioneer opt-in add-on
+    await installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
     // install the addon
     addonId = await utils.installAddon(driver);
     // allow our shield study addon some time to send initial pings
@@ -179,6 +182,8 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
   before(async() => {
     driver = await utils.promiseSetupDriver();
     await utils.disableShieldStudiesTelemetry(driver);
+    // install the pioneer opt-in add-on
+    await installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
     // install the addon
     addonId = await utils.installAddon(driver);
     // allow our shield study addon some time to send initial pings
@@ -248,6 +253,8 @@ describe("basic functional tests", function() {
 
   before(async() => {
     driver = await utils.promiseSetupDriver();
+    // install the pioneer opt-in add-on
+    await installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
     // install the addon
     addonId = await utils.installAddon(driver);
     // allow our shield study addon some time to send initial pings
