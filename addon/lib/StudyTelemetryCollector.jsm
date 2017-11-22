@@ -213,11 +213,6 @@ class StudyTelemetryCollector {
     attributes.subsession_start_date = payload.info.subsessionStartDate;
     attributes.timezone_offset = payload.info.timezoneOffset;
 
-    // firefox/toolkit/components/places/PlacesDBUtils.jsm
-    // Collect the histogram payloads if present
-    attributes.places_bookmarks_count_histogram = payload.processes.content.histograms.PLACES_BOOKMARKS_COUNT;
-    attributes.places_pages_count_histogram = payload.processes.content.histograms.PLACES_PAGES_COUNT;
-
     // firefox/browser/modules/BrowserUsageTelemetry.jsm
     attributes.search_counts = payload.keyedHistograms.SEARCH_COUNTS;
 

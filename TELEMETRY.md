@@ -48,8 +48,6 @@ total_time
 profile_subsession_counter
 subsession_start_date
 timezone_offset
-places_bookmarks_count_histogram
-places_pages_count_histogram
 search_counts
 ```
 
@@ -87,7 +85,7 @@ When a certain probe is not set in the current telemetry environment, the string
 
 ### Peculiarities
 
-1. The places_bookmarks_count_histogram and places_pages_count_histogram attributes are only available occasionally in the telemetry session due to performance reasons. We collect both the histograms as present in the current telemetry session (using the attributes places_bookmarks_count_histogram and places_pages_count_histogram) as well as the actual values that telemetry occasionally would collect. The places_bookmarks_count and places_pages_count attributes will always include the values based on the current database contents.
+1. The places_bookmarks_count and places_pages_count attributes are only available occasionally in the ordinary telemetry session due to performance reasons. To be certain that we get values, we query the current database contents using the same queries as telemetry uses. 
 1. Contrary to what the [documentation](https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/telemetry/data/main-ping.html) states ("Flag and count histograms are always created and submitted, with their default value being respectively false and 0. Other histogram types (see Choosing a Histogram Type) are not created nor submitted if no data was added to them."), the search_counts histogram is empty until a search has been executed.
 1. Scalars and most histograms are only submitted if data was added to them.
 1. Config/preference-related attributes are generally only defined if they defer from the browser default preferences.
@@ -118,9 +116,7 @@ version       3
     "os": "Darwin",
     "os_version": "16.7.0",
     "places_bookmarks_count": "10",
-    "places_bookmarks_count_histogram": "null",
     "places_pages_count": "10",
-    "places_pages_count_histogram": "null",
     "profile_creation_date": "17485",
     "profile_subsession_counter": "1",
     "scalar_parent_browser_engagement_max_concurrent_tab_count": "1",
