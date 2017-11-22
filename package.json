@@ -41,7 +41,7 @@
     "onchange": "^3.2.1",
     "path": "^0.12.7",
     "selenium-webdriver": "^3.6.0",
-    "pioneer-utils": "^1.0.6",
+    "pioneer-utils": "^1.0.9",
     "shield-studies-addon-utils": "^4.1.0"
   },
   "homepage": "https://github.com/motin/esper-pioneer-shield-study",
