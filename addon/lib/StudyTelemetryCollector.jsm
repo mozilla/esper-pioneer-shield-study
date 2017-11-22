@@ -177,18 +177,18 @@ class StudyTelemetryCollector {
     console.log("TelemetryEnvironment.currentEnvironment", environment);
 
     return {
-      "default_search_engine": environment.settings.defaultSearchEngine,
+      "defaultSearchEngine": environment.settings.defaultSearchEngine,
       "locale": environment.settings.locale,
       "os": environment.system.os.name,
-      "normalized_channel": environment.settings.update.channel,
-      "profile_creation_date": environment.profile.creationDate,
-      "app_version": environment.build.version,
-      "system.memory_mb": environment.system.memoryMB,
-      "system_cpu.cores": environment.system.cpu.cores,
-      "system_cpu.speed_mhz": environment.system.cpu.speedMHz,
-      "os_version": environment.system.os.version,
-      "system_gfx.monitors[1].screen_width": environment.system.gfx.monitors[0] ? environment.system.gfx.monitors[0].screenWidth : undefined,
-      "system_gfx.monitors[1].screen_width_zero_indexed": environment.system.gfx.monitors[1] ? environment.system.gfx.monitors[1].screenWidth : undefined,
+      "normalizedChannel": environment.settings.update.channel,
+      "profileCreationDate": environment.profile.creationDate,
+      "appVersion": environment.build.version,
+      "systemMemoryMb": environment.system.memoryMB,
+      "systemCpuCores": environment.system.cpu.cores,
+      "systemCpuSpeedMhz": environment.system.cpu.speedMHz,
+      "osVersion": environment.system.os.version,
+      "systemGfxMonitors1ScreenWidth": environment.system.gfx.monitors[0] ? environment.system.gfx.monitors[0].screenWidth : undefined,
+      "systemGfxMonitors1ScreenWidthZeroIndexed": environment.system.gfx.monitors[1] ? environment.system.gfx.monitors[1].screenWidth : undefined,
     };
 
   }
@@ -208,13 +208,13 @@ class StudyTelemetryCollector {
     const attributes = {};
 
     attributes.uptime = payload.simpleMeasurements.uptime;
-    attributes.total_time = payload.simpleMeasurements.totalTime;
-    attributes.profile_subsession_counter = payload.info.profileSubsessionCounter;
-    attributes.subsession_start_date = payload.info.subsessionStartDate;
-    attributes.timezone_offset = payload.info.timezoneOffset;
+    attributes.totalTime = payload.simpleMeasurements.totalTime;
+    attributes.profileSubsessionCounter = payload.info.profileSubsessionCounter;
+    attributes.subsessionStartDate = payload.info.subsessionStartDate;
+    attributes.timezoneOffest = payload.info.timezoneOffset;
 
     // firefox/browser/modules/BrowserUsageTelemetry.jsm
-    attributes.search_counts = payload.keyedHistograms.SEARCH_COUNTS;
+    attributes.searchCounts = payload.keyedHistograms.SEARCH_COUNTS;
 
     return attributes;
 
@@ -255,13 +255,13 @@ class StudyTelemetryCollector {
 
     console.log('scalars', scalars);
 
-    attributes.scalar_parent_browser_engagement_max_concurrent_window_count = getScalar(scalars, MAX_CONCURRENT_WINDOWS);
-    attributes.scalar_parent_browser_engagement_max_concurrent_tab_count = getScalar(scalars, MAX_CONCURRENT_TABS);
-    attributes.scalar_parent_browser_engagement_tab_open_event_count = getScalar(scalars, TAB_EVENT_COUNT);
-    attributes.scalar_parent_browser_engagement_window_open_event_count = getScalar(scalars, WINDOW_OPEN_COUNT);
-    attributes.scalar_parent_browser_engagement_unique_domains_count = getScalar(scalars, UNIQUE_DOMAINS_COUNT);
-    attributes.scalar_parent_browser_engagement_total_uri_count = getScalar(scalars, TOTAL_URI_COUNT);
-    attributes.scalar_parent_browser_engagement_unfiltered_uri_count = getScalar(scalars, UNFILTERED_URI_COUNT);
+    attributes.spbeMaxConcurrentWindowCount = getScalar(scalars, MAX_CONCURRENT_WINDOWS);
+    attributes.spbeMaxConcurrentTabCount = getScalar(scalars, MAX_CONCURRENT_TABS);
+    attributes.spbeTabOpenEventCount = getScalar(scalars, TAB_EVENT_COUNT);
+    attributes.spbeWindowOpenEventCount = getScalar(scalars, WINDOW_OPEN_COUNT);
+    attributes.spbeUniqueDomainsCount = getScalar(scalars, UNIQUE_DOMAINS_COUNT);
+    attributes.spbeTotalUriCount = getScalar(scalars, TOTAL_URI_COUNT);
+    attributes.spbeUnfilteredUriCount = getScalar(scalars, UNFILTERED_URI_COUNT);
 
     function getKeyedScalar(scalars, scalarName, key) {
       if (!(scalarName in scalars)) {
@@ -283,7 +283,7 @@ class StudyTelemetryCollector {
 
     const SCALAR_SEARCHBAR = "browser.engagement.navigation.searchbar";
 
-    attributes.scalar_parent_browser_engagement_navigation_searchbar = getKeyedScalar(keyedScalars, SCALAR_SEARCHBAR, "search_enter");
+    attributes.spbeNavigationSearchbar = getKeyedScalar(keyedScalars, SCALAR_SEARCHBAR, "search_enter");
 
     // firefox/browser/modules/test/browser/browser_UsageTelemetry_content.js
 
@@ -291,14 +291,14 @@ class StudyTelemetryCollector {
     const SCALAR_CONTEXT_MENU = BASE_PROBE_NAME + "contextmenu";
     const SCALAR_ABOUT_NEWTAB = BASE_PROBE_NAME + "about_newtab";
 
-    attributes.scalar_parent_browser_engagement_navigation_about_newtab = getKeyedScalar(keyedScalars, SCALAR_ABOUT_NEWTAB, "search_enter");
-    attributes.scalar_parent_browser_engagement_navigation_contextmenu = getKeyedScalar(keyedScalars, SCALAR_CONTEXT_MENU, "search");
+    attributes.spbeNavigationAboutNewtab = getKeyedScalar(keyedScalars, SCALAR_ABOUT_NEWTAB, "search_enter");
+    attributes.spbeNavigationContextmenu = getKeyedScalar(keyedScalars, SCALAR_CONTEXT_MENU, "search");
 
     // firefox/browser/modules/test/browser/browser_UsageTelemetry_urlbar.js
 
     const SCALAR_URLBAR = "browser.engagement.navigation.urlbar";
 
-    attributes.scalar_parent_browser_engagement_navigation_urlbar = getKeyedScalar(keyedScalars, SCALAR_URLBAR, "search_enter");
+    attributes.spbeNavigationUrlbar = getKeyedScalar(keyedScalars, SCALAR_URLBAR, "search_enter");
 
     return attributes;
 
@@ -321,8 +321,8 @@ class StudyTelemetryCollector {
       StudyTelemetryCollector.queryPlacesDbTelemetry().then((placesDbTelemetryResults) => {
 
         resolve({
-          places_pages_count: placesDbTelemetryResults[0][1],
-          places_bookmarks_count: placesDbTelemetryResults[1][1],
+          placesPagesCount: placesDbTelemetryResults[0][1],
+          placesBookmarksCount: placesDbTelemetryResults[1][1],
         });
 
       }).catch(ex => reject(ex));

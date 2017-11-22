@@ -26,59 +26,59 @@ At add-on installation, the add-on will send a "esper-init" event, wait for Tele
 Collected from the current telemetry environment:
 
 ```
-default_search_engine
+defaultSearchEngine
 locale
 os
-normalized_channel
-profile_creation_date
-app_version
-system.memory_mb
-system_cpu.cores
-system_cpu.speed_mhz
-os_version
-system_gfx.monitors[1].screen_width
-system_gfx.monitors[1].screen_width_zero_indexed
+normalizedChannel
+profileCreationDate
+appVersion
+systemMemoryMb
+systemCpuCores
+systemCpuSpeedMhz
+osVersion
+systemGfxMonitors1ScreenWidth
+systemGfxMonitors1ScreenWidthZeroIndexed
 ``` 
 
 Collected from the current telemetry subsession ping payload: 
 
 ```
 uptime
-total_time
-profile_subsession_counter
-subsession_start_date
-timezone_offset
-search_counts
+totalTime
+profileSubsessionCounter
+subsessionStartDate
+timezoneOffest
+searchCounts
 ```
 
-Collected using `Services.telemetry.snapshotScalars` and `Services.telemetry.snapshotKeyedScalars`: 
+Collected using `Services.telemetry.snapshotScalars` and `Services.telemetry.snapshotKeyedScalars` (spbe is short for scalar_parent_browser_engagement):
 
 ```
-scalar_parent_browser_engagement_window_open_event_count
-scalar_parent_browser_engagement_total_uri_count
-scalar_parent_browser_engagement_navigation_urlbar
-scalar_parent_browser_engagement_navigation_contextmenu
-scalar_parent_browser_engagement_tab_open_event_count
-scalar_parent_browser_engagement_navigation_searchbar
-scalar_parent_browser_engagement_navigation_about_newtab
-scalar_parent_browser_engagement_unique_domains_count
-scalar_parent_browser_engagement_max_concurrent_window_count
-scalar_parent_browser_engagement_max_concurrent_tab_count
-scalar_parent_browser_engagement_unfiltered_uri_count
+spbeWindowOpenEventCount
+spbeTotalUriCount
+spbeNavigationUrlbar
+spbeNavigationContextmenu
+spbeTabOpenEventCount
+spbeNavigationSearchbar
+spbeNavigationAboutNewtab
+spbeUniqueDomainsCount
+spbeMaxConcurrentWindowCount
+spbeMaxConcurrentTabCount
+spbeUnfilteredUriCount
 ``` 
 
 Collected by querying the places sqlite database in the same way that ordinary telemetry would do, if it would do it predictably:
 
 ```
-places_bookmarks_count
-places_pages_count
+placesBookmarksCount
+placesPagesCount
 ``` 
 
 Not collected by the add-on, but is added by server-side telemetry processing based on the user's IP:
 
 ```
-geo_country
-geo_city
+metadata.geoCountry
+metadata.geoCity
 ```
 
 When a certain probe is not set in the current telemetry environment, the string "null" is set instead. 
