@@ -40,7 +40,7 @@ system_gfx.monitors[1].screen_width
 system_gfx.monitors[1].screen_width_zero_indexed
 ``` 
 
-Collected from the current telemetry subsession ping payload (since scalars are only reported with subsession pings): 
+Collected from the current telemetry subsession ping payload: 
 
 ```
 uptime
@@ -51,6 +51,11 @@ timezone_offset
 places_bookmarks_count_histogram
 places_pages_count_histogram
 search_counts
+```
+
+Collected using `Services.telemetry.snapshotScalars` and `Services.telemetry.snapshotKeyedScalars`: 
+
+```
 scalar_parent_browser_engagement_window_open_event_count
 scalar_parent_browser_engagement_total_uri_count
 scalar_parent_browser_engagement_navigation_urlbar
