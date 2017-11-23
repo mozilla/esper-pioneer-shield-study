@@ -32,6 +32,11 @@ XPCOMUtils.defineLazyModuleGetter(this, "PlacesUtils",
 XPCOMUtils.defineLazyServiceGetter(this, "Telemetry",
   "@mozilla.org/base/telemetry;1", "nsITelemetry");
 
+// unit-tested study helpers
+XPCOMUtils.defineLazyModuleGetter(
+  this, "Helpers", "resource://esper-pioneer-shield-study/lib/Helpers.jsm"
+);
+
 /**
  * Note: Setting studyUtils in this constructor due to above comments
  */
@@ -213,7 +218,7 @@ class StudyTelemetryCollector {
     attributes.timezoneOffest = payload.info.timezoneOffset;
 
     // firefox/browser/modules/BrowserUsageTelemetry.jsm
-    attributes.searchCounts = payload.keyedHistograms.SEARCH_COUNTS;
+    attributes.searchCounts = Helpers.searchCountsHistogramToScalarTotalCount(payload.keyedHistograms.SEARCH_COUNTS);
 
     return attributes;
 
