@@ -64,8 +64,9 @@ class StudyTelemetryCollector {
   async telemetry(schemaName, schemaVersion, payload) {
     if (await this.allowedToSendTelemetry()) {
       await this.pioneerUtils.submitEncryptedPing(schemaName, schemaVersion, payload);
+      console.log('ESPER Telemetry sent (encrypted)', JSON.stringify(payload));
     } else {
-      console.log('ESPER Telemetry not sent due to privacy preferences', payload);
+      console.log('ESPER Telemetry not sent due to privacy preferences', JSON.stringify(payload));
     }
   }
 
