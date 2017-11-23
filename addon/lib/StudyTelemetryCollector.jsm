@@ -61,9 +61,9 @@ class StudyTelemetryCollector {
 
   }
 
-  async telemetry(schemaReference, payload) {
+  async telemetry(schemaName, schemaVersion, payload) {
     if (await this.allowedToSendTelemetry()) {
-      await this.pioneerUtils.submitEncryptedPing(schemaReference, 1, payload);
+      await this.pioneerUtils.submitEncryptedPing(schemaName, schemaVersion, payload);
     } else {
       console.log('ESPER Telemetry not sent due to privacy preferences', payload);
     }
@@ -135,7 +135,7 @@ class StudyTelemetryCollector {
 
       console.log("shieldPingPayload", shieldPingPayload);
 
-      this.telemetry("esper-study-telemetry", shieldPingPayload);
+      this.telemetry("esper-study-telemetry", 1, shieldPingPayload);
 
     });
 
