@@ -2,10 +2,10 @@
 
 ## Manual / QA TEST Instructions
 
-1. Install the shield addon from https://bugzilla.mozilla.org/show_bug.cgi?id=1414900#c4
-1. Go to about:telemetry -> Click "current ping" -> Archived ping data -> ping, select shield-study-addon
-1. Click on  "Raw Payload" and verify the ping is similar to https://github.com/motin/esper-pioneer-shield-study/blob/master/TELEMETRY.md
-1. Copy the ping to left box of  http://jsondiff.com/
+1. Install the latest signed version of the addon from https://bugzilla.mozilla.org/show_bug.cgi?id=1414900
+1. Go to about:telemetry -> Click "current ping" -> Archived ping data -> ping, select pioneer-study
+1. Click on "Raw Payload" and verify the ping is similar to https://github.com/motin/esper-pioneer-shield-study/blob/master/TELEMETRY.md
+1. Copy the ping (from the browser console, where the unencrypted payload is shown) to left box of  http://jsondiff.com/
 1. Go to about:addons and remove the addon
 1. Open a new tab and visit a unique page 
 1. Right click on any link from any page and click “Open Link in New Tab”
@@ -16,11 +16,9 @@
 1. Create a new tab and search "Firefox" in the tab contents search bar ("Search the Web")
 1. Reinstall the addon
 1. Go to about:telemetry in a new tab, or at least make sure to reload the previous page (this refreshes the archived ping data)
-1. Copy the ping to the right side of the above online tool: http://jsondiff.com/
+1. Copy the ping (from the browser console, where the unencrypted payload is shown) to the right side of the above online tool: http://jsondiff.com/
 1. Compare the two pings using the online tool
 1. Verify values of some fields are changed in the second ping. 
-
-Note: To increment the search_counts attribute, you'll need to have performed at least one search using the firefox search bar and then reload the addon.
 
 ## Developer testing 
 

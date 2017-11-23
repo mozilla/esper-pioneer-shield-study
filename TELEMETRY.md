@@ -51,6 +51,8 @@ timezoneOffest
 searchCounts
 ```
 
+Note: To increment the search_counts attribute, you'll need to have performed at least one search using the firefox search bar and then reload the addon.
+
 Collected using `Services.telemetry.snapshotScalars` and `Services.telemetry.snapshotKeyedScalars` (spbe is short for scalar_parent_browser_engagement):
 
 ```
