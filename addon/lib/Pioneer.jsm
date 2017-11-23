@@ -11,8 +11,19 @@ XPCOMUtils.defineLazyModuleGetter(
 );
 
 const Pioneer = {
-  startup() {
+  async startup(addonData) {
     this.utils = new PioneerUtils(Config);
+    const branch = await Pioneer.utils.chooseBranch();
+    this.utils.pioneerAddonMetadata = {
+      packetVersion: 'esper1',
+      studyName: Config.studyName,
+      branch: branch.name,
+      addonId: addonData.id,
+      addonVersion: addonData.version,
+      pioneerUtilsVersion: "1.0.9",
+      type: "pioneer-study-addon",
+      testing: !Config.telemetry.removeTestingFlag,
+    };
   },
 };
 

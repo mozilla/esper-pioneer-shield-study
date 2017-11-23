@@ -130,6 +130,9 @@ class StudyTelemetryCollector {
 
       const shieldPingPayload = StudyTelemetryCollector.createShieldPingPayload(shieldPingAttributes);
 
+      // Add additional add-on metadata to the payload since pioneer-utils doesn't seem to do include the same metadata as shield-utils
+      shieldPingPayload.pioneerAddonMetadata = this.pioneerUtils.pioneerAddonMetadata;
+
       console.log("shieldPingPayload", shieldPingPayload);
 
       this.telemetry("esper-study-telemetry", shieldPingPayload);

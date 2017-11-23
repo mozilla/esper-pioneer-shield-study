@@ -41,7 +41,7 @@ this.Bootstrap = {
    */
   async startup(addonData, reason) {
     // Check if the user is opted in to pioneer and if not end the study
-    Pioneer.startup();
+    await Pioneer.startup(addonData);
     const events = Pioneer.utils.getAvailableEvents();
 
     const isEligible = await Pioneer.utils.isUserOptedIn();

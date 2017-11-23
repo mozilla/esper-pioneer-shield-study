@@ -10,4 +10,7 @@ const Config = {
   branches: [
     { name: "pioneer", weight: 1 },
   ],
+  telemetry: {
+    "removeTestingFlag": true,
+  },
 };
