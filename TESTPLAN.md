@@ -57,9 +57,9 @@ At add-on installation, the add-on will wait for Telemetry to be fully initializ
 (which can take over a minute if Firefox was just started), and finally collect the relevant telemetry and send a ping with that payload.
 See [TELEMETRY.md](./TELEMETRY.md) for more details. 
 
-### Example of how it appears when testing in Firefox
+### Example of how it appears when testing in Firefox Nightly
 
-![Example of how it appears when testing in Firefox](https://user-images.githubusercontent.com/793037/32371249-d8389ac6-c098-11e7-890f-efb43344d162.jpg)
+![Example of how it appears when testing in Firefox Nightly](https://user-images.githubusercontent.com/793037/33172067-4fd68b42-d057-11e7-8f38-4185d60831ce.png)
 
 ## Automated Testing
 
