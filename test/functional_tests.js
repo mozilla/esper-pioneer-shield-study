@@ -144,19 +144,21 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
 
   it("no esper-specific pioneer-study telemetry ping", async() => {
 
-    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled", false);
+    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled");
     console.log('basicTelemetryEnabled', basicTelemetryEnabled);
 
-    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled", false);
+    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled");
     console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
 
-    const shieldStudiesTelemetryEnabled = await utils.getPreference(driver, "app.shield.optoutstudies.enabled", false);
+    const shieldStudiesTelemetryEnabled = await utils.getPreference(driver, "app.shield.optoutstudies.enabled");
     console.log('shieldStudiesTelemetryEnabled', shieldStudiesTelemetryEnabled);
 
     try {
       const foundPings = utils.searchTelemetry([
-        ping => ping.type === "pioneer-study",
+        ping => ping.type === "pioneer-study" && ping.payload.schemaName === "esper-study-telemetry",
       ], pings);
+      // should not reach this line of code
+      assert(false);
     } catch (e) {
       assert(e.name === 'SearchError');
     }
@@ -210,19 +212,21 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
 
   it("no esper-specific pioneer-study telemetry ping", async() => {
 
-    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled", false);
+    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled");
     console.log('basicTelemetryEnabled', basicTelemetryEnabled);
 
-    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled", false);
+    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled");
     console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
 
-    const shieldStudiesTelemetryEnabled = await utils.getPreference(driver, "app.shield.optoutstudies.enabled", false);
+    const shieldStudiesTelemetryEnabled = await utils.getPreference(driver, "app.shield.optoutstudies.enabled");
     console.log('shieldStudiesTelemetryEnabled', shieldStudiesTelemetryEnabled);
 
     try {
       const foundPings = utils.searchTelemetry([
-        ping => ping.type === "pioneer-study",
+        ping => ping.type === "pioneer-study" && ping.payload.schemaName === "esper-study-telemetry",
       ], pings);
+      // should not reach this line of code
+      assert(false);
     } catch (e) {
       assert(e.name === 'SearchError');
     }
