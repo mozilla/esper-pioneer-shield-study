@@ -38,3 +38,23 @@ const twoEngines = {
 };
 
 console.log('should be 5', Helpers.searchCountsHistogramToScalarTotalCount(twoEngines));
+
+const faulty = {
+  "ddg.searchbar": null,
+  "foo.searchbar": {
+    "range": [1, 2],
+    "bucket_count": 3,
+    "histogram_type": 4,
+    "values": { "0": 1, "1": 0 },
+    "sum___": 3
+  },
+  "bar.searchbar": {
+    "range": [1, 2],
+    "bucket_count": 3,
+    "histogram_type": 4,
+    "values": { "0": 1, "1": 0 },
+    "sum": 3
+  },
+};
+
+console.log('should be 3', Helpers.searchCountsHistogramToScalarTotalCount(faulty));

@@ -27,8 +27,25 @@ this.Helpers = {
    * @param searchCountsHistogram undefined/null or as per above
    */
   searchCountsHistogramToScalarTotalCount(searchCountsHistogram) {
-    // TODO
-    return 0;
+    if (typeof searchCountsHistogram === 'undefined') {
+      return 0;
+    }
+    if (searchCountsHistogram === null) {
+      return 0;
+    }
+    let totalCount = 0;
+    for (const attribute in searchCountsHistogram) {
+      if (!searchCountsHistogram.hasOwnProperty(attribute)) {
+        continue;
+      }
+      let attributeValue = searchCountsHistogram[attribute];
+      if (attributeValue !== null && typeof attributeValue === "object") {
+        if (attributeValue.hasOwnProperty("sum")) {
+          totalCount += attributeValue.sum;
+        }
+      }
+    }
+    return totalCount;
   }
 
 };
