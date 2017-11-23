@@ -38,14 +38,16 @@ After cloning the repo, you can run the following commands from the top level di
 
 `$ npm run build`
 
-This packages the add-on into `linked-addon.xpi` which is stored in `dist/`. This file is what you load into Firefox.
+This packages the add-on into `linked-addon.xpi` which is stored in `dist/`. It also builds the `pioneer-opt-in.xpi` which is required for the study to run. These files are what you load into Firefox.
 
 To do that, open your standard issue Firefox (with your ordinary profile) and load the `.xpi` using the following steps:
 
 * Navigate to *about:config* and set `extensions.legacy.enabled` to `true`. This permits the loading of the embedded Web Extension since new versions of Firefox are becoming restricted to pure Web Extensions only.
 * Navigate to *about:debugging* in your URL bar
 * Select "Load Temporary Add-on"
-* Find and select the `linked-addon.xpi` file you just built.
+* Find and select the `dist/pioneer-opt-in.xpi` file.
+* Select "Load Temporary Add-on"
+* Find and select the `dist/linked-addon.xpi` file.
 
 ### Seeing the add-on in action
 
