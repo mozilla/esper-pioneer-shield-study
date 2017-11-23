@@ -4,6 +4,7 @@
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/
 
 const { utils: Cu } = Components;
+Cu.import("resource://gre/modules/Console.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
@@ -47,6 +48,7 @@ this.Bootstrap = {
 
     const isEligible = await Pioneer.utils.isUserOptedIn();
     if (!isEligible) {
+      console.log('Not eligable for Pioneer study. Will uninstall the study add-on.');
       Pioneer.utils.endStudy(events.INELIGIBLE);
       return;
     }
