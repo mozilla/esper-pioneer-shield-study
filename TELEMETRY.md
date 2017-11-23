@@ -93,82 +93,27 @@ When a certain probe is not set in the current telemetry environment, the string
 
 ## Example sequence
 
-These are the `payload` fields from all pings sent encrypted via pioneer utils. (Reversed chronological order)
+These are the `payload` fields from the ping sent encrypted via pioneer utils.
 
 ```
 
 // common fields
 
-branch        pioneer
-study_name    esper-pioneer-shield-study
-addon_version 0.4.0
-version       3
+schemaName     esper-study-telemetry
+schemaVersion  1
+studyName      esper-pioneer-shield-study
 
 
-2017-11-15T14:29:55.206Z shield-study-addon
+2017-11-23T10:58:03.028Z
 {
-  "attributes": {
-    "app_version": "58.0a1",
-    "default_search_engine": "google",
-    "event": "telemetry-payload",
-    "locale": "en-US",
-    "normalized_channel": "nightly",
-    "os": "Darwin",
-    "os_version": "16.7.0",
-    "places_bookmarks_count": "10",
-    "places_pages_count": "10",
-    "profile_creation_date": "17485",
-    "profile_subsession_counter": "1",
-    "scalar_parent_browser_engagement_max_concurrent_tab_count": "1",
-    "scalar_parent_browser_engagement_max_concurrent_window_count": "1",
-    "scalar_parent_browser_engagement_navigation_about_newtab": "null",
-    "scalar_parent_browser_engagement_navigation_contextmenu": "null",
-    "scalar_parent_browser_engagement_navigation_searchbar": "null",
-    "scalar_parent_browser_engagement_navigation_urlbar": "null",
-    "scalar_parent_browser_engagement_tab_open_event_count": "null",
-    "scalar_parent_browser_engagement_total_uri_count": "null",
-    "scalar_parent_browser_engagement_unfiltered_uri_count": "1",
-    "scalar_parent_browser_engagement_unique_domains_count": "null",
-    "scalar_parent_browser_engagement_window_open_event_count": "null",
-    "search_counts": "null",
-    "subsession_start_date": "2017-11-15T16:00:00.0+02:00",
-    "system.memory_mb": "16384",
-    "system_cpu.cores": "4",
-    "system_cpu.speed_mhz": "2500",
-    "system_gfx.monitors[1].screen_width": "1680",
-    "system_gfx.monitors[1].screen_width_zero_indexed": "null",
-    "timezone_offset": "120",
-    "total_time": "61",
-    "uptime": "1"
-  }
-}
-2017-11-15T14:28:57.495Z shield-study-addon
-{
-  "attributes": {
-    "event": "esper-init"
-  }
-}
-2017-11-15T14:28:57.487Z shield-study
-{
-  "study_state": "installed"
-}
-2017-11-15T14:28:57.417Z shield-study
-{
-  "study_state": "enter"
+  "encryptedData": "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ.0SvAEm1Qb-YN5tAIoBMycggxuOmRt3TssWEX8JzqBBhNFJk7DoTDPsEneKf8aUF3N2GaY0171t6BJQHLgkHwxc_gQQ2Xo0cnTy8VwTxB1YKtIkJXvzKoEI9AXzbAfp6MYa3YgB1r71_So2yd77rMZCE8A9q8JO7_Txy5_3daWqajEntGY0W1iZMU3gK4RUUEKqam5QhWsJX8OyGPo-bffclBywtuVHiGfklV3JIR9AHdFwlF29PdVoscBnNGyvTdpeK1eYmEh3ROyU4eUQ2wo5m96VkIdbcDDVN0uMK8x7LA4Nj-t4kYhlTyXiQlDJAddhsBzax_WmawrKWtcFGTMA.JCoJqB9i8pj4Id6c.SIWA7Jjy7l0AB5Bf9CIZuLGo8aYvmDuF_2j4BUGid2yx72-aGIb_VF33AKwqgOIqKvpy3DOcMkQ8G6HMFjSj5I7i0pnpH0r7GN0ZT2wQX6SbnBB7ZNmbOf6V1c3kLPy2DIfSzc8bGa1DaGQkfTaeVBrTXnnisN_mVV5vdBh3ztGR8miEU6nHBlDGvqlC_sXgGsopA75Qi-yEsXeFKlqz5cCY2THQJNSMXXjgfNc2OUYA19Tj8AMEBSpz0XCnzPCDqSwaLZtB6XLDM3j6N21AuGjcFWGSsmbySBY_1g3Iw-NjTtxQ2Tdlox6IdNNdpih9T25FGyFoTLHAL_9JnIICGaCHp6JaXyXsw-J3Sb8caOQG14CApREswLcHeH0GJShsd9Vzdfu9wi5ueBy_fBvrtONN9oQgiSMM-AleMjObz_suNIiBA6_1ADMPrc8aD1J-P2Mwrp4McUSOWF3O7R3k0txfs9H_96o8cDauvL9FUFAxk3oY-jUvGShbuIg87NWcIxOZK9Oj1Xo3tSRoJiswCiWwpJ0T6zMss7w-AuKoKrqXyaqnE-7W4-yQGbhZvergrvPdcWHbbnt5jZxlNVPirW-OLC0lxK2KA2hbuhsrAQvfBENr21uZXgsxKwyNO8tGBmpw6OMtmZaZL-peoQUdxyCYvKILFwiRp9Wb5EN3bpMoebsXeKL7akDJi43wppcEqyy4X5blldwQxdzQdb1W-cFuhaetyCAJHyUlJoa_YKALfLBuA-gIJv5kHlms8XwkaHV8ji1cLmb_lfp5Mh3Gq4aP14qnv0lRjkvzOqXbpjFRKhBwdsPXUPwPS1TFkB71ncpspi21f_5in3Ky7r0itZmmZHuRHRO85fEPjYs-86XyhPDDw0Kj2Kx2mVR3z02lXjzVEuXaooGXlm5ajoBM47bItTvWSxRpKS6Z9YXObKNM5i7P_BsyhyOohrth1qCiW6YHWdo2UdXXqjIOhC_YgpJcpqLZ0DOyoLQEUEpn5lHT9bMal6azosFH9JIPvnkPO2IibficrOXXa3Q_TKuKFrije1sayVzFDfs1H-mtRiUgC1Ag8mhyqiJPIMaEKhePxJWg9dumkIDovHvgy9XsLDzetjckMIEoz4zH0g025CQklwwatHAMcwiCxttti9p4aWYgfD_BzAflIdcbKu1S2FAALVmewzQeUhnS9cXEGDy-S2Uqm7SBRG0nNe4DfbLiOIK3BLlYgMmZEiWve9Tdkn-aBlBbQ3BFHf9W6tpc6zb-YeVqV2y3HDjluRGoH1vtExAUZ2iFR7ftwayqK8b1O45lUo0L6ga_xrGiJdk8dNayHAZ41ugu6LjpRJetBw78nYVw36zUojPoJ1EetVf5MGG7fneSTWhEKHMT-AIGOX-s9VHcvacAocMyRFwJWxwDLPBBvAGSISXuBLJK1E0U2F7MK9Pl2JFuZfPc9q69E-k4CqZZzPh3lTajiPaanIhBjQjleauon_fzcl2mxyy8TxWZgws1tDvb0gtrmrnFfin1yQnyidpgFatCnp4xPEkKfns.iKZwjZFLb9f4euFDoKtIzw",
+  "encryptionKeyId": "pioneer-20170905",
+  "pioneerId": "e032d5dc-2fcc-f648-abda-5fea8597d155",
+  "schemaName": "esper-study-telemetry",
+  "schemaVersion": 1,
+  "studyName": "esper-pioneer-shield-study"
 }
 
 ```
 
-To trigger the search_counts data, you'll need to have performed at least one search using the firefox search bar and then reload the addon. 
-The sent attribute may look like this:
-
-```
-"search_counts":"{\"ddg.searchbar\":{\"range\":[1,2],\"bucket_count\":3,\"histogram_type\":4,\"values\":{\"0\":1,\"1\":0},\"sum\":1}}"
-```
-
-# Retrieving data for analysis
-
-Telemetry pings are loaded into S3 and re:dash. Published queries:
-
-* [ESPER Pioneer Shield Study - All Telemetry Payloads](https://sql.telemetry.mozilla.org/queries/48557/source)
-* [ESPER Pioneer Shield Study - Number of clients](https://sql.telemetry.mozilla.org/queries/48440/source)
+For a sample of the encrypted data before encryption, see [schemas/esper-study-telemetry.1.schema.json](./schemas/esper-study-telemetry.1.schema.json).

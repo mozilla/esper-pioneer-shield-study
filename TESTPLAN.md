@@ -20,6 +20,8 @@
 1. Compare the two pings using the online tool
 1. Verify values of some fields are changed in the second ping. 
 
+Note: To increment the search_counts attribute, you'll need to have performed at least one search using the firefox search bar and then reload the addon.
+
 ## Developer testing 
 
 First, make sure you are on NPM 5+ installed so that the proper dependencies are installed using the package-lock.json file.
@@ -51,11 +53,7 @@ You should not see any UI element from this add-on, only log output in the Brows
 
 ### Note: checking "Correct Pings"
 
-Install the signed version of [the QA Shield Study Helper Add-on](https://bugzilla.mozilla.org/show_bug.cgi?id=1407757) and then reload the esper add-on (from *about:debugging*). 
-
-Click on the QA Shield Study Helper Add-on to see the sent pings. 
-
-At add-on installation, the add-on will send a "esper-init" event, wait for Telemetry to be fully initialized 
+At add-on installation, the add-on will wait for Telemetry to be fully initialized 
 (which can take over a minute if Firefox was just started), and finally collect the relevant telemetry and send a ping with that payload.
 See [TELEMETRY.md](./TELEMETRY.md) for more details. 
 

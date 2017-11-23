@@ -27,7 +27,7 @@ const {
   installAddon,
   promiseSetupDriver,
   getTelemetryPings,
-  printPings,
+  printPioneerPings,
   takeScreenshot,
   writePingsJson
 } = require("./test/utils");
@@ -92,7 +92,7 @@ const minimistHandler = {
     };
     const pings = await getTelemetryPings(driver, telemetryPingsFilterOptions);
     console.log("Pioneer study telemetry pings: ");
-    printPings(pings);
+    printPioneerPings(pings);
 
     writePingsJson(pings);
     console.log("Pioneer study telemetry pings written to pings.json");
