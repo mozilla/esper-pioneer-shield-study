@@ -28,8 +28,8 @@ async function postTestReset(driver) {
     /*
     TODO: add tests that confirm that the study is only executed a predefined set number of times
     Components.utils.import("resource://gre/modules/Preferences.jsm");
-    const COUNTER_PREF = "extensions.template-shield-study.counter";
-    const ADDED_BOOL_PREF = "extensions.template-shield-study.addedBool";
+    const COUNTER_PREF = "extensions.template-pioneer-study.counter";
+    const ADDED_BOOL_PREF = "extensions.template-pioneer-study.addedBool";
     if (Preferences.has(COUNTER_PREF)) {
       Preferences.set(COUNTER_PREF, 0);
     }
@@ -117,7 +117,7 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
     // allow our shield study addon some time to send initial pings
     await driver.sleep(2000);
     // collect sent pings
-    pings = await utils.getTelemetryPings(driver, ["shield-study", "shield-study-addon"]);
+    pings = await utils.getTelemetryPings(driver, ["pioneer-study"]);
     // print sent pings
     console.log("Shield study telemetry pings: ");
     utils.printPings(pings);
@@ -133,25 +133,25 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
 
   });
 
-  it("at least one shield-study telemetry ping with study_state=installed", async() => {
+  it("at least one pioneer-study telemetry ping with study_state=installed", async() => {
 
     const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study" && ping.payload.data.study_state === "installed",
+      ping => ping.type === "pioneer-study" && ping.payload.data.study_state === "installed",
     ], pings);
-    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=installed");
+    assert(foundPings.length > 0, "at least one pioneer-study telemetry ping with study_state=installed");
 
   });
 
-  it("at least one shield-study telemetry ping with study_state=enter", async() => {
+  it("at least one pioneer-study telemetry ping with study_state=enter", async() => {
 
     const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study" && ping.payload.data.study_state === "enter",
+      ping => ping.type === "pioneer-study" && ping.payload.data.study_state === "enter",
     ], pings);
-    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=enter");
+    assert(foundPings.length > 0, "at least one pioneer-study telemetry ping with study_state=enter");
 
   });
 
-  it("no shield-study-addon telemetry ping for the esper-init event", async() => {
+  it("no pioneer-study-addon telemetry ping for the esper-init event", async() => {
 
     const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled", false);
     console.log('basicTelemetryEnabled', basicTelemetryEnabled);
@@ -161,7 +161,7 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
 
     try {
       const foundPings = utils.searchTelemetry([
-        ping => ping.type === "shield-study-addon" && ping.payload.data.attributes.event === "esper-init",
+        ping => ping.type === "pioneer-study-addon" && ping.payload.data.attributes.event === "esper-init",
       ], pings);
     } catch (e) {
       assert(e.name === 'SearchError');
@@ -189,7 +189,7 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
     // allow our shield study addon some time to send initial pings
     await driver.sleep(2000);
     // collect sent pings
-    pings = await utils.getTelemetryPings(driver, ["shield-study", "shield-study-addon"]);
+    pings = await utils.getTelemetryPings(driver, ["pioneer-study"]);
     // print sent pings
     console.log("Shield study telemetry pings: ");
     utils.printPings(pings);
@@ -205,25 +205,25 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
 
   });
 
-  it("at least one shield-study telemetry ping with study_state=installed", async() => {
+  it("at least one pioneer-study telemetry ping with study_state=installed", async() => {
 
     const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study" && ping.payload.data.study_state === "installed",
+      ping => ping.type === "pioneer-study" && ping.payload.data.study_state === "installed",
     ], pings);
-    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=installed");
+    assert(foundPings.length > 0, "at least one pioneer-study telemetry ping with study_state=installed");
 
   });
 
-  it("at least one shield-study telemetry ping with study_state=enter", async() => {
+  it("at least one pioneer-study telemetry ping with study_state=enter", async() => {
 
     const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study" && ping.payload.data.study_state === "enter",
+      ping => ping.type === "pioneer-study" && ping.payload.data.study_state === "enter",
     ], pings);
-    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=enter");
+    assert(foundPings.length > 0, "at least one pioneer-study telemetry ping with study_state=enter");
 
   });
 
-  it("no shield-study-addon telemetry ping for the esper-init event", async() => {
+  it("no pioneer-study-addon telemetry ping for the esper-init event", async() => {
 
     const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled", false);
     console.log('basicTelemetryEnabled', basicTelemetryEnabled);
@@ -233,7 +233,7 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
 
     try {
       const foundPings = utils.searchTelemetry([
-        ping => ping.type === "shield-study-addon" && ping.payload.data.attributes.event === "esper-init",
+        ping => ping.type === "pioneer-study-addon" && ping.payload.data.attributes.event === "esper-init",
       ], pings);
     } catch (e) {
       assert(e.name === 'SearchError');
@@ -262,7 +262,7 @@ describe("basic functional tests", function() {
     // wait for telemetry to be fully initialized
     await driver.sleep(60000);
     // collect sent pings
-    pings = await utils.getTelemetryPings(driver, ["shield-study", "shield-study-addon"]);
+    pings = await utils.getTelemetryPings(driver, ["pioneer-study"]);
     // print sent pings
     console.log("Shield study telemetry pings: ");
     utils.printPings(pings);
@@ -278,43 +278,43 @@ describe("basic functional tests", function() {
 
   });
 
-  it("at least one shield-study telemetry ping with study_state=installed", async() => {
+  it("at least one pioneer-study telemetry ping with study_state=installed", async() => {
 
     const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study" && ping.payload.data.study_state === "installed",
+      ping => ping.type === "pioneer-study" && ping.payload.data.study_state === "installed",
     ], pings);
-    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=installed");
+    assert(foundPings.length > 0, "at least one pioneer-study telemetry ping with study_state=installed");
 
   });
 
-  it("at least one shield-study telemetry ping with study_state=enter", async() => {
+  it("at least one pioneer-study telemetry ping with study_state=enter", async() => {
 
     const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study" && ping.payload.data.study_state === "enter",
+      ping => ping.type === "pioneer-study" && ping.payload.data.study_state === "enter",
     ], pings);
-    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=enter");
+    assert(foundPings.length > 0, "at least one pioneer-study telemetry ping with study_state=enter");
 
   });
 
-  it("one shield-study-addon telemetry ping for the esper-init event", async() => {
+  it("one pioneer-study-addon telemetry ping for the esper-init event", async() => {
 
     const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study-addon" && ping.payload.data.attributes.event === "esper-init",
+      ping => ping.type === "pioneer-study-addon" && ping.payload.data.attributes.event === "esper-init",
     ], pings);
     assert(foundPings.length === 1);
 
   });
 
-  it("one proper shield-study-addon telemetry ping for the telemetry-payload event as expected at startup with a clean profile", async() => {
+  it("one proper pioneer-study-addon telemetry ping for the telemetry-payload event as expected at startup with a clean profile", async() => {
 
     const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study-addon" && ping.payload.data.attributes.event === "telemetry-payload",
+      ping => ping.type === "pioneer-study-addon" && ping.payload.data.attributes.event === "telemetry-payload",
     ], pings);
     assert(foundPings.length === 1);
 
     const ping = foundPings[0];
 
-    assert(ping.payload.shield_version === "4.1.0", "expected shield-study-utils version");
+    assert(ping.payload.shield_version === "4.1.0", "expected pioneer-study-utils version");
 
     // no unexpected data attributes
 

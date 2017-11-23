@@ -87,15 +87,15 @@ const minimistHandler = {
     await driver.sleep(60000);
 
     const telemetryPingsFilterOptions = {
-      type: [ "shield-study", "shield-study-addon" ],
+      type: [ "pioneer-study" ],
       headersOnly: false,
     };
     const pings = await getTelemetryPings(driver, telemetryPingsFilterOptions);
-    console.log("Shield study telemetry pings: ");
+    console.log("Pioneer study telemetry pings: ");
     printPings(pings);
 
     writePingsJson(pings);
-    console.log("Shield study telemetry pings written to pings.json");
+    console.log("Pioneer study telemetry pings written to pings.json");
 
   } catch (e) {
     console.error(e); // eslint-disable-line no-console
