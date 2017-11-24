@@ -67,50 +67,12 @@ class StudyTelemetryCollector {
   }
 
   async telemetry(schemaName, schemaVersion, payload) {
-    if (await this.allowedToSendTelemetry()) {
-      await this.pioneerUtils.submitEncryptedPing(schemaName, schemaVersion, payload);
+    const pingId = await this.pioneerUtils.submitEncryptedPing(schemaName, schemaVersion, payload);
+    if (pingId) {
       console.log('ESPER Telemetry sent (encrypted)', JSON.stringify(payload));
     } else {
       console.log('ESPER Telemetry not sent due to privacy preferences', JSON.stringify(payload));
     }
-  }
-
-  async allowedToSendTelemetry() {
-
-    // Main Telemetry preference that determines whether Telemetry data is collected and uploaded.
-    const basicTelemetryEnabled = Preferences.get("datareporting.healthreport.uploadEnabled");
-
-    console.log('allowedToSendTelemetry: basicTelemetryEnabled', basicTelemetryEnabled);
-
-    // This preference determines the build. True means pre-release version of Firefox, false means release version of Firefox.
-    const extendedTelemetryEnabled = Preferences.get("toolkit.telemetry.enabled");
-
-    console.log('allowedToSendTelemetry: extendedTelemetryEnabled', extendedTelemetryEnabled);
-
-    // Allow pioneer studies
-    const isEligible = await this.pioneerUtils.isUserOptedIn();
-
-    console.log('allowedToSendTelemetry: isEligible', isEligible);
-
-    // do not run study if basic telemetry is disabled
-    if (basicTelemetryEnabled === false) {
-      return false;
-    }
-
-    // do not care if extended telemetry is disabled or enabled
-    /*
-    if (extendedTelemetryEnabled === false) {
-      return false;
-    }
-    */
-
-    // do not run study if shield studies are disabled
-    if (isEligible === false) {
-      return false;
-    }
-
-    return true;
-
   }
 
   async collectAndSendTelemetry() {
