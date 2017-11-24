@@ -5,7 +5,6 @@
 const EXPORTED_SYMBOLS = ["Config"];
 
 const Config = {
-  addonId: "esper-pioneer-shield-study@shield.mozilla.org",
   studyName: "esper-pioneer-shield-study",
   branches: [
     { name: "pioneer", weight: 1 },

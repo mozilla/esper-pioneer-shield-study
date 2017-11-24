@@ -12,6 +12,7 @@ XPCOMUtils.defineLazyModuleGetter(
 
 const Pioneer = {
   async startup(addonData) {
+    Config.addonId = addonData.id;
     this.utils = new PioneerUtils(Config);
     const branch = await Pioneer.utils.chooseBranch();
     this.utils.pioneerAddonMetadata = {
