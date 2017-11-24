@@ -59,10 +59,12 @@ this.Bootstrap = {
     }
   },
 
+  // Unload all resources used by the add-on (even those not loaded in bootstrap.js)
   shutdown() {
     Cu.unload("resource://esper-pioneer-shield-study/Config.jsm");
     Cu.unload("resource://esper-pioneer-shield-study/lib/Pioneer.jsm");
     Cu.unload("resource://esper-pioneer-shield-study/lib/StudyTelemetryCollector.jsm");
+    Cu.unload("resource://esper-pioneer-shield-study/lib/Helpers.jsm");
   },
 
   uninstall() {
