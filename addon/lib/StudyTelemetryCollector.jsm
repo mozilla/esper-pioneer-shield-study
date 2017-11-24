@@ -11,17 +11,6 @@ Cu.import("resource://gre/modules/PromiseUtils.jsm");
 
 const EXPORTED_SYMBOLS = this.EXPORTED_SYMBOLS = ["StudyTelemetryCollector"];
 
-/*
-Note: All combinations of below ended up with Component returned failure code: 0x8000ffff (NS_ERROR_UNEXPECTED) [nsIXPCComponents_Utils.import]
-when trying to access the studyUtils object
-
-const BASERESOURCE = "esper-pioneer-shield-study";
-// const STUDYUTILSPATH = `resource://${BASERESOURCE}/StudyUtils.jsm`;
-// const STUDYUTILSPATH = `${__SCRIPT_URI_SPEC__}/../../${studyConfig.studyUtilsPath}`;
-// const { studyUtils } = Cu.import(STUDYUTILSPATH, {});
-// XPCOMUtils.defineLazyModuleGetter(this, "studyUtils", STUDYUTILSPATH);
-*/
-
 // telemetry utils
 const { TelemetryController } = Cu.import("resource://gre/modules/TelemetryController.jsm", null);
 const { TelemetrySession } = Cu.import("resource://gre/modules/TelemetrySession.jsm", null);
@@ -32,18 +21,19 @@ XPCOMUtils.defineLazyModuleGetter(this, "PlacesUtils",
 XPCOMUtils.defineLazyServiceGetter(this, "Telemetry",
   "@mozilla.org/base/telemetry;1", "nsITelemetry");
 
+// pioneer utils
+XPCOMUtils.defineLazyModuleGetter(
+  this, "Pioneer", "resource://esper-pioneer-shield-study/lib/Pioneer.jsm"
+);
+
 // unit-tested study helpers
 XPCOMUtils.defineLazyModuleGetter(
   this, "Helpers", "resource://esper-pioneer-shield-study/lib/Helpers.jsm"
 );
 
-/**
- * Note: Setting pioneerUtils in this constructor due to above comments (which were regarding studyUtils, but the construct survived shield-utils -> pioneer-utils refactoring)
- */
 class StudyTelemetryCollector {
 
-  constructor(pioneerUtils) {
-    this.pioneerUtils = pioneerUtils;
+  constructor() {
   }
 
   async start() {
@@ -60,14 +50,14 @@ class StudyTelemetryCollector {
 
     } catch (ex) {
       // TODO: how are errors during study execution reported?
-      // this.pioneerUtils.telemetryError();
+      // Pioneer.utils.telemetryError();
       Components.utils.reportError(ex);
     }
 
   }
 
   async telemetry(schemaName, schemaVersion, payload) {
-    const pingId = await this.pioneerUtils.submitEncryptedPing(schemaName, schemaVersion, payload);
+    const pingId = await Pioneer.utils.submitEncryptedPing(schemaName, schemaVersion, payload);
     if (pingId) {
       console.log('ESPER Telemetry sent (encrypted)', JSON.stringify(payload));
     } else {
@@ -99,7 +89,7 @@ class StudyTelemetryCollector {
       const shieldPingPayload = StudyTelemetryCollector.createShieldPingPayload(shieldPingAttributes);
 
       // Add additional add-on metadata to the payload since pioneer-utils doesn't seem to do include the same metadata as shield-utils
-      shieldPingPayload.pioneerAddonMetadata = this.pioneerUtils.pioneerAddonMetadata;
+      shieldPingPayload.pioneerAddonMetadata = Pioneer.metadata;
 
       console.log("shieldPingPayload", shieldPingPayload);
 

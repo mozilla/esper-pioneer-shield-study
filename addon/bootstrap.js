@@ -55,7 +55,7 @@ this.Bootstrap = {
 
     // Fire this once per released version (only during INSTALL or UPGRADE), then we are done.
     if (reason === REASONS.ADDON_INSTALL || reason === REASONS.ADDON_UPGRADE) {
-      new StudyTelemetryCollector(Pioneer.utils).start();
+      new StudyTelemetryCollector().start();
     }
   },
 

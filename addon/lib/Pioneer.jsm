@@ -15,7 +15,7 @@ const Pioneer = {
     Config.addonId = addonData.id;
     this.utils = new PioneerUtils(Config);
     const branch = await Pioneer.utils.chooseBranch();
-    this.utils.pioneerAddonMetadata = {
+    this.metadata = {
       packetVersion: 'esper1',
       studyName: Config.studyName,
       branch: branch.name,
