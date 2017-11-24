@@ -38,7 +38,7 @@ XPCOMUtils.defineLazyModuleGetter(
 );
 
 /**
- * Note: Setting studyUtils in this constructor due to above comments
+ * Note: Setting pioneerUtils in this constructor due to above comments (which were regarding studyUtils, but the construct survived shield-utils -> pioneer-utils refactoring)
  */
 class StudyTelemetryCollector {
 
