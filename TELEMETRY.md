@@ -5,20 +5,20 @@
 - No change: `main` and other pings are UNAFFECTED by this addon.
 - Respects telemetry preferences.  If user has disabled telemetry, no telemetry will be sent.
 
-## `shield-study` pings (common to all shield-studies)
+## `pioneer-study` pings (common to all pioneer-studies)
 
-`shield-studies-addon-utils` sends the usual packets.
+`pioneer-utils` sends the usual packets.
 
 This study has no surveys and as such has NO SPECIFIC ENDINGS.
 
-## `shield-study-addon` pings, specific to THIS study.
+## `pioneer-study` pings, specific to THIS study.
 
 No user interaction is instrumented in this study. Instead, the add-on performs a one-time collection of a large 
 subset of telemetry fields for the cohort of users participating in the Firefox Pioneer project. The collection of 
 normal telemetry variables for this cohort in conjunction with the extended data collection unique to Pioneer will 
 allow both quantitative and qualitative comparison of the Pioneer cohort to the Firefox release population. 
 
-At add-on installation, the add-on will send a "esper-init" event, wait for Telemetry to be fully initialized 
+At add-on installation, the add-on will wait for Telemetry to be fully initialized 
 (which can take over a minute if Firefox was just started), and finally collect the relevant telemetry and send a ping with that payload.
 
 ### Attributes
@@ -95,7 +95,7 @@ When a certain probe is not set in the current telemetry environment, the string
 
 ## Example sequence
 
-These are the `payload` fields from the ping sent encrypted via pioneer utils.
+These are the `payload` fields from the ping sent via pioneer utils.
 
 ```
 
