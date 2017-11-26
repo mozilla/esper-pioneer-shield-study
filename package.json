@@ -1,7 +1,7 @@
 {
   "name": "esper-pioneer-shield-study",
   "description": "The ESPER Experiment - Firefox Pioneer Study",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Fredrik Wollsén <fwollsen@mozilla.com>",
   "addon": {
     "ABOUT": "the variables fill the moustache templates",
