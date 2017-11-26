@@ -118,4 +118,4 @@ studyName      esper-pioneer-shield-study
 
 ```
 
-For a sample of the encrypted data before encryption, see [schemas/esper-study-telemetry.1.schema.json](./schemas/esper-study-telemetry.1.schema.json).
+For a sample of the encrypted data before encryption, see [schemas/esper-study-telemetry.1.sample.json](./schemas/esper-study-telemetry.1.sample.json).
