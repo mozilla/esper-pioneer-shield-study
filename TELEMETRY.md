@@ -29,7 +29,7 @@ Collected from the current telemetry environment:
 defaultSearchEngine
 locale
 os
-normalizedChannel
+appUpdateChannel
 profileCreationDate
 appVersion
 systemMemoryMb

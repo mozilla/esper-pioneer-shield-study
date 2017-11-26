@@ -2,7 +2,7 @@
   "defaultSearchEngine": "ddg",
   "locale": "en-US",
   "os": "Darwin",
-  "normalizedChannel": "aurora",
+  "appUpdateChannel": "aurora",
   "profileCreationDate": "14812",
   "appVersion": "58.0",
   "systemMemoryMb": "16384",

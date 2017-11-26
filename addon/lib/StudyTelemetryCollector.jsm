@@ -136,7 +136,7 @@ class StudyTelemetryCollector {
       "defaultSearchEngine": environment.settings.defaultSearchEngine,
       "locale": environment.settings.locale,
       "os": environment.system.os.name,
-      "normalizedChannel": environment.settings.update.channel,
+      "appUpdateChannel": environment.settings.update.channel,
       "profileCreationDate": environment.profile.creationDate,
       "appVersion": environment.build.version,
       "systemMemoryMb": environment.system.memoryMB,
