@@ -1,4 +1,4 @@
-# Test Plan for The ESPER experiment - Firefox Pioneer Study
+# Test Plan for The ESPER Experiment - Firefox Pioneer Study
 
 ## Manual / QA TEST Instructions
 
