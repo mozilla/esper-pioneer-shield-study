@@ -1,6 +1,5 @@
 "use strict";
 
-/* global studyUtils */
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(EXPORTED_SYMBOLS|StudyTelemetryCollector)" }]*/
 
 const { utils: Cu } = Components;
@@ -12,17 +11,6 @@ Cu.import("resource://gre/modules/PromiseUtils.jsm");
 
 const EXPORTED_SYMBOLS = this.EXPORTED_SYMBOLS = ["StudyTelemetryCollector"];
 
-/*
-Note: All combinations of below ended up with Component returned failure code: 0x8000ffff (NS_ERROR_UNEXPECTED) [nsIXPCComponents_Utils.import]
-when trying to access the studyUtils object
-
-const BASERESOURCE = "esper-pioneer-shield-study";
-// const STUDYUTILSPATH = `resource://${BASERESOURCE}/StudyUtils.jsm`;
-// const STUDYUTILSPATH = `${__SCRIPT_URI_SPEC__}/../../${studyConfig.studyUtilsPath}`;
-// const { studyUtils } = Cu.import(STUDYUTILSPATH, {});
-// XPCOMUtils.defineLazyModuleGetter(this, "studyUtils", STUDYUTILSPATH);
-*/
-
 // telemetry utils
 const { TelemetryController } = Cu.import("resource://gre/modules/TelemetryController.jsm", null);
 const { TelemetrySession } = Cu.import("resource://gre/modules/TelemetrySession.jsm", null);
@@ -33,82 +21,48 @@ XPCOMUtils.defineLazyModuleGetter(this, "PlacesUtils",
 XPCOMUtils.defineLazyServiceGetter(this, "Telemetry",
   "@mozilla.org/base/telemetry;1", "nsITelemetry");
 
-/**
- * Note: Setting studyUtils in this constructor due to above comments
- */
+// pioneer utils
+XPCOMUtils.defineLazyModuleGetter(
+  this, "Pioneer", "resource://esper-pioneer-shield-study/lib/Pioneer.jsm"
+);
+
+// unit-tested study helpers
+XPCOMUtils.defineLazyModuleGetter(
+  this, "Helpers", "resource://esper-pioneer-shield-study/lib/Helpers.jsm"
+);
+
 class StudyTelemetryCollector {
 
-  constructor(studyUtils, variation) {
-    this.variation = variation;
-    this.studyUtils = studyUtils;
+  constructor() {
   }
 
   async start() {
 
-    this.telemetry({ event: "esper-init" });
+    console.log('ESPER Study init. Will now await full telemetry initialization before collecting the payload for this study.');
 
     // Ensure that we collect telemetry payloads only after it is fully initialized
     // See http://searchfox.org/mozilla-central/rev/423b2522c48e1d654e30ffc337164d677f934ec3/toolkit/components/telemetry/TelemetryController.jsm#295
-    TelemetryController.promiseInitialized().then(() => {
+    await TelemetryController.promiseInitialized();
 
-      try {
+    try {
 
-        this.collectAndSendTelemetry();
+      this.collectAndSendTelemetry();
 
-      } catch (ex) {
-        // TODO: how are errors during study execution reported?
-        // this.studyUtils.telemetryError();
-        Components.utils.reportError(ex);
-      }
-
-    });
+    } catch (ex) {
+      // TODO: how are errors during study execution reported?
+      // Pioneer.utils.telemetryError();
+      Components.utils.reportError(ex);
+    }
 
   }
 
-  telemetry(payload) {
-    if (StudyTelemetryCollector.allowedToSendTelemetry()) {
-      this.studyUtils.telemetry(payload);
+  async telemetry(schemaName, schemaVersion, payload) {
+    const pingId = await Pioneer.utils.submitEncryptedPing(schemaName, schemaVersion, payload);
+    if (pingId) {
+      console.log('ESPER Telemetry sent (encrypted)', JSON.stringify(payload));
     } else {
-      console.log('ESPER telemetry not sent due to privacy preferences', payload);
+      console.log('ESPER Telemetry not sent due to privacy preferences', JSON.stringify(payload));
     }
-  }
-
-  static allowedToSendTelemetry() {
-
-    // Main Telemetry preference that determines whether Telemetry data is collected and uploaded.
-    const basicTelemetryEnabled = Preferences.get("datareporting.healthreport.uploadEnabled");
-
-    console.log('allowedToSendTelemetry: basicTelemetryEnabled', basicTelemetryEnabled);
-
-    // This preference determines the build. True means pre-release version of Firefox, false means release version of Firefox.
-    const extendedTelemetryEnabled = Preferences.get("toolkit.telemetry.enabled");
-
-    console.log('allowedToSendTelemetry: extendedTelemetryEnabled', extendedTelemetryEnabled);
-
-    // Allow shield studies
-    const shieldStudiesTelemetryEnabled = Preferences.get("app.shield.optoutstudies.enabled");
-
-    console.log('allowedToSendTelemetry: shieldStudiesTelemetryEnabled', shieldStudiesTelemetryEnabled);
-
-    // do not run study if basic telemetry is disabled
-    if (basicTelemetryEnabled === false) {
-      return false;
-    }
-
-    // do not care if extended telemetry is disabled or enabled
-    /*
-    if (extendedTelemetryEnabled === false) {
-      return false;
-    }
-    */
-
-    // do not run study if shield studies are disabled
-    if (shieldStudiesTelemetryEnabled === false) {
-      return false;
-    }
-
-    return true;
-
   }
 
   async collectAndSendTelemetry() {
@@ -126,7 +80,6 @@ class StudyTelemetryCollector {
       console.log("placesDbBasedAttributes", placesDbBasedAttributes);
 
       const shieldPingAttributes = {
-        event: "telemetry-payload",
         ...telemetryEnvironmentBasedAttributes,
         ...telemetrySubsessionPayloadBasedAttributes,
         ...telemetryScalarBasedAttributes,
@@ -135,15 +88,18 @@ class StudyTelemetryCollector {
 
       const shieldPingPayload = StudyTelemetryCollector.createShieldPingPayload(shieldPingAttributes);
 
+      // Add additional add-on metadata to the payload since pioneer-utils doesn't seem to do include the same metadata as shield-utils
+      shieldPingPayload.pioneerAddonMetadata = Pioneer.metadata;
+
       console.log("shieldPingPayload", shieldPingPayload);
 
-      this.telemetry(shieldPingPayload);
+      this.telemetry("esper-study-telemetry", 1, shieldPingPayload);
 
     });
 
   }
 
-  // TODO: @glind: move to shield study utils?
+  // TODO: @glind: move to shield study utils / pioneer utils?
   static createShieldPingPayload(shieldPingAttributes) {
 
     const shieldPingPayload = {};
@@ -177,18 +133,18 @@ class StudyTelemetryCollector {
     console.log("TelemetryEnvironment.currentEnvironment", environment);
 
     return {
-      "default_search_engine": environment.settings.defaultSearchEngine,
+      "defaultSearchEngine": environment.settings.defaultSearchEngine,
       "locale": environment.settings.locale,
       "os": environment.system.os.name,
-      "normalized_channel": environment.settings.update.channel,
-      "profile_creation_date": environment.profile.creationDate,
-      "app_version": environment.build.version,
-      "system.memory_mb": environment.system.memoryMB,
-      "system_cpu.cores": environment.system.cpu.cores,
-      "system_cpu.speed_mhz": environment.system.cpu.speedMHz,
-      "os_version": environment.system.os.version,
-      "system_gfx.monitors[1].screen_width": environment.system.gfx.monitors[0] ? environment.system.gfx.monitors[0].screenWidth : undefined,
-      "system_gfx.monitors[1].screen_width_zero_indexed": environment.system.gfx.monitors[1] ? environment.system.gfx.monitors[1].screenWidth : undefined,
+      "appUpdateChannel": environment.settings.update.channel,
+      "profileCreationDate": environment.profile.creationDate,
+      "appVersion": environment.build.version,
+      "systemMemoryMb": environment.system.memoryMB,
+      "systemCpuCores": environment.system.cpu.cores,
+      "systemCpuSpeedMhz": environment.system.cpu.speedMHz,
+      "osVersion": environment.system.os.version,
+      "systemGfxMonitors1ScreenWidth": environment.system.gfx.monitors[0] ? environment.system.gfx.monitors[0].screenWidth : undefined,
+      "systemGfxMonitors1ScreenWidthZeroIndexed": environment.system.gfx.monitors[1] ? environment.system.gfx.monitors[1].screenWidth : undefined,
     };
 
   }
@@ -208,18 +164,13 @@ class StudyTelemetryCollector {
     const attributes = {};
 
     attributes.uptime = payload.simpleMeasurements.uptime;
-    attributes.total_time = payload.simpleMeasurements.totalTime;
-    attributes.profile_subsession_counter = payload.info.profileSubsessionCounter;
-    attributes.subsession_start_date = payload.info.subsessionStartDate;
-    attributes.timezone_offset = payload.info.timezoneOffset;
-
-    // firefox/toolkit/components/places/PlacesDBUtils.jsm
-    // Collect the histogram payloads if present
-    attributes.places_bookmarks_count_histogram = payload.processes.content.histograms.PLACES_BOOKMARKS_COUNT;
-    attributes.places_pages_count_histogram = payload.processes.content.histograms.PLACES_PAGES_COUNT;
+    attributes.totalTime = payload.simpleMeasurements.totalTime;
+    attributes.profileSubsessionCounter = payload.info.profileSubsessionCounter;
+    attributes.subsessionStartDate = payload.info.subsessionStartDate;
+    attributes.timezoneOffest = payload.info.timezoneOffset;
 
     // firefox/browser/modules/BrowserUsageTelemetry.jsm
-    attributes.search_counts = payload.keyedHistograms.SEARCH_COUNTS;
+    attributes.searchCounts = Helpers.searchCountsHistogramToScalarTotalCount(payload.keyedHistograms.SEARCH_COUNTS);
 
     return attributes;
 
@@ -260,13 +211,13 @@ class StudyTelemetryCollector {
 
     console.log('scalars', scalars);
 
-    attributes.scalar_parent_browser_engagement_max_concurrent_window_count = getScalar(scalars, MAX_CONCURRENT_WINDOWS);
-    attributes.scalar_parent_browser_engagement_max_concurrent_tab_count = getScalar(scalars, MAX_CONCURRENT_TABS);
-    attributes.scalar_parent_browser_engagement_tab_open_event_count = getScalar(scalars, TAB_EVENT_COUNT);
-    attributes.scalar_parent_browser_engagement_window_open_event_count = getScalar(scalars, WINDOW_OPEN_COUNT);
-    attributes.scalar_parent_browser_engagement_unique_domains_count = getScalar(scalars, UNIQUE_DOMAINS_COUNT);
-    attributes.scalar_parent_browser_engagement_total_uri_count = getScalar(scalars, TOTAL_URI_COUNT);
-    attributes.scalar_parent_browser_engagement_unfiltered_uri_count = getScalar(scalars, UNFILTERED_URI_COUNT);
+    attributes.spbeMaxConcurrentWindowCount = getScalar(scalars, MAX_CONCURRENT_WINDOWS);
+    attributes.spbeMaxConcurrentTabCount = getScalar(scalars, MAX_CONCURRENT_TABS);
+    attributes.spbeTabOpenEventCount = getScalar(scalars, TAB_EVENT_COUNT);
+    attributes.spbeWindowOpenEventCount = getScalar(scalars, WINDOW_OPEN_COUNT);
+    attributes.spbeUniqueDomainsCount = getScalar(scalars, UNIQUE_DOMAINS_COUNT);
+    attributes.spbeTotalUriCount = getScalar(scalars, TOTAL_URI_COUNT);
+    attributes.spbeUnfilteredUriCount = getScalar(scalars, UNFILTERED_URI_COUNT);
 
     function getKeyedScalar(scalars, scalarName, key) {
       if (!(scalarName in scalars)) {
@@ -288,7 +239,7 @@ class StudyTelemetryCollector {
 
     const SCALAR_SEARCHBAR = "browser.engagement.navigation.searchbar";
 
-    attributes.scalar_parent_browser_engagement_navigation_searchbar = getKeyedScalar(keyedScalars, SCALAR_SEARCHBAR, "search_enter");
+    attributes.spbeNavigationSearchbar = getKeyedScalar(keyedScalars, SCALAR_SEARCHBAR, "search_enter");
 
     // firefox/browser/modules/test/browser/browser_UsageTelemetry_content.js
 
@@ -296,14 +247,14 @@ class StudyTelemetryCollector {
     const SCALAR_CONTEXT_MENU = BASE_PROBE_NAME + "contextmenu";
     const SCALAR_ABOUT_NEWTAB = BASE_PROBE_NAME + "about_newtab";
 
-    attributes.scalar_parent_browser_engagement_navigation_about_newtab = getKeyedScalar(keyedScalars, SCALAR_ABOUT_NEWTAB, "search_enter");
-    attributes.scalar_parent_browser_engagement_navigation_contextmenu = getKeyedScalar(keyedScalars, SCALAR_CONTEXT_MENU, "search");
+    attributes.spbeNavigationAboutNewtab = getKeyedScalar(keyedScalars, SCALAR_ABOUT_NEWTAB, "search_enter");
+    attributes.spbeNavigationContextmenu = getKeyedScalar(keyedScalars, SCALAR_CONTEXT_MENU, "search");
 
     // firefox/browser/modules/test/browser/browser_UsageTelemetry_urlbar.js
 
     const SCALAR_URLBAR = "browser.engagement.navigation.urlbar";
 
-    attributes.scalar_parent_browser_engagement_navigation_urlbar = getKeyedScalar(keyedScalars, SCALAR_URLBAR, "search_enter");
+    attributes.spbeNavigationUrlbar = getKeyedScalar(keyedScalars, SCALAR_URLBAR, "search_enter");
 
     return attributes;
 
@@ -326,8 +277,8 @@ class StudyTelemetryCollector {
       StudyTelemetryCollector.queryPlacesDbTelemetry().then((placesDbTelemetryResults) => {
 
         resolve({
-          places_pages_count: placesDbTelemetryResults[0][1],
-          places_bookmarks_count: placesDbTelemetryResults[1][1],
+          placesPagesCount: placesDbTelemetryResults[0][1],
+          placesBookmarksCount: placesDbTelemetryResults[1][1],
         });
 
       }).catch(ex => reject(ex));

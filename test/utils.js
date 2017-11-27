@@ -209,6 +209,33 @@ version       ${p0.version}
 
 };
 
+module.exports.printPioneerPings = async(pings) => {
+
+  if (pings.length === 0) {
+    console.log('No pings');
+    return;
+  }
+
+  const p0 = pings[0].payload;
+  // print common fields
+  console.log(
+    `
+// common fields
+
+schemaName     ${p0.schemaName}
+schemaVersion  ${p0.schemaVersion}
+studyName      ${p0.studyName}
+
+    `
+  )
+
+  pings.forEach(p => {
+    console.log(p.creationDate);
+    console.log(JSON.stringify(p.payload, null, 2))
+  })
+
+};
+
 module.exports.writePingsJson = async(pings, filepath = "./pings.json") => {
   try {
     return await Fs.outputFile(filepath,

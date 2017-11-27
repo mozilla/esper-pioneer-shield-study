@@ -12,6 +12,7 @@ const assert = require("assert");
 const utils = require("./utils");
 const webdriver = require("selenium-webdriver");
 const firefox = require("selenium-webdriver/firefox");
+const path = require("path");
 
 const By = webdriver.By;
 const Context = firefox.Context;
@@ -27,8 +28,8 @@ async function postTestReset(driver) {
     /*
     TODO: add tests that confirm that the study is only executed a predefined set number of times
     Components.utils.import("resource://gre/modules/Preferences.jsm");
-    const COUNTER_PREF = "extensions.template-shield-study.counter";
-    const ADDED_BOOL_PREF = "extensions.template-shield-study.addedBool";
+    const COUNTER_PREF = "extensions.template-pioneer-study.counter";
+    const ADDED_BOOL_PREF = "extensions.template-pioneer-study.addedBool";
     if (Preferences.has(COUNTER_PREF)) {
       Preferences.set(COUNTER_PREF, 0);
     }
@@ -109,57 +110,55 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
   before(async() => {
     driver = await utils.promiseSetupDriver();
     await utils.disableBasicTelemetry(driver);
+    // install the pioneer opt-in add-on
+    await utils.installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
     // install the addon
     addonId = await utils.installAddon(driver);
-    // allow our shield study addon some time to send initial pings
+    // allow our pioneer study addon some time to send initial pings
     await driver.sleep(2000);
     // collect sent pings
-    pings = await utils.getTelemetryPings(driver, ["shield-study", "shield-study-addon"]);
+    pings = await utils.getTelemetryPings(driver, ["pioneer-study"]);
     // print sent pings
-    console.log("Shield study telemetry pings: ");
-    utils.printPings(pings);
+    console.log("Pioneer study telemetry pings: ");
+    utils.printPioneerPings(pings);
   });
 
   after(async() => driver.quit());
 
   afterEach(async() => postTestReset(driver));
 
-  it("should send shield telemetry pings", async() => {
+  it("should send telemetry pings", async() => {
 
-    assert(pings.length > 0, "at least one shield telemetry ping");
+    assert(pings.length > 0, "at least one telemetry ping");
 
   });
 
-  it("at least one shield-study telemetry ping with study_state=installed", async() => {
+  it("one pioneer-study telemetry ping with schema event", async() => {
 
     const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study" && ping.payload.data.study_state === "installed",
+      ping => ping.type === "pioneer-study" && ping.payload.schemaName === "event",
     ], pings);
-    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=installed");
+    assert(foundPings.length === 1);
 
   });
 
-  it("at least one shield-study telemetry ping with study_state=enter", async() => {
+  it("no esper-specific pioneer-study telemetry ping", async() => {
 
-    const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study" && ping.payload.data.study_state === "enter",
-    ], pings);
-    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=enter");
-
-  });
-
-  it("no shield-study-addon telemetry ping for the esper-init event", async() => {
-
-    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled", false);
+    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled");
     console.log('basicTelemetryEnabled', basicTelemetryEnabled);
 
-    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled", false);
+    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled");
     console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
+
+    const shieldStudiesTelemetryEnabled = await utils.getPreference(driver, "app.shield.optoutstudies.enabled");
+    console.log('shieldStudiesTelemetryEnabled', shieldStudiesTelemetryEnabled);
 
     try {
       const foundPings = utils.searchTelemetry([
-        ping => ping.type === "shield-study-addon" && ping.payload.data.attributes.event === "esper-init",
+        ping => ping.type === "pioneer-study" && ping.payload.schemaName === "esper-study-telemetry",
       ], pings);
+      // should not reach this line of code
+      assert(false);
     } catch (e) {
       assert(e.name === 'SearchError');
     }
@@ -179,57 +178,55 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
   before(async() => {
     driver = await utils.promiseSetupDriver();
     await utils.disableShieldStudiesTelemetry(driver);
+    // install the pioneer opt-in add-on
+    await utils.installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
     // install the addon
     addonId = await utils.installAddon(driver);
-    // allow our shield study addon some time to send initial pings
+    // allow our pioneer study addon some time to send initial pings
     await driver.sleep(2000);
     // collect sent pings
-    pings = await utils.getTelemetryPings(driver, ["shield-study", "shield-study-addon"]);
+    pings = await utils.getTelemetryPings(driver, ["pioneer-study"]);
     // print sent pings
-    console.log("Shield study telemetry pings: ");
-    utils.printPings(pings);
+    console.log("Pioneer study telemetry pings: ");
+    utils.printPioneerPings(pings);
   });
 
   after(async() => driver.quit());
 
   afterEach(async() => postTestReset(driver));
 
-  it("should send shield telemetry pings", async() => {
+  it("should send telemetry pings", async() => {
 
-    assert(pings.length > 0, "at least one shield telemetry ping");
+    assert(pings.length > 0, "at least one telemetry ping");
 
   });
 
-  it("at least one shield-study telemetry ping with study_state=installed", async() => {
+  it("one pioneer-study telemetry ping with schema event", async() => {
 
     const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study" && ping.payload.data.study_state === "installed",
+      ping => ping.type === "pioneer-study" && ping.payload.schemaName === "event",
     ], pings);
-    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=installed");
+    assert(foundPings.length === 1);
 
   });
 
-  it("at least one shield-study telemetry ping with study_state=enter", async() => {
+  it("no esper-specific pioneer-study telemetry ping", async() => {
 
-    const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study" && ping.payload.data.study_state === "enter",
-    ], pings);
-    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=enter");
-
-  });
-
-  it("no shield-study-addon telemetry ping for the esper-init event", async() => {
-
-    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled", false);
+    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled");
     console.log('basicTelemetryEnabled', basicTelemetryEnabled);
 
-    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled", false);
+    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled");
     console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
+
+    const shieldStudiesTelemetryEnabled = await utils.getPreference(driver, "app.shield.optoutstudies.enabled");
+    console.log('shieldStudiesTelemetryEnabled', shieldStudiesTelemetryEnabled);
 
     try {
       const foundPings = utils.searchTelemetry([
-        ping => ping.type === "shield-study-addon" && ping.payload.data.attributes.event === "esper-init",
+        ping => ping.type === "pioneer-study" && ping.payload.schemaName === "esper-study-telemetry",
       ], pings);
+      // should not reach this line of code
+      assert(false);
     } catch (e) {
       assert(e.name === 'SearchError');
     }
@@ -248,66 +245,45 @@ describe("basic functional tests", function() {
 
   before(async() => {
     driver = await utils.promiseSetupDriver();
+    // install the pioneer opt-in add-on
+    await utils.installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
     // install the addon
     addonId = await utils.installAddon(driver);
-    // allow our shield study addon some time to send initial pings
+    // allow our pioneer study addon some time to send initial pings
     await driver.sleep(2000);
     // wait for telemetry to be fully initialized
     await driver.sleep(60000);
     // collect sent pings
-    pings = await utils.getTelemetryPings(driver, ["shield-study", "shield-study-addon"]);
+    pings = await utils.getTelemetryPings(driver, ["pioneer-study"]);
     // print sent pings
-    console.log("Shield study telemetry pings: ");
-    utils.printPings(pings);
+    console.log("Pioneer study telemetry pings: ");
+    utils.printPioneerPings(pings);
   });
 
   after(async() => driver.quit());
 
   afterEach(async() => postTestReset(driver));
 
-  it("should send shield telemetry pings", async() => {
+  it("should send telemetry pings", async() => {
 
-    assert(pings.length > 0, "at least one shield telemetry ping");
-
-  });
-
-  it("at least one shield-study telemetry ping with study_state=installed", async() => {
-
-    const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study" && ping.payload.data.study_state === "installed",
-    ], pings);
-    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=installed");
+    assert(pings.length > 0, "at least one telemetry ping");
 
   });
 
-  it("at least one shield-study telemetry ping with study_state=enter", async() => {
+  it("one proper pioneer-study telemetry ping for the telemetry-payload event as expected at startup with a clean profile", async() => {
 
     const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study" && ping.payload.data.study_state === "enter",
-    ], pings);
-    assert(foundPings.length > 0, "at least one shield-study telemetry ping with study_state=enter");
-
-  });
-
-  it("one shield-study-addon telemetry ping for the esper-init event", async() => {
-
-    const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study-addon" && ping.payload.data.attributes.event === "esper-init",
-    ], pings);
-    assert(foundPings.length === 1);
-
-  });
-
-  it("one proper shield-study-addon telemetry ping for the telemetry-payload event as expected at startup with a clean profile", async() => {
-
-    const foundPings = utils.searchTelemetry([
-      ping => ping.type === "shield-study-addon" && ping.payload.data.attributes.event === "telemetry-payload",
+      ping => ping.type === "pioneer-study" && ping.payload.schemaName === "esper-study-telemetry",
     ], pings);
     assert(foundPings.length === 1);
 
     const ping = foundPings[0];
 
-    assert(ping.payload.shield_version === "4.1.0", "expected shield-study-utils version");
+    /*
+
+    // inactivated tests against attributes since ping payload is encrypted
+
+    assert(ping.payload.pioneerAddonMetadata.pioneerUtilsVersion === "1.0.9", "expected pioneer-study-utils version");
 
     // no unexpected data attributes
 
@@ -358,6 +334,8 @@ describe("basic functional tests", function() {
     }
 
     assert.deepEqual(expected, actual, "only expected attributes encountered");
+
+    */
 
   });
 
