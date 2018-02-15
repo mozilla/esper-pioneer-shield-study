@@ -49,7 +49,7 @@ this.Bootstrap = {
 
     const isEligible = await Pioneer.utils.isUserOptedIn();
     if (!isEligible) {
-      console.log('Not eligable for Pioneer study. Will uninstall the study add-on.');
+      console.log("Not eligable for Pioneer study. Will uninstall the study add-on.");
       Pioneer.utils.endStudy(events.INELIGIBLE);
       return;
     }

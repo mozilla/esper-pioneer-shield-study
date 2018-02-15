@@ -44,7 +44,7 @@ const FIREFOX_PREFERENCES = {
 
   // Set telemetry to initiate earlier than 60 seconds
   // TODO: figure out why setting this preference leads to profile_creation_date and default_search_engine not being set
-  //"toolkit.telemetry.initDelay": 1,
+  // "toolkit.telemetry.initDelay": 1,
 
   /** WARNING: gecko webdriver sets many additional prefs at:
     * https://dxr.mozilla.org/mozilla-central/source/testing/geckodriver/src/prefs.rs
@@ -162,7 +162,7 @@ module.exports.getTelemetryPings = async(driver, options) => {
     let pings = await TelemetryArchive.promiseArchivedPingList();
     if (type) {
       if (!(type instanceof Array)) {
-        type = [type];  // Array-ify if it's a string
+        type = [type]; // Array-ify if it's a string
       }
     }
     if (type) pings = pings.filter(p => type.includes(p.type));
@@ -184,7 +184,7 @@ module.exports.searchTelemetry = (conditionArray, telemetryArray) => {
     if (index === -1) {
       throw new SearchError(condition);
     }
-    resultingPings.push(telemetryArray[ index ]);
+    resultingPings.push(telemetryArray[index]);
   }
   return resultingPings;
 };
@@ -192,7 +192,7 @@ module.exports.searchTelemetry = (conditionArray, telemetryArray) => {
 module.exports.printPings = async(pings) => {
 
   if (pings.length === 0) {
-    console.log('No pings');
+    console.log("No pings");
     return;
   }
 
@@ -208,19 +208,19 @@ addon_version ${p0.addon_version}
 version       ${p0.version}
 
     `
-  )
+  );
 
   pings.forEach(p => {
     console.log(p.creationDate, p.payload.type);
-    console.log(JSON.stringify(p.payload.data, null, 2))
-  })
+    console.log(JSON.stringify(p.payload.data, null, 2));
+  });
 
 };
 
 module.exports.printPioneerPings = async(pings) => {
 
   if (pings.length === 0) {
-    console.log('No pings');
+    console.log("No pings");
     return;
   }
 
@@ -235,19 +235,19 @@ schemaVersion  ${p0.schemaVersion}
 studyName      ${p0.studyName}
 
     `
-  )
+  );
 
   pings.forEach(p => {
     console.log(p.creationDate);
-    console.log(JSON.stringify(p.payload, null, 2))
-  })
+    console.log(JSON.stringify(p.payload, null, 2));
+  });
 
 };
 
 module.exports.writePingsJson = async(pings, filepath = "./pings.json") => {
   try {
     return await Fs.outputFile(filepath,
-      JSON.stringify(pings, null, '\t'));
+      JSON.stringify(pings, null, "\t"));
   } catch (error) {
     throw error;
   }

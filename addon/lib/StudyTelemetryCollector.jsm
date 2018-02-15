@@ -38,7 +38,7 @@ class StudyTelemetryCollector {
 
   async start() {
 
-    console.log('ESPER Study init. Will now await full telemetry initialization before collecting the payload for this study.');
+    console.log("ESPER Study init. Will now await full telemetry initialization before collecting the payload for this study.");
 
     // Ensure that we collect telemetry payloads only after it is fully initialized
     // See http://searchfox.org/mozilla-central/rev/423b2522c48e1d654e30ffc337164d677f934ec3/toolkit/components/telemetry/TelemetryController.jsm#295
@@ -59,9 +59,9 @@ class StudyTelemetryCollector {
   async telemetry(schemaName, schemaVersion, payload) {
     const pingId = await Pioneer.utils.submitEncryptedPing(schemaName, schemaVersion, payload);
     if (pingId) {
-      console.log('ESPER Telemetry sent (encrypted)', JSON.stringify(payload));
+      console.log("ESPER Telemetry sent (encrypted)", JSON.stringify(payload));
     } else {
-      console.log('ESPER Telemetry not sent due to privacy preferences', JSON.stringify(payload));
+      console.log("ESPER Telemetry not sent due to privacy preferences", JSON.stringify(payload));
     }
   }
 
@@ -209,7 +209,7 @@ class StudyTelemetryCollector {
       return scalars[scalarName];
     }
 
-    console.log('scalars', scalars);
+    console.log("scalars", scalars);
 
     attributes.spbeMaxConcurrentWindowCount = getScalar(scalars, MAX_CONCURRENT_WINDOWS);
     attributes.spbeMaxConcurrentTabCount = getScalar(scalars, MAX_CONCURRENT_TABS);
@@ -233,7 +233,7 @@ class StudyTelemetryCollector {
 
     const keyedScalars = getParentProcessScalars(Telemetry.DATASET_RELEASE_CHANNEL_OPTIN, true, false);
 
-    console.log('keyedScalars', keyedScalars);
+    console.log("keyedScalars", keyedScalars);
 
     // firefox/browser/modules/test/browser/browser_UsageTelemetry_searchbar.js
 

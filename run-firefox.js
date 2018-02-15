@@ -30,7 +30,7 @@ const {
   getTelemetryPings,
   printPioneerPings,
   takeScreenshot,
-  writePingsJson
+  writePingsJson,
 } = require("./test/utils");
 
 const HELP = `

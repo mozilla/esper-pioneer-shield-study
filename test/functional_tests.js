@@ -1,4 +1,5 @@
 /* eslint-env node, mocha */
+/* eslint no-console:off */
 
 /* Purpose:
  *
@@ -42,11 +43,11 @@ async function postTestReset(driver) {
 }
 
 const notNullAssertion = value => {
-  return value !== "null" && typeof value !== "undefined"
+  return value !== "null" && typeof value !== "undefined";
 };
 
 const nullAssertion = value => {
-  return value === "null"
+  return value === "null";
 };
 
 
@@ -72,27 +73,27 @@ describe("preferences behavior tests", function() {
   it("preferences get behavior should be as expected", async() => {
 
     const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled");
-    console.log('basicTelemetryEnabled', basicTelemetryEnabled);
+    console.log("basicTelemetryEnabled", basicTelemetryEnabled);
     assert(basicTelemetryEnabled === false);
 
     const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled");
-    console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
+    console.log("extendedTelemetryEnabled", extendedTelemetryEnabled);
     assert(extendedTelemetryEnabled === true);
 
     const nonExistantPreference = await utils.getPreference(driver, "foo.bar");
-    console.log('nonExistantPreference', nonExistantPreference);
+    console.log("nonExistantPreference", nonExistantPreference);
     assert(nonExistantPreference === null);
 
     const basicTelemetryEnabledWithTrueAsDefault = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled", true);
-    console.log('basicTelemetryEnabledWithTrueAsDefault', basicTelemetryEnabledWithTrueAsDefault);
+    console.log("basicTelemetryEnabledWithTrueAsDefault", basicTelemetryEnabledWithTrueAsDefault);
     assert(basicTelemetryEnabledWithTrueAsDefault === false);
 
     const extendedTelemetryEnabledWithTrueAsDefault = await utils.getPreference(driver, "toolkit.telemetry.enabled", true);
-    console.log('extendedTelemetryEnabledWithTrueAsDefault', extendedTelemetryEnabledWithTrueAsDefault);
+    console.log("extendedTelemetryEnabledWithTrueAsDefault", extendedTelemetryEnabledWithTrueAsDefault);
     assert(extendedTelemetryEnabledWithTrueAsDefault === true);
 
     const nonExistantPreferenceWithTrueAsDefault = await utils.getPreference(driver, "foo.bar", true);
-    console.log('nonExistantPreferenceWithTrueAsDefault', nonExistantPreferenceWithTrueAsDefault);
+    console.log("nonExistantPreferenceWithTrueAsDefault", nonExistantPreferenceWithTrueAsDefault);
     assert(nonExistantPreferenceWithTrueAsDefault === true);
 
   });
@@ -145,13 +146,13 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
   it("no esper-specific pioneer-study telemetry ping", async() => {
 
     const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled");
-    console.log('basicTelemetryEnabled', basicTelemetryEnabled);
+    console.log("basicTelemetryEnabled", basicTelemetryEnabled);
 
     const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled");
-    console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
+    console.log("extendedTelemetryEnabled", extendedTelemetryEnabled);
 
     const shieldStudiesTelemetryEnabled = await utils.getPreference(driver, "app.shield.optoutstudies.enabled");
-    console.log('shieldStudiesTelemetryEnabled', shieldStudiesTelemetryEnabled);
+    console.log("shieldStudiesTelemetryEnabled", shieldStudiesTelemetryEnabled);
 
     try {
       const foundPings = utils.searchTelemetry([
@@ -160,7 +161,7 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
       // should not reach this line of code
       assert(false);
     } catch (e) {
-      assert(e.name === 'SearchError');
+      assert(e.name === "SearchError");
     }
 
   });
@@ -213,13 +214,13 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
   it("no esper-specific pioneer-study telemetry ping", async() => {
 
     const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled");
-    console.log('basicTelemetryEnabled', basicTelemetryEnabled);
+    console.log("basicTelemetryEnabled", basicTelemetryEnabled);
 
     const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled");
-    console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
+    console.log("extendedTelemetryEnabled", extendedTelemetryEnabled);
 
     const shieldStudiesTelemetryEnabled = await utils.getPreference(driver, "app.shield.optoutstudies.enabled");
-    console.log('shieldStudiesTelemetryEnabled', shieldStudiesTelemetryEnabled);
+    console.log("shieldStudiesTelemetryEnabled", shieldStudiesTelemetryEnabled);
 
     try {
       const foundPings = utils.searchTelemetry([
@@ -228,7 +229,7 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
       // should not reach this line of code
       assert(false);
     } catch (e) {
-      assert(e.name === 'SearchError');
+      assert(e.name === "SearchError");
     }
 
   });
