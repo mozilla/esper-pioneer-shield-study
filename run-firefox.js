@@ -1,4 +1,5 @@
 /* eslint-env node */
+/* eslint no-console:off */
 
 /* This file is a helper script that will install the extension from the .xpi
  * file and setup useful preferences for debugging. This is the same setup
@@ -32,20 +33,29 @@ const {
   writePingsJson
 } = require("./test/utils");
 
-
 const HELP = `
 env vars:
+
 - XPI (optional): path to xpi / addon
-- FIREFOX_BINARY = 'nightly'
+
+  installs $XPI as a temporary addon.
+
+  Note: must be 'legacy signed' if on Beta or Release.
+
+- FIREFOX_BINARY :  nightly | beta | firefox
+
+Future will clean up this interface a bit!
+- prefs
+- multiple addons
+- re-use or create profiles, etc.
 
 `;
 
 const minimistHandler = {
-  boolean: [ 'help' ],
-  alias: { h: 'help', v: 'version' },
-  '--': true,
+  boolean: ["help"],
+  alias: { h: "help", v: "version" },
+  "--": true,
 };
-
 
 (async() => {
   const minimist = require("minimist");
@@ -65,14 +75,20 @@ const minimistHandler = {
     // install the addon
     if (process.env.XPI) {
       const fileLocation = path.join(process.cwd(), process.env.XPI);
-      console.log(fileLocation)
+      console.log(fileLocation);
       await installAddon(driver, fileLocation);
       console.log("Load temporary addon.");
     }
 
-    // navigate to a regular page
+    // navigate to about:debugging
     driver.setContext(Context.CONTENT);
     driver.get("about:debugging");
+
+    // open the browser console
+    driver.setContext(Context.CHROME);
+    const urlBar = await promiseUrlBar(driver);
+    const openBrowserConsole = Key.chord(MODIFIER_KEY, Key.SHIFT, "j");
+    await urlBar.sendKeys(openBrowserConsole);
 
     console.log("The addon should now be loaded and you should be able to interact with the addon in the newly opened Firefox instance.");
 
@@ -98,6 +114,6 @@ const minimistHandler = {
     console.log("Pioneer study telemetry pings written to pings.json");
 
   } catch (e) {
-    console.error(e); // eslint-disable-line no-console
+    console.error(e);
   }
 })();

@@ -1,6 +1,7 @@
 "use strict";
 
 /* global  __SCRIPT_URI_SPEC__  */
+/* global Feature, Services */ // Cu.import
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/
 
 const { utils: Cu } = Components;
@@ -75,14 +76,3 @@ this.Bootstrap = {
 for (const methodName of ["install", "startup", "shutdown", "uninstall"]) {
   this[methodName] = Bootstrap[methodName].bind(Bootstrap);
 }
-
-/** CONSTANTS and other bootstrap.js utilities */
-
-// logging
-// function createLog(name, levelWord) {
-//  Cu.import("resource://gre/modules/Log.jsm");
-//  var L = Log.repository.getLogger(name);
-//  L.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
-//  L.level = Log.Level[levelWord] || Log.Level.Debug; // should be a config / pref
-//  return L;
-// }

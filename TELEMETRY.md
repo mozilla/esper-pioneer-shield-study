@@ -1,8 +1,8 @@
-# Telemetry sent by this addon
+# Telemetry sent by this add-on
 
 ## Usual Firefox Telemetry is unaffected.
 
-- No change: `main` and other pings are UNAFFECTED by this addon.
+- No change: `main` and other pings are UNAFFECTED by this add-on.
 - Respects telemetry preferences.  If user has disabled telemetry, no telemetry will be sent.
 
 ## `pioneer-study` pings (common to all pioneer-studies)

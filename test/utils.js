@@ -1,4 +1,6 @@
 /* eslint-env node */
+/* eslint no-console:off */
+
 // The geckodriver package downloads and installs geckodriver for us.
 // We use it by requiring it.
 require("geckodriver");
@@ -33,7 +35,10 @@ const FIREFOX_PREFERENCES = {
   // NECESSARY for all 57+ builds
   "extensions.legacy.enabled": true,
 
-  // Enabled basic telemetry + shield studies by default when running tests
+  // Include log output in browser console
+  "shield.testing.logging.level": 10, // Trace
+
+  // Enable basic telemetry + shield studies by default when running tests
   "datareporting.healthreport.uploadEnabled": true,
   "app.shield.optoutstudies.enabled": true,
 
@@ -53,7 +58,8 @@ const FIREFOX_PREFERENCES = {
 // useful if we need to test on a specific version of Firefox
 async function promiseActualBinary(binary) {
   try {
-    const normalizedBinary = await FxRunnerUtils.normalizeBinary(binary);
+    let normalizedBinary = await FxRunnerUtils.normalizeBinary(binary);
+    normalizedBinary = path.resolve(normalizedBinary);
     await Fs.stat(normalizedBinary);
     return normalizedBinary;
   } catch (ex) {
@@ -64,9 +70,10 @@ async function promiseActualBinary(binary) {
   }
 }
 
-
-
-
+/**
+  * Uses process.env.FIREFOX_BINARY
+  *
+  */
 module.exports.promiseSetupDriver = async() => {
   const profile = new firefox.Profile();
 
@@ -84,7 +91,8 @@ module.exports.promiseSetupDriver = async() => {
     .setFirefoxOptions(options);
 
   const binaryLocation = await promiseActualBinary(process.env.FIREFOX_BINARY || "nightly");
-  //console.log(binaryLocation);
+
+  // console.log(binaryLocation);
   await options.setBinary(new firefox.Binary(binaryLocation));
   const driver = await builder.build();
   // Firefox will be started up by now
