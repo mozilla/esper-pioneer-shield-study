@@ -1,6 +1,6 @@
 "use strict";
 
-/* global  __SCRIPT_URI_SPEC__, StudyTelemetryCollector  */
+/* global  __SCRIPT_URI_SPEC__  */
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/
 
 const { utils: Cu } = Components;
@@ -8,135 +8,72 @@ Cu.import("resource://gre/modules/Console.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-const CONFIGPATH = `${__SCRIPT_URI_SPEC__}/../Config.jsm`;
-const { config } = Cu.import(CONFIGPATH, {});
-const studyConfig = config.study;
+XPCOMUtils.defineLazyModuleGetter(
+  this, "Config", "resource://esper-pioneer-shield-study/Config.jsm"
+);
+XPCOMUtils.defineLazyModuleGetter(
+  this, "StudyTelemetryCollector", "resource://esper-pioneer-shield-study/lib/StudyTelemetryCollector.jsm"
+);
+XPCOMUtils.defineLazyModuleGetter(
+  this, "Pioneer", "resource://esper-pioneer-shield-study/lib/Pioneer.jsm"
+);
 
-const STUDYUTILSPATH = `${__SCRIPT_URI_SPEC__}/../${studyConfig.studyUtilsPath}`;
-const { studyUtils } = Cu.import(STUDYUTILSPATH, {});
-
-const STUDYTELEMETRYCOLLECTORPATH = `${__SCRIPT_URI_SPEC__}/.././lib/StudyTelemetryCollector.jsm`;
-XPCOMUtils.defineLazyModuleGetter(this, "StudyTelemetryCollector", STUDYTELEMETRYCOLLECTORPATH);
-// Not using the below since ends up with "StudyTelemetryCollector is not a constructor"
-// const { StudyTelemetryCollector } = Cu.import(STUDYTELEMETRYCOLLECTORPATH, {});
-
-const REASONS = studyUtils.REASONS;
+const REASONS = {
+  APP_STARTUP: 1, // The application is starting up.
+  APP_SHUTDOWN: 2, // The application is shutting down.
+  ADDON_ENABLE: 3, // The add-on is being enabled.
+  ADDON_DISABLE: 4, // The add-on is being disabled. (Also sent during uninstallation)
+  ADDON_INSTALL: 5, // The add-on is being installed.
+  ADDON_UNINSTALL: 6, // The add-on is being uninstalled.
+  ADDON_UPGRADE: 7, // The add-on is being upgraded.
+  ADDON_DOWNGRADE: 8, // The add-on is being downgraded.
+};
 
 // var log = createLog(studyConfig.study.studyName, config.log.bootstrap.level);  // defined below.
 // log("LOG started!");
 
-/* Example addon-specific module imports.  Remember to Unload during shutdown() below.
-   Ideally, put ALL your feature code in a Feature.jsm file,
-   NOT in this bootstrap.js.
+this.Bootstrap = {
+  install() {
+  },
 
-  const FEATUREPATH = `${__SCRIPT_URI_SPEC__}/../Feature.jsm`;
-  const { feature } = Cu.import(FEATUREPATH, {});
+  /**
+   * @param addonData Array [ "id", "version", "installPath", "resourceURI", "instanceID", "webExtension" ]
+   * @param reason
+   * @returns {Promise.<void>}
+   */
+  async startup(addonData, reason) {
+    // Check if the user is opted in to pioneer and if not end the study
+    await Pioneer.startup(addonData);
+    const events = Pioneer.utils.getAvailableEvents();
 
-  const SOMEEXPORTEDSYMBOLPATH = `${__SCRIPT_URI_SPEC__}/../SomeExportedSymbol.jsm`;
-  const { someExportedSymbol } = Cu.import(SOMEEXPORTEDSYMBOLPATH, {});
-
-  XPCOMUtils.defineLazyModuleGetter(this, "Preferences",
-    "resource://gre/modules/Preferences.jsm");
-*/
-
-async function startup(addonData, reason) {
-  // addonData: Array [ "id", "version", "installPath", "resourceURI", "instanceID", "webExtension" ]  bootstrap.js:48
-  console.log("startup", REASONS[reason] || reason);
-
-  // setup the studyUtils so that Telemetry is valid
-  studyUtils.setup({
-    ...config,
-    addon: { id: addonData.id, version: addonData.version },
-  });
-
-  // choose the variation for this particular user, then set it.
-  const variation = (studyConfig.forceVariation ||
-    await studyUtils.deterministicVariation(
-      studyConfig.weightedVariations
-    )
-  );
-  studyUtils.setVariation(variation);
-
-
-  // addon_install:  note first seen, check eligible
-  if ((REASONS[reason]) === "ADDON_INSTALL") {
-    studyUtils.firstSeen(); // sends telemetry "enter"
-    const eligible = await config.isEligible(); // addon-specific
-    if (!eligible) {
-      // uses config.endings.ineligible.url if any,
-      // sends UT for "ineligible"
-      // then uninstalls addon
-      await studyUtils.endStudy({reason: "ineligible"});
+    const isEligible = await Pioneer.utils.isUserOptedIn();
+    if (!isEligible) {
+      console.log('Not eligable for Pioneer study. Will uninstall the study add-on.');
+      Pioneer.utils.endStudy(events.INELIGIBLE);
       return;
     }
-  }
 
-  // for all 'eligible' users, startup.
-  await studyUtils.startup({reason});
-
-  // log what the study variation and other info is.
-  console.log(`info ${JSON.stringify(studyUtils.info())}`);
-
-
-  // if you have code to handle expiration / long-timers, it could go here
-
-
-  // If your study has an embedded webExtension, start it.
-  const webExtension = addonData.webExtension;
-  if (webExtension) {
-    webExtension.startup().then(api => {
-      const {browser} = api;
-      /* spec for messages intended for Shield =>
-        {shield:true,msg=[info|endStudy|telemetry],data=data}
-      */
-      browser.runtime.onMessage.addListener(studyUtils.respondToWebExtensionMessage);
-
-      // other browser.runtime.onMessage handlers for your addon, if any
-
-    });
-  }
-
-  // Fire this, then we are done.
-  new StudyTelemetryCollector(studyUtils, variation).start();
-}
-
-
-function shutdown(addonData, reason) {
-  console.log("shutdown", REASONS[reason] || reason);
-  // FRAGILE: handle uninstalls initiated by USER or by addon
-  if (reason === REASONS.ADDON_UNINSTALL || reason === REASONS.ADDON_DISABLE) {
-    console.log("uninstall or disable");
-    if (!studyUtils._isEnding) {
-      // we are the first 'uninstall' requestor => must be user action.
-      console.log("user requested shutdown");
-      studyUtils.endStudy({reason: "user-disable"});
-      return;
+    // Fire this once per released version (only during INSTALL or UPGRADE), then we are done.
+    if (reason === REASONS.ADDON_INSTALL || reason === REASONS.ADDON_UPGRADE) {
+      new StudyTelemetryCollector().start();
     }
-    // normal shutdown, or 2nd uninstall request
-    console.log("Jsms unloading");
+  },
 
+  // Unload all resources used by the add-on (even those not loaded in bootstrap.js)
+  shutdown() {
+    Cu.unload("resource://esper-pioneer-shield-study/Config.jsm");
+    Cu.unload("resource://esper-pioneer-shield-study/lib/Pioneer.jsm");
+    Cu.unload("resource://esper-pioneer-shield-study/lib/StudyTelemetryCollector.jsm");
+    Cu.unload("resource://esper-pioneer-shield-study/lib/Helpers.jsm");
+  },
 
-    // QA NOTE:  unload addon specific modules here.
+  uninstall() {
+  },
+};
 
-
-
-    // clean up our modules.
-    Cu.unload(CONFIGPATH);
-    Cu.unload(STUDYUTILSPATH);
-    Cu.unload(STUDYTELEMETRYCOLLECTORPATH);
-    // Cu.unload(FEATUREPATH);
-    // Cu.unload(SOMEEXPORTEDSYMBOLPATH);
-
-  }
-}
-
-function uninstall(addonData, reason) {
-  console.log("uninstall", REASONS[reason] || reason);
-}
-
-function install(addonData, reason) {
-  console.log("install", REASONS[reason] || reason);
-  // handle ADDON_UPGRADE (if needful) here
+// Expose bootstrap methods on the global
+for (const methodName of ["install", "startup", "shutdown", "uninstall"]) {
+  this[methodName] = Bootstrap[methodName].bind(Bootstrap);
 }
 
 /** CONSTANTS and other bootstrap.js utilities */
@@ -149,4 +86,3 @@ function install(addonData, reason) {
 //  L.level = Log.Level[levelWord] || Log.Level.Debug; // should be a config / pref
 //  return L;
 // }
-

@@ -27,7 +27,7 @@ const {
   installAddon,
   promiseSetupDriver,
   getTelemetryPings,
-  printPings,
+  printPioneerPings,
   takeScreenshot,
   writePingsJson
 } = require("./test/utils");
@@ -59,6 +59,9 @@ const minimistHandler = {
     const driver = await promiseSetupDriver();
     console.log("Firefox started");
 
+    // install the pioneer opt-in add-on
+    await installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
+
     // install the addon
     if (process.env.XPI) {
       const fileLocation = path.join(process.cwd(), process.env.XPI);
@@ -80,16 +83,19 @@ const minimistHandler = {
     await takeScreenshot(driver);
     console.log("Screenshot dumped");
 
+    // wait for telemetry to be fully initialized
+    await driver.sleep(60000);
+
     const telemetryPingsFilterOptions = {
-      type: [ "shield-study", "shield-study-addon" ],
+      type: [ "pioneer-study" ],
       headersOnly: false,
     };
     const pings = await getTelemetryPings(driver, telemetryPingsFilterOptions);
-    console.log("Shield study telemetry pings: ");
-    printPings(pings);
+    console.log("Pioneer study telemetry pings: ");
+    printPioneerPings(pings);
 
     writePingsJson(pings);
-    console.log("Shield study telemetry pings written to pings.json");
+    console.log("Pioneer study telemetry pings written to pings.json");
 
   } catch (e) {
     console.error(e); // eslint-disable-line no-console

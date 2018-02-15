@@ -33,6 +33,14 @@ const FIREFOX_PREFERENCES = {
   // NECESSARY for all 57+ builds
   "extensions.legacy.enabled": true,
 
+  // Enabled basic telemetry + shield studies by default when running tests
+  "datareporting.healthreport.uploadEnabled": true,
+  "app.shield.optoutstudies.enabled": true,
+
+  // Set telemetry to initiate earlier than 60 seconds
+  // TODO: figure out why setting this preference leads to profile_creation_date and default_search_engine not being set
+  //"toolkit.telemetry.initDelay": 1,
+
   /** WARNING: gecko webdriver sets many additional prefs at:
     * https://dxr.mozilla.org/mozilla-central/source/testing/geckodriver/src/prefs.rs
     *
@@ -83,6 +91,30 @@ module.exports.promiseSetupDriver = async() => {
   driver.setContext(Context.CHROME);
 
   return driver;
+};
+
+module.exports.disableBasicTelemetry = async(driver) => {
+  return await module.exports.setPreference(driver, "datareporting.healthreport.uploadEnabled", false);
+};
+
+module.exports.disableShieldStudiesTelemetry = async(driver) => {
+  return await module.exports.setPreference(driver, "app.shield.optoutstudies.enabled", false);
+};
+
+module.exports.setPreference = async(driver, prefName, prefValue) => {
+  return await driver.executeAsyncScript((prefName, prefValue, callback) => {
+    Components.utils.import("resource://gre/modules/Preferences.jsm");
+    Preferences.set(prefName, prefValue);
+    callback();
+  }, prefName, prefValue);
+};
+
+module.exports.getPreference = async(driver, prefName, defaultValue) => {
+  return await driver.executeAsyncScript((prefName, defaultValue, callback) => {
+    Components.utils.import("resource://gre/modules/Preferences.jsm");
+    const value = Preferences.get(prefName, defaultValue);
+    callback(value);
+  }, prefName, defaultValue);
 };
 
 module.exports.installAddon = async(driver, fileLocation) => {
@@ -173,6 +205,33 @@ version       ${p0.version}
   pings.forEach(p => {
     console.log(p.creationDate, p.payload.type);
     console.log(JSON.stringify(p.payload.data, null, 2))
+  })
+
+};
+
+module.exports.printPioneerPings = async(pings) => {
+
+  if (pings.length === 0) {
+    console.log('No pings');
+    return;
+  }
+
+  const p0 = pings[0].payload;
+  // print common fields
+  console.log(
+    `
+// common fields
+
+schemaName     ${p0.schemaName}
+schemaVersion  ${p0.schemaVersion}
+studyName      ${p0.studyName}
+
+    `
+  )
+
+  pings.forEach(p => {
+    console.log(p.creationDate);
+    console.log(JSON.stringify(p.payload, null, 2))
   })
 
 };

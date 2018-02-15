@@ -41,10 +41,20 @@ ln -s "${XPI_NAME}" linked-addon.xpi
 
 popd > /dev/null
 
+# download and build xpi for https://github.com/mozilla/pioneer-opt-in.git
+if [ ! -d "pioneer-opt-in" ]; then
+    git clone https://github.com/mozilla/pioneer-opt-in.git
+fi
+cd pioneer-opt-in
+bin/make-xpi.sh .
+cd -
+cp pioneer-opt-in/pioneer-opt-in.xpi "${BASE_DIR}"/dist/
 
 echo
 echo "SUCCESS: xpi at ${BASE_DIR}/dist/${XPI_NAME}"
 echo "SUCCESS: symlinked xpi at ${BASE_DIR}/dist/linked-addon.xpi"
+echo "SUCCESS: pioneer-opt-in xpi at ${BASE_DIR}/dist/pioneer-opt-in.xpi"
+echo
 
 ls -alF "${BASE_DIR}"/dist
 

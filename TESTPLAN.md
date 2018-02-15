@@ -1,207 +1,72 @@
-# Test Plan for the 57-Perception-Study Addon
-
-## Automated Testing
-
-`npm test` does **optimistic testing** of the *commonest path* though the study for a user
-
-- prove the notification bar ui opens
-- *clicking on the left-most button presented*.
-- verifying that sent Telemetry is correct.
-
-Code at [./test/functional_test.js].
+# Test Plan for The ESPER Experiment - Firefox Pioneer Study
 
 ## Manual / QA TEST Instructions
 
-Assumptions / Thoughts
+1. Install the latest signed version of the addon from https://bugzilla.mozilla.org/show_bug.cgi?id=1414900
+1. Go to about:telemetry -> Click "current ping" -> Archived ping data -> ping, select pioneer-study
+1. Click on "Raw Payload" and verify the ping is similar to https://github.com/motin/esper-pioneer-shield-study/blob/master/TELEMETRY.md
+1. Copy the ping (from the browser console, where the unencrypted payload is shown) to left box of  http://jsondiff.com/
+1. Go to about:addons and remove the addon
+1. Open a new tab and visit a unique page 
+1. Right click on any link from any page and click “Open Link in New Tab”
+1. Bookmark the page
+1. Open a new window and search “Mozilla” in the search bar
+1. Create a new tab and search “Firefox” in the urlbar
+1. Right-click any word and select to search for it in the context menu
+1. Create a new tab and search "Firefox" in the tab contents search bar ("Search the Web")
+1. Reinstall the addon
+1. Go to about:telemetry in a new tab, or at least make sure to reload the previous page (this refreshes the archived ping data)
+1. Copy the ping (from the browser console, where the unencrypted payload is shown) to the right side of the above online tool: http://jsondiff.com/
+1. Compare the two pings using the online tool
+1. Verify values of some fields are changed in the second ping. 
 
-1.  Please ask if you want  more command-line tools to do this testing.
+## Developer testing 
 
-### BEFORE EACH TEST: INSTALL THE ADDON to a CLEAN (NEW) PROFILE
+First, make sure you are on NPM 5+ installed so that the proper dependencies are installed using the package-lock.json file.
 
-0.  (create profile:  https://developer.mozilla.org/en-US/Firefox/Multiple_profiles, or via some other method)
-1.  In your Firefox profile
-2.  `about:debugging` > `install temporary addon`
+`$ npm install -g npm`
 
-As an alternative (command line) cli method:
+Clone the repo:
 
-1. `git clone` the directory.
-2. `npm install` then `npm run firefox` from the Github (source) directory.
+`$ git clone https://github.com/motin/esper-pioneer-shield-study.git -b prepare-for-qa`
 
+After cloning the repo, you can run the following commands from the top level directory, one after another:
+
+`$ npm install`
+
+`$ npm run build`
+
+This packages the add-on into `linked-addon.xpi` which is stored in `dist/`. It also builds the `pioneer-opt-in.xpi` which is required for the study to run. These files are what you load into Firefox.
+
+To do that, open your standard issue Firefox (with your ordinary profile) and load the `.xpi` using the following steps:
+
+* Navigate to *about:config* and set `extensions.legacy.enabled` to `true`. This permits the loading of the embedded Web Extension since new versions of Firefox are becoming restricted to pure Web Extensions only.
+* Navigate to *about:debugging* in your URL bar
+* Select "Load Temporary Add-on"
+* Find and select the `dist/pioneer-opt-in.xpi` file.
+* Select "Load Temporary Add-on"
+* Find and select the `dist/linked-addon.xpi` file.
+
+### Seeing the add-on in action
+
+You should not see any UI element from this add-on, only log output in the Browser Console (`Tools > Web Developer > Browser Console`), which comes from shield utilities in general and this add-on.
 
 ### Note: checking "Correct Pings"
 
-All interactions with the UI create sequences of Telemetry Pings.
+At add-on installation, the add-on will wait for Telemetry to be fully initialized 
+(which can take over a minute if Firefox was just started), and finally collect the relevant telemetry and send a ping with that payload.
+See [TELEMETRY.md](./TELEMETRY.md) for more details. 
 
-All UI `shield-study` `study_state` sequences look like this:
+### Example of how it appears when testing in Firefox Nightly
 
-- `enter => install => (one of: "voted" | "notification-x" |  "window-or-fx-closed") => exit`.
+![Example of how it appears when testing in Firefox Nightly](https://user-images.githubusercontent.com/793037/33172067-4fd68b42-d057-11e7-8f38-4185d60831ce.png)
 
-(Note: this is complicated to explain, so please ask questions and I will try to write it up better!, see `TELMETRY.md` and EXAMPLE SEQUENCE below.)
+## Automated Testing
 
-### Do these tests.
+`npm run firefox` starts Firefox and automatically installs the add-on in a new profile and echoes the sent pings to the shell.
 
-1.  UI APPEARANCE.  OBSERVE a notification bar with these traits:
+`npm test` verifies the telemetry payload as expected at firefox startup and add-on installation in a clean profile.
 
-    *  Icon is 'heartbeat'
-    *  Text is one of 8 selected "questions", such as:  "Do you like Firefox?".  These are listed in [./addon/Config.jsm] as the variable `weightedVariations`.
-    *  clickable buttons with labels 'yes | not sure | no'  OR 'no | not sure | yes' (50/50 chance of each)
-    *  an `x` button at the right that closes the notice.
+Code at [./test/functional_test.js](./test/functional_test.js).
 
-    Test fails IF:
-
-    - there is no bar.
-    - elements are not correct or are not displayed
-
-
-2.  UI functionality: VOTE
-
-    Expect:  Click on a 'vote' button (any of: `yes | not sure | no`) has all these effects
-
-    - notice closes
-    - addon uninstalls
-    - no additional tabs open
-    - telemetry pings are 'correct' with this SPECIFIC `study_state` as the ending
-
-        - ending is `voted`
-        - 'vote' is correct.
-
-3.  UI functionality: 'X' button
-
-    Click on the 'x' button.
-
-    - notice closes
-    - addon uninstalls
-    - no additional tabs open
-    - telemetry pings are 'correct' with this SPECIFIC ending
-
-      - ending is `notification-x`
-
-4.  UI functionality  'close window'
-
-    1.  Open a 2nd firefox window.
-    2.  Close the initial window.
-
-    Then observe:
-
-    - notice closes
-    - addon uninstalls
-    - no additional tabs open
-    - telemetry pings are 'correct' with this SPECIFIC ending
-
-      - ending is `window-or-fx-closed`
-
-
----
-## Helper code and tips
-
-### ***To open a Chrome privileged console***
-
-1.  `about:addons`
-2.  `Tools > web developer console`
-
-Or use other methods, like Scratchpad.
-
-
-### **Telemetry Ping Printing Helper Code**
-
-```javascript
-async function printPings() {
-  async function getTelemetryPings (options) {
-    // type is String or Array
-    const {type, n, timestamp, headersOnly} = options;
-    Components.utils.import("resource://gre/modules/TelemetryArchive.jsm");
-    // {type, id, timestampCreated}
-    let pings = await TelemetryArchive.promiseArchivedPingList();
-    if (type) {
-      if (!(type instanceof Array)) {
-        type = [type];  // Array-ify if it's a string
-      }
-    }
-    if (type) pings = pings.filter(p => type.includes(p.type));
-    if (timestamp) pings = pings.filter(p => p.timestampCreated > timestamp);
-
-    pings.sort((a, b) => b.timestampCreated - a.timestampCreated);
-    if (n) pings = pings.slice(0, n);
-    const pingData = headersOnly ? pings : pings.map(ping => TelemetryArchive.promiseArchivedPingById(ping.id));
-    return Promise.all(pingData)
-  }
-  async function getPings() {
-    const ar = ["shield-study", "shield-study-addon"];
-    return getTelemetryPings({type: ["shield-study", "shield-study-addon"]});
-  }
-
-  const pings = (await getPings()).reverse();
-  const p0 = pings[0].payload;
-  // print common fields
-  console.log(
-    `
-// common fields
-
-branch        ${p0.branch}        // should describe Question text
-study_name    ${p0.study_name}
-addon_version ${p0.addon_version}
-version       ${p0.version}
-
-    `
-  )
-
-  pings.forEach(p=>{
-    console.log(p.creationDate, p.payload.type);
-    console.log(JSON.stringify(p.payload.data,null,2))
-  })
-}
-
-printPings()
-
-```
-
-
-### Example sequence for a 'voted => not sure' interaction
-
-```
-
-// common fields
-
-branch        up-to-expectations-1        // should describe Question text
-study_name    57-perception-shield-study
-addon_version 1.0.0
-version       3
-
-
-2017-10-09T14:16:18.042Z shield-study
-{
-  "study_state": "enter"
-}
-2017-10-09T14:16:18.055Z shield-study
-{
-  "study_state": "installed"
-}
-2017-10-09T14:16:18.066Z shield-study-addon
-{
-  "attributes": {
-    "event": "prompted",
-    "promptType": "notificationBox-strings-1"
-  }
-}
-2017-10-09T16:29:44.109Z shield-study-addon
-{
-  "attributes": {
-    "promptType": "notificationBox-strings-1",
-    "event": "answered",
-    "yesFirst": "1",
-    "score": "0",
-    "label": "not sure",
-    "branch": "up-to-expectations-1",
-    "message": "Is Firefox performing up to your expectations?"
-  }
-}
-2017-10-09T16:29:44.188Z shield-study
-{
-  "study_state": "ended-neutral",
-  "study_state_fullname": "voted"
-}
-2017-10-09T16:29:44.191Z shield-study
-{
-  "study_state": "exit"
-}
-```
+Note: Both of these run in recently created profiles, leading to behavior-dependent such as browser engagement and search count telemetry not being available.  
