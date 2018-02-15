@@ -70,7 +70,10 @@ const minimistHandler = {
     console.log("Firefox started");
 
     // install the pioneer opt-in add-on
-    await installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
+    await installAddon(
+      driver,
+      path.join(process.cwd(), "dist/pioneer-opt-in.xpi"),
+    );
 
     // install the addon
     if (process.env.XPI) {
@@ -90,7 +93,9 @@ const minimistHandler = {
     const openBrowserConsole = Key.chord(MODIFIER_KEY, Key.SHIFT, "j");
     await urlBar.sendKeys(openBrowserConsole);
 
-    console.log("The addon should now be loaded and you should be able to interact with the addon in the newly opened Firefox instance.");
+    console.log(
+      "The addon should now be loaded and you should be able to interact with the addon in the newly opened Firefox instance.",
+    );
 
     // allow our shield study addon some time to start
     console.log("Waiting 2 seconds to allow for initial telemetry to be sent");
@@ -103,7 +108,7 @@ const minimistHandler = {
     await driver.sleep(60000);
 
     const telemetryPingsFilterOptions = {
-      type: [ "pioneer-study" ],
+      type: ["pioneer-study"],
       headersOnly: false,
     };
     const pings = await getTelemetryPings(driver, telemetryPingsFilterOptions);
@@ -112,7 +117,6 @@ const minimistHandler = {
 
     writePingsJson(pings);
     console.log("Pioneer study telemetry pings written to pings.json");
-
   } catch (e) {
     console.error(e);
   }

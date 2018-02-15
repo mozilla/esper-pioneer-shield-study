@@ -1,8 +1,7 @@
-"use strict";
+"use strict"; // Cu.import
 
 /* global  __SCRIPT_URI_SPEC__  */
-/* global Feature, Services */ // Cu.import
-/* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/
+/* global Feature, Services */ /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/
 
 const { utils: Cu } = Components;
 Cu.import("resource://gre/modules/Console.jsm");
@@ -10,13 +9,19 @@ Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 XPCOMUtils.defineLazyModuleGetter(
-  this, "Config", "resource://esper-pioneer-shield-study/Config.jsm"
+  this,
+  "Config",
+  "resource://esper-pioneer-shield-study/Config.jsm",
 );
 XPCOMUtils.defineLazyModuleGetter(
-  this, "StudyTelemetryCollector", "resource://esper-pioneer-shield-study/lib/StudyTelemetryCollector.jsm"
+  this,
+  "StudyTelemetryCollector",
+  "resource://esper-pioneer-shield-study/lib/StudyTelemetryCollector.jsm",
 );
 XPCOMUtils.defineLazyModuleGetter(
-  this, "Pioneer", "resource://esper-pioneer-shield-study/lib/Pioneer.jsm"
+  this,
+  "Pioneer",
+  "resource://esper-pioneer-shield-study/lib/Pioneer.jsm",
 );
 
 const REASONS = {
@@ -34,8 +39,7 @@ const REASONS = {
 // log("LOG started!");
 
 this.Bootstrap = {
-  install() {
-  },
+  install() {},
 
   /**
    * @param addonData Array [ "id", "version", "installPath", "resourceURI", "instanceID", "webExtension" ]
@@ -49,7 +53,9 @@ this.Bootstrap = {
 
     const isEligible = await Pioneer.utils.isUserOptedIn();
     if (!isEligible) {
-      console.log("Not eligable for Pioneer study. Will uninstall the study add-on.");
+      console.log(
+        "Not eligable for Pioneer study. Will uninstall the study add-on.",
+      );
       Pioneer.utils.endStudy(events.INELIGIBLE);
       return;
     }
@@ -64,12 +70,13 @@ this.Bootstrap = {
   shutdown() {
     Cu.unload("resource://esper-pioneer-shield-study/Config.jsm");
     Cu.unload("resource://esper-pioneer-shield-study/lib/Pioneer.jsm");
-    Cu.unload("resource://esper-pioneer-shield-study/lib/StudyTelemetryCollector.jsm");
+    Cu.unload(
+      "resource://esper-pioneer-shield-study/lib/StudyTelemetryCollector.jsm",
+    );
     Cu.unload("resource://esper-pioneer-shield-study/lib/Helpers.jsm");
   },
 
-  uninstall() {
-  },
+  uninstall() {},
 };
 
 // Expose bootstrap methods on the global

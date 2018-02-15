@@ -2,8 +2,8 @@
 
 ## Usual Firefox Telemetry is unaffected.
 
-- No change: `main` and other pings are UNAFFECTED by this add-on.
-- Respects telemetry preferences.  If user has disabled telemetry, no telemetry will be sent.
+* No change: `main` and other pings are UNAFFECTED by this add-on.
+* Respects telemetry preferences. If user has disabled telemetry, no telemetry will be sent.
 
 ## `pioneer-study` pings (common to all pioneer-studies)
 
@@ -13,12 +13,12 @@ This study has no surveys and as such has NO SPECIFIC ENDINGS.
 
 ## `pioneer-study` pings, specific to THIS study.
 
-No user interaction is instrumented in this study. Instead, the add-on performs a one-time collection of a large 
-subset of telemetry fields for the cohort of users participating in the Firefox Pioneer project. The collection of 
-normal telemetry variables for this cohort in conjunction with the extended data collection unique to Pioneer will 
-allow both quantitative and qualitative comparison of the Pioneer cohort to the Firefox release population. 
+No user interaction is instrumented in this study. Instead, the add-on performs a one-time collection of a large
+subset of telemetry fields for the cohort of users participating in the Firefox Pioneer project. The collection of
+normal telemetry variables for this cohort in conjunction with the extended data collection unique to Pioneer will
+allow both quantitative and qualitative comparison of the Pioneer cohort to the Firefox release population.
 
-At add-on installation, the add-on will wait for Telemetry to be fully initialized 
+At add-on installation, the add-on will wait for Telemetry to be fully initialized
 (which can take over a minute if Firefox was just started), and finally collect the relevant telemetry and send a ping with that payload.
 
 ### Attributes
@@ -38,9 +38,9 @@ systemCpuSpeedMhz
 osVersion
 systemGfxMonitors1ScreenWidth
 systemGfxMonitors1ScreenWidthZeroIndexed
-``` 
+```
 
-Collected from the current telemetry subsession ping payload: 
+Collected from the current telemetry subsession ping payload:
 
 ```
 uptime
@@ -67,14 +67,14 @@ spbeUniqueDomainsCount
 spbeMaxConcurrentWindowCount
 spbeMaxConcurrentTabCount
 spbeUnfilteredUriCount
-``` 
+```
 
 Collected by querying the places sqlite database in the same way that ordinary telemetry would do, if it would do it predictably:
 
 ```
 placesBookmarksCount
 placesPagesCount
-``` 
+```
 
 Not collected by the add-on, but is added by server-side telemetry processing based on the user's IP:
 
@@ -83,11 +83,11 @@ metadata.geoCountry
 metadata.geoCity
 ```
 
-When a certain probe is not set in the current telemetry environment, the string "null" is set instead. 
+When a certain probe is not set in the current telemetry environment, the string "null" is set instead.
 
 ### Peculiarities
 
-1. The places_bookmarks_count and places_pages_count attributes are only available occasionally in the ordinary telemetry session due to performance reasons. To be certain that we get values, we query the current database contents using the same queries as telemetry uses. 
+1. The places_bookmarks_count and places_pages_count attributes are only available occasionally in the ordinary telemetry session due to performance reasons. To be certain that we get values, we query the current database contents using the same queries as telemetry uses.
 1. Contrary to what the [documentation](https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/telemetry/data/main-ping.html) states ("Flag and count histograms are always created and submitted, with their default value being respectively false and 0. Other histogram types (see Choosing a Histogram Type) are not created nor submitted if no data was added to them."), the search_counts histogram is empty until a search has been executed.
 1. Scalars and most histograms are only submitted if data was added to them.
 1. Config/preference-related attributes are generally only defined if they defer from the browser default preferences.
@@ -98,7 +98,6 @@ When a certain probe is not set in the current telemetry environment, the string
 These are the `payload` fields from the ping sent via pioneer utils.
 
 ```
-
 // common fields
 
 schemaName     esper-study-telemetry
@@ -115,7 +114,6 @@ studyName      esper-pioneer-shield-study
   "schemaVersion": 1,
   "studyName": "esper-pioneer-shield-study"
 }
-
 ```
 
 For a sample of the encrypted data before encryption, see [schemas/esper-study-telemetry.1.sample.json](./schemas/esper-study-telemetry.1.sample.json).

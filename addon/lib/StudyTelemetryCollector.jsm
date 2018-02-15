@@ -9,99 +9,130 @@ Cu.import("resource://gre/modules/Preferences.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/PromiseUtils.jsm");
 
-const EXPORTED_SYMBOLS = this.EXPORTED_SYMBOLS = ["StudyTelemetryCollector"];
+const EXPORTED_SYMBOLS = (this.EXPORTED_SYMBOLS = ["StudyTelemetryCollector"]);
 
 // telemetry utils
-const { TelemetryController } = Cu.import("resource://gre/modules/TelemetryController.jsm", null);
-const { TelemetrySession } = Cu.import("resource://gre/modules/TelemetrySession.jsm", null);
-const { TelemetryEnvironment } = Cu.import("resource://gre/modules/TelemetryEnvironment.jsm", null);
+const { TelemetryController } = Cu.import(
+  "resource://gre/modules/TelemetryController.jsm",
+  null,
+);
+const { TelemetrySession } = Cu.import(
+  "resource://gre/modules/TelemetrySession.jsm",
+  null,
+);
+const { TelemetryEnvironment } = Cu.import(
+  "resource://gre/modules/TelemetryEnvironment.jsm",
+  null,
+);
 
-XPCOMUtils.defineLazyModuleGetter(this, "PlacesUtils",
-  "resource://gre/modules/PlacesUtils.jsm");
-XPCOMUtils.defineLazyServiceGetter(this, "Telemetry",
-  "@mozilla.org/base/telemetry;1", "nsITelemetry");
+XPCOMUtils.defineLazyModuleGetter(
+  this,
+  "PlacesUtils",
+  "resource://gre/modules/PlacesUtils.jsm",
+);
+XPCOMUtils.defineLazyServiceGetter(
+  this,
+  "Telemetry",
+  "@mozilla.org/base/telemetry;1",
+  "nsITelemetry",
+);
 
 // pioneer utils
 XPCOMUtils.defineLazyModuleGetter(
-  this, "Pioneer", "resource://esper-pioneer-shield-study/lib/Pioneer.jsm"
+  this,
+  "Pioneer",
+  "resource://esper-pioneer-shield-study/lib/Pioneer.jsm",
 );
 
 // unit-tested study helpers
 XPCOMUtils.defineLazyModuleGetter(
-  this, "Helpers", "resource://esper-pioneer-shield-study/lib/Helpers.jsm"
+  this,
+  "Helpers",
+  "resource://esper-pioneer-shield-study/lib/Helpers.jsm",
 );
 
 class StudyTelemetryCollector {
-
-  constructor() {
-  }
+  constructor() {}
 
   async start() {
-
-    console.log("ESPER Study init. Will now await full telemetry initialization before collecting the payload for this study.");
+    console.log(
+      "ESPER Study init. Will now await full telemetry initialization before collecting the payload for this study.",
+    );
 
     // Ensure that we collect telemetry payloads only after it is fully initialized
     // See http://searchfox.org/mozilla-central/rev/423b2522c48e1d654e30ffc337164d677f934ec3/toolkit/components/telemetry/TelemetryController.jsm#295
     await TelemetryController.promiseInitialized();
 
     try {
-
       this.collectAndSendTelemetry();
-
     } catch (ex) {
       // TODO: how are errors during study execution reported?
       // Pioneer.utils.telemetryError();
       Components.utils.reportError(ex);
     }
-
   }
 
   async telemetry(schemaName, schemaVersion, payload) {
-    const pingId = await Pioneer.utils.submitEncryptedPing(schemaName, schemaVersion, payload);
+    const pingId = await Pioneer.utils.submitEncryptedPing(
+      schemaName,
+      schemaVersion,
+      payload,
+    );
     if (pingId) {
       console.log("ESPER Telemetry sent (encrypted)", JSON.stringify(payload));
     } else {
-      console.log("ESPER Telemetry not sent due to privacy preferences", JSON.stringify(payload));
+      console.log(
+        "ESPER Telemetry not sent due to privacy preferences",
+        JSON.stringify(payload),
+      );
     }
   }
 
   async collectAndSendTelemetry() {
-
     const telemetryEnvironmentBasedAttributes = StudyTelemetryCollector.collectTelemetryEnvironmentBasedAttributes();
     const telemetrySubsessionPayloadBasedAttributes = StudyTelemetryCollector.collectTelemetrySubsessionPayloadBasedAttributes();
     const telemetryScalarBasedAttributes = StudyTelemetryCollector.collectTelemetryScalarBasedAttributes();
 
-    console.log("telemetryEnvironmentBasedAttributes", telemetryEnvironmentBasedAttributes);
-    console.log("telemetrySubsessionPayloadBasedAttributes", telemetrySubsessionPayloadBasedAttributes);
-    console.log("telemetryScalarBasedAttributes", telemetryScalarBasedAttributes);
+    console.log(
+      "telemetryEnvironmentBasedAttributes",
+      telemetryEnvironmentBasedAttributes,
+    );
+    console.log(
+      "telemetrySubsessionPayloadBasedAttributes",
+      telemetrySubsessionPayloadBasedAttributes,
+    );
+    console.log(
+      "telemetryScalarBasedAttributes",
+      telemetryScalarBasedAttributes,
+    );
 
-    StudyTelemetryCollector.collectPlacesDbBasedAttributes().then((placesDbBasedAttributes) => {
+    StudyTelemetryCollector.collectPlacesDbBasedAttributes().then(
+      placesDbBasedAttributes => {
+        console.log("placesDbBasedAttributes", placesDbBasedAttributes);
 
-      console.log("placesDbBasedAttributes", placesDbBasedAttributes);
+        const shieldPingAttributes = {
+          ...telemetryEnvironmentBasedAttributes,
+          ...telemetrySubsessionPayloadBasedAttributes,
+          ...telemetryScalarBasedAttributes,
+          ...placesDbBasedAttributes,
+        };
 
-      const shieldPingAttributes = {
-        ...telemetryEnvironmentBasedAttributes,
-        ...telemetrySubsessionPayloadBasedAttributes,
-        ...telemetryScalarBasedAttributes,
-        ...placesDbBasedAttributes,
-      };
+        const shieldPingPayload = StudyTelemetryCollector.createShieldPingPayload(
+          shieldPingAttributes,
+        );
 
-      const shieldPingPayload = StudyTelemetryCollector.createShieldPingPayload(shieldPingAttributes);
+        // Add additional add-on metadata to the payload since pioneer-utils doesn't seem to do include the same metadata as shield-utils
+        shieldPingPayload.pioneerAddonMetadata = Pioneer.metadata;
 
-      // Add additional add-on metadata to the payload since pioneer-utils doesn't seem to do include the same metadata as shield-utils
-      shieldPingPayload.pioneerAddonMetadata = Pioneer.metadata;
+        console.log("shieldPingPayload", shieldPingPayload);
 
-      console.log("shieldPingPayload", shieldPingPayload);
-
-      this.telemetry("esper-study-telemetry", 1, shieldPingPayload);
-
-    });
-
+        this.telemetry("esper-study-telemetry", 1, shieldPingPayload);
+      },
+    );
   }
 
   // TODO: @glind: move to shield study utils / pioneer utils?
   static createShieldPingPayload(shieldPingAttributes) {
-
     const shieldPingPayload = {};
 
     // shield ping attributes must be strings
@@ -120,7 +151,6 @@ class StudyTelemetryCollector {
     }
 
     return shieldPingPayload;
-
   }
 
   /**
@@ -128,25 +158,28 @@ class StudyTelemetryCollector {
    * @returns {{}}
    */
   static collectTelemetryEnvironmentBasedAttributes() {
-
     const environment = TelemetryEnvironment.currentEnvironment;
     console.log("TelemetryEnvironment.currentEnvironment", environment);
 
     return {
-      "defaultSearchEngine": environment.settings.defaultSearchEngine,
-      "locale": environment.settings.locale,
-      "os": environment.system.os.name,
-      "appUpdateChannel": environment.settings.update.channel,
-      "profileCreationDate": environment.profile.creationDate,
-      "appVersion": environment.build.version,
-      "systemMemoryMb": environment.system.memoryMB,
-      "systemCpuCores": environment.system.cpu.cores,
-      "systemCpuSpeedMhz": environment.system.cpu.speedMHz,
-      "osVersion": environment.system.os.version,
-      "systemGfxMonitors1ScreenWidth": environment.system.gfx.monitors[0] ? environment.system.gfx.monitors[0].screenWidth : undefined,
-      "systemGfxMonitors1ScreenWidthZeroIndexed": environment.system.gfx.monitors[1] ? environment.system.gfx.monitors[1].screenWidth : undefined,
+      defaultSearchEngine: environment.settings.defaultSearchEngine,
+      locale: environment.settings.locale,
+      os: environment.system.os.name,
+      appUpdateChannel: environment.settings.update.channel,
+      profileCreationDate: environment.profile.creationDate,
+      appVersion: environment.build.version,
+      systemMemoryMb: environment.system.memoryMB,
+      systemCpuCores: environment.system.cpu.cores,
+      systemCpuSpeedMhz: environment.system.cpu.speedMHz,
+      osVersion: environment.system.os.version,
+      systemGfxMonitors1ScreenWidth: environment.system.gfx.monitors[0]
+        ? environment.system.gfx.monitors[0].screenWidth
+        : undefined,
+      systemGfxMonitors1ScreenWidthZeroIndexed: environment.system.gfx
+        .monitors[1]
+        ? environment.system.gfx.monitors[1].screenWidth
+        : undefined,
     };
-
   }
 
   /**
@@ -155,9 +188,13 @@ class StudyTelemetryCollector {
    * @returns {{}}
    */
   static collectTelemetrySubsessionPayloadBasedAttributes() {
-
-    const telemetrySubsessionCurrentPingData = TelemetryController.getCurrentPingData(true);
-    console.log("telemetrySubsessionCurrentPingData", telemetrySubsessionCurrentPingData);
+    const telemetrySubsessionCurrentPingData = TelemetryController.getCurrentPingData(
+      true,
+    );
+    console.log(
+      "telemetrySubsessionCurrentPingData",
+      telemetrySubsessionCurrentPingData,
+    );
 
     const payload = telemetrySubsessionCurrentPingData.payload;
 
@@ -170,22 +207,22 @@ class StudyTelemetryCollector {
     attributes.timezoneOffest = payload.info.timezoneOffset;
 
     // firefox/browser/modules/BrowserUsageTelemetry.jsm
-    attributes.searchCounts = Helpers.searchCountsHistogramToScalarTotalCount(payload.keyedHistograms.SEARCH_COUNTS);
+    attributes.searchCounts = Helpers.searchCountsHistogramToScalarTotalCount(
+      payload.keyedHistograms.SEARCH_COUNTS,
+    );
 
     return attributes;
-
   }
 
   static collectTelemetryScalarBasedAttributes() {
-
     const attributes = {};
 
     // firefox/browser/modules/test/browser/head.js
 
     function getParentProcessScalars(aChannel, aKeyed = false, aClear = false) {
-      const scalars = aKeyed ?
-        Services.telemetry.snapshotKeyedScalars(aChannel, aClear).parent :
-        Services.telemetry.snapshotScalars(aChannel, aClear).parent;
+      const scalars = aKeyed
+        ? Services.telemetry.snapshotKeyedScalars(aChannel, aClear).parent
+        : Services.telemetry.snapshotScalars(aChannel, aClear).parent;
       return scalars || {};
     }
 
@@ -193,13 +230,16 @@ class StudyTelemetryCollector {
 
     const MAX_CONCURRENT_TABS = "browser.engagement.max_concurrent_tab_count";
     const TAB_EVENT_COUNT = "browser.engagement.tab_open_event_count";
-    const MAX_CONCURRENT_WINDOWS = "browser.engagement.max_concurrent_window_count";
+    const MAX_CONCURRENT_WINDOWS =
+      "browser.engagement.max_concurrent_window_count";
     const WINDOW_OPEN_COUNT = "browser.engagement.window_open_event_count";
     const TOTAL_URI_COUNT = "browser.engagement.total_uri_count";
     const UNIQUE_DOMAINS_COUNT = "browser.engagement.unique_domains_count";
     const UNFILTERED_URI_COUNT = "browser.engagement.unfiltered_uri_count";
 
-    const scalars = getParentProcessScalars(Telemetry.DATASET_RELEASE_CHANNEL_OPTIN);
+    const scalars = getParentProcessScalars(
+      Telemetry.DATASET_RELEASE_CHANNEL_OPTIN,
+    );
 
     function getScalar(scalars, scalarName) {
       if (!(scalarName in scalars)) {
@@ -211,13 +251,25 @@ class StudyTelemetryCollector {
 
     console.log("scalars", scalars);
 
-    attributes.spbeMaxConcurrentWindowCount = getScalar(scalars, MAX_CONCURRENT_WINDOWS);
-    attributes.spbeMaxConcurrentTabCount = getScalar(scalars, MAX_CONCURRENT_TABS);
+    attributes.spbeMaxConcurrentWindowCount = getScalar(
+      scalars,
+      MAX_CONCURRENT_WINDOWS,
+    );
+    attributes.spbeMaxConcurrentTabCount = getScalar(
+      scalars,
+      MAX_CONCURRENT_TABS,
+    );
     attributes.spbeTabOpenEventCount = getScalar(scalars, TAB_EVENT_COUNT);
     attributes.spbeWindowOpenEventCount = getScalar(scalars, WINDOW_OPEN_COUNT);
-    attributes.spbeUniqueDomainsCount = getScalar(scalars, UNIQUE_DOMAINS_COUNT);
+    attributes.spbeUniqueDomainsCount = getScalar(
+      scalars,
+      UNIQUE_DOMAINS_COUNT,
+    );
     attributes.spbeTotalUriCount = getScalar(scalars, TOTAL_URI_COUNT);
-    attributes.spbeUnfilteredUriCount = getScalar(scalars, UNFILTERED_URI_COUNT);
+    attributes.spbeUnfilteredUriCount = getScalar(
+      scalars,
+      UNFILTERED_URI_COUNT,
+    );
 
     function getKeyedScalar(scalars, scalarName, key) {
       if (!(scalarName in scalars)) {
@@ -231,7 +283,11 @@ class StudyTelemetryCollector {
       return scalars[scalarName][key];
     }
 
-    const keyedScalars = getParentProcessScalars(Telemetry.DATASET_RELEASE_CHANNEL_OPTIN, true, false);
+    const keyedScalars = getParentProcessScalars(
+      Telemetry.DATASET_RELEASE_CHANNEL_OPTIN,
+      true,
+      false,
+    );
 
     console.log("keyedScalars", keyedScalars);
 
@@ -239,7 +295,11 @@ class StudyTelemetryCollector {
 
     const SCALAR_SEARCHBAR = "browser.engagement.navigation.searchbar";
 
-    attributes.spbeNavigationSearchbar = getKeyedScalar(keyedScalars, SCALAR_SEARCHBAR, "search_enter");
+    attributes.spbeNavigationSearchbar = getKeyedScalar(
+      keyedScalars,
+      SCALAR_SEARCHBAR,
+      "search_enter",
+    );
 
     // firefox/browser/modules/test/browser/browser_UsageTelemetry_content.js
 
@@ -247,17 +307,28 @@ class StudyTelemetryCollector {
     const SCALAR_CONTEXT_MENU = BASE_PROBE_NAME + "contextmenu";
     const SCALAR_ABOUT_NEWTAB = BASE_PROBE_NAME + "about_newtab";
 
-    attributes.spbeNavigationAboutNewtab = getKeyedScalar(keyedScalars, SCALAR_ABOUT_NEWTAB, "search_enter");
-    attributes.spbeNavigationContextmenu = getKeyedScalar(keyedScalars, SCALAR_CONTEXT_MENU, "search");
+    attributes.spbeNavigationAboutNewtab = getKeyedScalar(
+      keyedScalars,
+      SCALAR_ABOUT_NEWTAB,
+      "search_enter",
+    );
+    attributes.spbeNavigationContextmenu = getKeyedScalar(
+      keyedScalars,
+      SCALAR_CONTEXT_MENU,
+      "search",
+    );
 
     // firefox/browser/modules/test/browser/browser_UsageTelemetry_urlbar.js
 
     const SCALAR_URLBAR = "browser.engagement.navigation.urlbar";
 
-    attributes.spbeNavigationUrlbar = getKeyedScalar(keyedScalars, SCALAR_URLBAR, "search_enter");
+    attributes.spbeNavigationUrlbar = getKeyedScalar(
+      keyedScalars,
+      SCALAR_URLBAR,
+      "search_enter",
+    );
 
     return attributes;
-
   }
 
   /**
@@ -271,20 +342,16 @@ class StudyTelemetryCollector {
    * @returns {Promise}
    */
   static async collectPlacesDbBasedAttributes() {
-
     return new Promise((resolve, reject) => {
-
-      StudyTelemetryCollector.queryPlacesDbTelemetry().then((placesDbTelemetryResults) => {
-
-        resolve({
-          placesPagesCount: placesDbTelemetryResults[0][1],
-          placesBookmarksCount: placesDbTelemetryResults[1][1],
-        });
-
-      }).catch(ex => reject(ex));
-
+      StudyTelemetryCollector.queryPlacesDbTelemetry()
+        .then(placesDbTelemetryResults => {
+          resolve({
+            placesPagesCount: placesDbTelemetryResults[0][1],
+            placesBookmarksCount: placesDbTelemetryResults[1][1],
+          });
+        })
+        .catch(ex => reject(ex));
     });
-
   }
 
   /**
@@ -293,7 +360,6 @@ class StudyTelemetryCollector {
    * @returns {Promise.<A|Promise.<*[]>|Promise.<Array.<T>>>}
    */
   static async queryPlacesDbTelemetry() {
-
     const probes = [
       {
         histogram: "PLACES_PAGES_COUNT",
@@ -307,7 +373,6 @@ class StudyTelemetryCollector {
                     AND t.parent <> :tags_folder
                     WHERE b.type = :type_bookmark`,
       },
-
     ];
 
     const params = {
@@ -332,15 +397,14 @@ class StudyTelemetryCollector {
         PlacesUtils.promiseDBConnection()
           .then(db => db.execute(probe.query, filteredParams))
           .then(rows => resolve([probe, rows[0].getResultByIndex(0)]))
-          .catch(() => reject(new Error("Unable to get telemetry from database.")));
+          .catch(() =>
+            reject(new Error("Unable to get telemetry from database.")),
+          );
       });
 
       promises.push(promiseDone);
-
     }
 
     return Promise.all(promises);
-
   }
-
 }

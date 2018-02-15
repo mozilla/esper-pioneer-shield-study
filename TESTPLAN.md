@@ -5,9 +5,9 @@
 1. Install the latest signed version of the addon from https://bugzilla.mozilla.org/show_bug.cgi?id=1414900
 1. Go to about:telemetry -> Click "current ping" -> Archived ping data -> ping, select pioneer-study
 1. Click on "Raw Payload" and verify the ping is similar to https://github.com/motin/esper-pioneer-shield-study/blob/master/TELEMETRY.md
-1. Copy the ping (from the browser console, where the unencrypted payload is shown) to left box of  http://jsondiff.com/
+1. Copy the ping (from the browser console, where the unencrypted payload is shown) to left box of http://jsondiff.com/
 1. Go to about:addons and remove the addon
-1. Open a new tab and visit a unique page 
+1. Open a new tab and visit a unique page
 1. Right click on any link from any page and click “Open Link in New Tab”
 1. Bookmark the page
 1. Open a new window and search “Mozilla” in the search bar
@@ -18,9 +18,9 @@
 1. Go to about:telemetry in a new tab, or at least make sure to reload the previous page (this refreshes the archived ping data)
 1. Copy the ping (from the browser console, where the unencrypted payload is shown) to the right side of the above online tool: http://jsondiff.com/
 1. Compare the two pings using the online tool
-1. Verify values of some fields are changed in the second ping. 
+1. Verify values of some fields are changed in the second ping.
 
-## Developer testing 
+## Developer testing
 
 First, make sure you are on NPM 5+ installed so that the proper dependencies are installed using the package-lock.json file.
 
@@ -40,8 +40,8 @@ This packages the add-on into `linked-addon.xpi` which is stored in `dist/`. It 
 
 To do that, open your standard issue Firefox (with your ordinary profile) and load the `.xpi` using the following steps:
 
-* Navigate to *about:config* and set `extensions.legacy.enabled` to `true`. This permits the loading of the embedded Web Extension since new versions of Firefox are becoming restricted to pure Web Extensions only.
-* Navigate to *about:debugging* in your URL bar
+* Navigate to _about:config_ and set `extensions.legacy.enabled` to `true`. This permits the loading of the embedded Web Extension since new versions of Firefox are becoming restricted to pure Web Extensions only.
+* Navigate to _about:debugging_ in your URL bar
 * Select "Load Temporary Add-on"
 * Find and select the `dist/pioneer-opt-in.xpi` file.
 * Select "Load Temporary Add-on"
@@ -53,9 +53,9 @@ You should not see any UI element from this add-on, only log output in the Brows
 
 ### Note: checking "Correct Pings"
 
-At add-on installation, the add-on will wait for Telemetry to be fully initialized 
+At add-on installation, the add-on will wait for Telemetry to be fully initialized
 (which can take over a minute if Firefox was just started), and finally collect the relevant telemetry and send a ping with that payload.
-See [TELEMETRY.md](./TELEMETRY.md) for more details. 
+See [TELEMETRY.md](./TELEMETRY.md) for more details.
 
 ### Example of how it appears when testing in Firefox Nightly
 
@@ -69,4 +69,4 @@ See [TELEMETRY.md](./TELEMETRY.md) for more details.
 
 Code at [./test/functional_test.js](./test/functional_test.js).
 
-Note: Both of these run in recently created profiles, leading to behavior-dependent such as browser engagement and search count telemetry not being available.  
+Note: Both of these run in recently created profiles, leading to behavior-dependent such as browser engagement and search count telemetry not being available.
