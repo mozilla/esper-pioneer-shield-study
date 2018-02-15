@@ -1,9 +1,7 @@
-"use strict"; // Cu.import
+"use strict" /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/; // Cu.import
 
 /* global  __SCRIPT_URI_SPEC__  */
-/* global Feature, Services */ /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/
-
-const { utils: Cu } = Components;
+/* global Feature, Services */ const { utils: Cu } = Components;
 Cu.import("resource://gre/modules/Console.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");

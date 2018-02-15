@@ -16,10 +16,6 @@ const { TelemetryController } = Cu.import(
   "resource://gre/modules/TelemetryController.jsm",
   null,
 );
-const { TelemetrySession } = Cu.import(
-  "resource://gre/modules/TelemetrySession.jsm",
-  null,
-);
 const { TelemetryEnvironment } = Cu.import(
   "resource://gre/modules/TelemetryEnvironment.jsm",
   null,
@@ -241,12 +237,12 @@ class StudyTelemetryCollector {
       Telemetry.DATASET_RELEASE_CHANNEL_OPTIN,
     );
 
-    function getScalar(scalars, scalarName) {
-      if (!(scalarName in scalars)) {
+    function getScalar(_scalars, scalarName) {
+      if (!(scalarName in _scalars)) {
         console.log(`Scalar ${scalarName} is not set`);
-        return;
+        return null;
       }
-      return scalars[scalarName];
+      return _scalars[scalarName];
     }
 
     console.log("scalars", scalars);
@@ -271,16 +267,16 @@ class StudyTelemetryCollector {
       UNFILTERED_URI_COUNT,
     );
 
-    function getKeyedScalar(scalars, scalarName, key) {
-      if (!(scalarName in scalars)) {
+    function getKeyedScalar(_scalars, scalarName, key) {
+      if (!(scalarName in _scalars)) {
         console.log(`Keyed scalar ${scalarName} is not set`);
-        return;
+        return null;
       }
-      if (!(key in scalars[scalarName])) {
+      if (!(key in _scalars[scalarName])) {
         console.log(`Keyed scalar ${scalarName} has not key ${key}`);
-        return;
+        return null;
       }
-      return scalars[scalarName][key];
+      return _scalars[scalarName][key];
     }
 
     const keyedScalars = getParentProcessScalars(
