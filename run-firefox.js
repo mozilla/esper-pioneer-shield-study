@@ -21,11 +21,14 @@ const webdriver = require("selenium-webdriver");
 const By = webdriver.By;
 const Context = firefox.Context;
 const until = webdriver.until;
+const Key = webdriver.Key;
 
 const {
   promiseActualBinary,
   installAddon,
   promiseSetupDriver,
+  promiseUrlBar,
+  MODIFIER_KEY,
   getTelemetryPings,
   printPioneerPings,
   takeScreenshot,

@@ -103,6 +103,17 @@ module.exports.promiseSetupDriver = async() => {
   return driver;
 };
 
+/* let's actually just make this a constant */
+const MODIFIER_KEY = (function getModifierKey() {
+  const modifierKey =
+    process.platform === "darwin"
+      ? webdriver.Key.COMMAND
+      : webdriver.Key.CONTROL;
+  return modifierKey;
+})();
+
+module.exports.MODIFIER_KEY = MODIFIER_KEY;
+
 module.exports.disableBasicTelemetry = async driver => {
   return await module.exports.setPreference(
     driver,
@@ -180,13 +191,21 @@ module.exports.uninstallAddon = async(driver, id) => {
   await executor.execute(uninstallCmd);
 };
 
-// Returns array of pings of type `type` in sorted order by timestamp
-// first element is most recent ping
-// as seen in shield-study-addon-util's `utils.jsm`
-module.exports.getTelemetryPings = async(driver, options) => {
+/** Returns array of pings of type `type` in reverse sorted order by timestamp
+ * first element is most recent ping
+ *
+ * as seen in shield-study-addon-util's `utils.jsm`
+ * options
+ * - type:  string or array of ping types
+ * - n:  positive integer. at most n pings.
+ * - timestamp:  only pings after this timestamp.
+ * - headersOnly: boolean, just the 'headers' for the pings, not the full bodies.
+ */
+module.exports.getTelemetryPings = async(driver, passedOptions) => {
   // callback is how you get the return back from the script
   return driver.executeAsyncScript(async(options, callback) => {
-    let { type, n, timestamp, headersOnly } = options;
+    let { type } = options;
+    const { n, timestamp, headersOnly } = options;
     Components.utils.import("resource://gre/modules/TelemetryArchive.jsm");
     // {type, id, timestampCreated}
     let pings = await TelemetryArchive.promiseArchivedPingList();
@@ -206,19 +225,12 @@ module.exports.getTelemetryPings = async(driver, options) => {
       : pings.map(ping => TelemetryArchive.promiseArchivedPingById(ping.id));
 
     callback(await Promise.all(pingData));
-  }, options);
+  }, passedOptions);
 };
 
-module.exports.searchTelemetry = (conditionArray, telemetryArray) => {
-  const resultingPings = [];
-  for (const condition of conditionArray) {
-    const index = telemetryArray.findIndex(ping => condition(ping));
-    if (index === -1) {
-      throw new SearchError(condition);
-    }
-    resultingPings.push(telemetryArray[index]);
-  }
-  return resultingPings;
+module.exports.promiseUrlBar = driver => {
+  driver.setContext(Context.CHROME);
+  return driver.wait(until.elementLocated(By.id("urlbar")), 1000);
 };
 
 module.exports.printPings = async pings => {
@@ -307,3 +319,15 @@ class SearchError extends Error {
     this.name = "SearchError";
   }
 }
+
+module.exports.searchTelemetry = (conditionArray, telemetryArray) => {
+  const resultingPings = [];
+  for (const condition of conditionArray) {
+    const index = telemetryArray.findIndex(ping => condition(ping));
+    if (index === -1) {
+      throw new SearchError(condition);
+    }
+    resultingPings.push(telemetryArray[index]);
+  }
+  return resultingPings;
+};
