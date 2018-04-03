@@ -25,7 +25,7 @@ const Pioneer = {
       branch: branch.name,
       addonId: addonData.id,
       addonVersion: addonData.version,
-      pioneerUtilsVersion: "1.0.9",
+      pioneerUtilsVersion: "1.0.10",
       type: "pioneer-study-addon",
       testing: !Config.telemetry.removeTestingFlag,
     };
