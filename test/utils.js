@@ -115,7 +115,7 @@ const MODIFIER_KEY = (function getModifierKey() {
 module.exports.MODIFIER_KEY = MODIFIER_KEY;
 
 module.exports.disableBasicTelemetry = async driver => {
-  return await module.exports.setPreference(
+  return module.exports.setPreference(
     driver,
     "datareporting.healthreport.uploadEnabled",
     false,
@@ -123,7 +123,7 @@ module.exports.disableBasicTelemetry = async driver => {
 };
 
 module.exports.disableShieldStudiesTelemetry = async driver => {
-  return await module.exports.setPreference(
+  return module.exports.setPreference(
     driver,
     "app.shield.optoutstudies.enabled",
     false,
@@ -131,10 +131,10 @@ module.exports.disableShieldStudiesTelemetry = async driver => {
 };
 
 module.exports.setPreference = async(driver, prefName, prefValue) => {
-  return await driver.executeAsyncScript(
-    (prefName, prefValue, callback) => {
+  return driver.executeAsyncScript(
+    (_prefName, _prefValue, callback) => {
       Components.utils.import("resource://gre/modules/Preferences.jsm");
-      Preferences.set(prefName, prefValue);
+      Preferences.set(_prefName, _prefValue);
       callback();
     },
     prefName,
@@ -143,10 +143,10 @@ module.exports.setPreference = async(driver, prefName, prefValue) => {
 };
 
 module.exports.getPreference = async(driver, prefName, defaultValue) => {
-  return await driver.executeAsyncScript(
-    (prefName, defaultValue, callback) => {
+  return driver.executeAsyncScript(
+    (_prefName, _defaultValue, callback) => {
       Components.utils.import("resource://gre/modules/Preferences.jsm");
-      const value = Preferences.get(prefName, defaultValue);
+      const value = Preferences.get(_prefName, _defaultValue);
       callback(value);
     },
     prefName,
@@ -286,7 +286,7 @@ studyName      ${p0.studyName}
 
 module.exports.writePingsJson = async(pings, filepath = "./pings.json") => {
   try {
-    return await Fs.outputFile(filepath, JSON.stringify(pings, null, "\t"));
+    return Fs.outputFile(filepath, JSON.stringify(pings, null, "\t"));
   } catch (error) {
     throw error;
   }
@@ -298,7 +298,7 @@ module.exports.takeScreenshot = async(
 ) => {
   try {
     const data = await driver.takeScreenshot();
-    return await Fs.outputFile(filepath, data, "base64");
+    return Fs.outputFile(filepath, data, "base64");
   } catch (screenshotError) {
     throw screenshotError;
   }

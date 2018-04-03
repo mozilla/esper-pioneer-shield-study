@@ -13,18 +13,12 @@ console.log("Starting up firefox");
 
 require("geckodriver");
 const firefox = require("selenium-webdriver/firefox");
-const cmd = require("selenium-webdriver/lib/command");
-const Fs = require("fs-extra");
-const FxRunnerUtils = require("fx-runner/lib/utils");
 const path = require("path");
 const webdriver = require("selenium-webdriver");
-const By = webdriver.By;
 const Context = firefox.Context;
-const until = webdriver.until;
 const Key = webdriver.Key;
 
 const {
-  promiseActualBinary,
   installAddon,
   promiseSetupDriver,
   promiseUrlBar,

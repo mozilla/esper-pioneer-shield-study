@@ -11,13 +11,7 @@ process.on("unhandledRejection", r => console.log(r)); // eslint-disable-line no
 
 const assert = require("assert");
 const utils = require("./utils");
-const webdriver = require("selenium-webdriver");
-const firefox = require("selenium-webdriver/firefox");
 const path = require("path");
-
-const By = webdriver.By;
-const Context = firefox.Context;
-const until = webdriver.until;
 
 /* Part 1:  Test helpers */
 
@@ -42,6 +36,7 @@ async function postTestReset(driver) {
   });
 }
 
+/*
 const notNullAssertion = value => {
   return value !== "null" && typeof value !== "undefined";
 };
@@ -49,6 +44,7 @@ const notNullAssertion = value => {
 const nullAssertion = value => {
   return value === "null";
 };
+*/
 
 /* Part 2:  The Tests */
 
@@ -57,8 +53,6 @@ describe("preferences behavior tests", function() {
   this.timeout(5000);
 
   let driver;
-  let addonId;
-  let pings;
 
   before(async() => {
     driver = await utils.promiseSetupDriver();
@@ -128,7 +122,6 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
   this.timeout(15000);
 
   let driver;
-  let addonId;
   let pings;
 
   before(async() => {
@@ -140,7 +133,7 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
       path.join(process.cwd(), "dist/pioneer-opt-in.xpi"),
     );
     // install the addon
-    addonId = await utils.installAddon(driver);
+    await utils.installAddon(driver);
     // allow our pioneer study addon some time to send initial pings
     await driver.sleep(2000);
     // collect sent pings
@@ -189,7 +182,7 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
     console.log("shieldStudiesTelemetryEnabled", shieldStudiesTelemetryEnabled);
 
     try {
-      const foundPings = utils.searchTelemetry(
+      utils.searchTelemetry(
         [
           ping =>
             ping.type === "pioneer-study" &&
@@ -210,7 +203,6 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
   this.timeout(15000);
 
   let driver;
-  let addonId;
   let pings;
 
   before(async() => {
@@ -222,7 +214,7 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
       path.join(process.cwd(), "dist/pioneer-opt-in.xpi"),
     );
     // install the addon
-    addonId = await utils.installAddon(driver);
+    await utils.installAddon(driver);
     // allow our pioneer study addon some time to send initial pings
     await driver.sleep(2000);
     // collect sent pings
@@ -271,7 +263,7 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
     console.log("shieldStudiesTelemetryEnabled", shieldStudiesTelemetryEnabled);
 
     try {
-      const foundPings = utils.searchTelemetry(
+      utils.searchTelemetry(
         [
           ping =>
             ping.type === "pioneer-study" &&
@@ -292,7 +284,6 @@ describe("basic functional tests", function() {
   this.timeout(75000);
 
   let driver;
-  let addonId;
   let pings;
 
   before(async() => {
@@ -303,7 +294,7 @@ describe("basic functional tests", function() {
       path.join(process.cwd(), "dist/pioneer-opt-in.xpi"),
     );
     // install the addon
-    addonId = await utils.installAddon(driver);
+    await utils.installAddon(driver);
     // allow our pioneer study addon some time to send initial pings
     await driver.sleep(2000);
     // wait for telemetry to be fully initialized
@@ -334,9 +325,9 @@ describe("basic functional tests", function() {
     );
     assert(foundPings.length === 1);
 
-    const ping = foundPings[0];
-
     /*
+
+    const ping = foundPings[0];
 
     // inactivated tests against attributes since ping payload is encrypted
 
