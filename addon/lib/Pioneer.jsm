@@ -4,10 +4,14 @@ const { utils: Cu } = Components;
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 XPCOMUtils.defineLazyModuleGetter(
-  this, "Config", "resource://esper-pioneer-shield-study/Config.jsm"
+  this,
+  "Config",
+  "chrome://esper-pioneer-shield-study/content/Config.jsm",
 );
 XPCOMUtils.defineLazyModuleGetter(
-  this, "PioneerUtils", "resource://esper-pioneer-shield-study/PioneerUtils.jsm"
+  this,
+  "PioneerUtils",
+  "chrome://esper-pioneer-shield-study/content/PioneerUtils.jsm",
 );
 
 const Pioneer = {
@@ -16,12 +20,12 @@ const Pioneer = {
     this.utils = new PioneerUtils(Config);
     const branch = await Pioneer.utils.chooseBranch();
     this.metadata = {
-      packetVersion: 'esper1',
+      packetVersion: "esper1",
       studyName: Config.studyName,
       branch: branch.name,
       addonId: addonData.id,
       addonVersion: addonData.version,
-      pioneerUtilsVersion: "1.0.9",
+      pioneerUtilsVersion: "1.0.10",
       type: "pioneer-study-addon",
       testing: !Config.telemetry.removeTestingFlag,
     };

@@ -1,4 +1,6 @@
 /* eslint-env node */
+/* eslint no-console:off */
+
 // The geckodriver package downloads and installs geckodriver for us.
 // We use it by requiring it.
 require("geckodriver");
@@ -33,27 +35,31 @@ const FIREFOX_PREFERENCES = {
   // NECESSARY for all 57+ builds
   "extensions.legacy.enabled": true,
 
-  // Enabled basic telemetry + shield studies by default when running tests
+  // Include log output in browser console
+  "shield.testing.logging.level": 10, // Trace
+
+  // Enable basic telemetry + shield studies by default when running tests
   "datareporting.healthreport.uploadEnabled": true,
   "app.shield.optoutstudies.enabled": true,
 
   // Set telemetry to initiate earlier than 60 seconds
   // TODO: figure out why setting this preference leads to profile_creation_date and default_search_engine not being set
-  //"toolkit.telemetry.initDelay": 1,
+  // "toolkit.telemetry.initDelay": 1,
 
   /** WARNING: gecko webdriver sets many additional prefs at:
-    * https://dxr.mozilla.org/mozilla-central/source/testing/geckodriver/src/prefs.rs
-    *
-    * In, particular, this DISABLES actual telemetry uploading
-    * ("toolkit.telemetry.server", Pref::new("https://%(server)s/dummy/telemetry/")),
-    *
-    */
+   * https://dxr.mozilla.org/mozilla-central/source/testing/geckodriver/src/prefs.rs
+   *
+   * In, particular, this DISABLES actual telemetry uploading
+   * ("toolkit.telemetry.server", Pref::new("https://%(server)s/dummy/telemetry/")),
+   *
+   */
 };
 
 // useful if we need to test on a specific version of Firefox
 async function promiseActualBinary(binary) {
   try {
-    const normalizedBinary = await FxRunnerUtils.normalizeBinary(binary);
+    let normalizedBinary = await FxRunnerUtils.normalizeBinary(binary);
+    normalizedBinary = path.resolve(normalizedBinary);
     await Fs.stat(normalizedBinary);
     return normalizedBinary;
   } catch (ex) {
@@ -64,14 +70,15 @@ async function promiseActualBinary(binary) {
   }
 }
 
-
-
-
+/**
+ * Uses process.env.FIREFOX_BINARY
+ *
+ */
 module.exports.promiseSetupDriver = async() => {
   const profile = new firefox.Profile();
 
   // TODO, allow 'actually send telemetry' here.
-  Object.keys(FIREFOX_PREFERENCES).forEach((key) => {
+  Object.keys(FIREFOX_PREFERENCES).forEach(key => {
     profile.setPreference(key, FIREFOX_PREFERENCES[key]);
   });
 
@@ -83,8 +90,11 @@ module.exports.promiseSetupDriver = async() => {
     .forBrowser("firefox")
     .setFirefoxOptions(options);
 
-  const binaryLocation = await promiseActualBinary(process.env.FIREFOX_BINARY || "nightly");
-  //console.log(binaryLocation);
+  const binaryLocation = await promiseActualBinary(
+    process.env.FIREFOX_BINARY || "nightly",
+  );
+
+  // console.log(binaryLocation);
   await options.setBinary(new firefox.Binary(binaryLocation));
   const driver = await builder.build();
   // Firefox will be started up by now
@@ -93,28 +103,55 @@ module.exports.promiseSetupDriver = async() => {
   return driver;
 };
 
-module.exports.disableBasicTelemetry = async(driver) => {
-  return await module.exports.setPreference(driver, "datareporting.healthreport.uploadEnabled", false);
+/* let's actually just make this a constant */
+const MODIFIER_KEY = (function getModifierKey() {
+  const modifierKey =
+    process.platform === "darwin"
+      ? webdriver.Key.COMMAND
+      : webdriver.Key.CONTROL;
+  return modifierKey;
+})();
+
+module.exports.MODIFIER_KEY = MODIFIER_KEY;
+
+module.exports.disableBasicTelemetry = async driver => {
+  return module.exports.setPreference(
+    driver,
+    "datareporting.healthreport.uploadEnabled",
+    false,
+  );
 };
 
-module.exports.disableShieldStudiesTelemetry = async(driver) => {
-  return await module.exports.setPreference(driver, "app.shield.optoutstudies.enabled", false);
+module.exports.disableShieldStudiesTelemetry = async driver => {
+  return module.exports.setPreference(
+    driver,
+    "app.shield.optoutstudies.enabled",
+    false,
+  );
 };
 
 module.exports.setPreference = async(driver, prefName, prefValue) => {
-  return await driver.executeAsyncScript((prefName, prefValue, callback) => {
-    Components.utils.import("resource://gre/modules/Preferences.jsm");
-    Preferences.set(prefName, prefValue);
-    callback();
-  }, prefName, prefValue);
+  return driver.executeAsyncScript(
+    (_prefName, _prefValue, callback) => {
+      Components.utils.import("resource://gre/modules/Preferences.jsm");
+      Preferences.set(_prefName, _prefValue);
+      callback();
+    },
+    prefName,
+    prefValue,
+  );
 };
 
 module.exports.getPreference = async(driver, prefName, defaultValue) => {
-  return await driver.executeAsyncScript((prefName, defaultValue, callback) => {
-    Components.utils.import("resource://gre/modules/Preferences.jsm");
-    const value = Preferences.get(prefName, defaultValue);
-    callback(value);
-  }, prefName, defaultValue);
+  return driver.executeAsyncScript(
+    (_prefName, _defaultValue, callback) => {
+      Components.utils.import("resource://gre/modules/Preferences.jsm");
+      const value = Preferences.get(_prefName, _defaultValue);
+      callback(value);
+    },
+    prefName,
+    defaultValue,
+  );
 };
 
 module.exports.installAddon = async(driver, fileLocation) => {
@@ -124,17 +161,29 @@ module.exports.installAddon = async(driver, fileLocation) => {
   fileLocation = fileLocation || path.join(process.cwd(), process.env.XPI);
 
   const executor = driver.getExecutor();
-  executor.defineCommand("installAddon", "POST", "/session/:sessionId/moz/addon/install");
+  executor.defineCommand(
+    "installAddon",
+    "POST",
+    "/session/:sessionId/moz/addon/install",
+  );
   const installCmd = new cmd.Command("installAddon");
 
   const session = await driver.getSession();
-  installCmd.setParameters({ sessionId: session.getId(), path: fileLocation, temporary: true });
+  installCmd.setParameters({
+    sessionId: session.getId(),
+    path: fileLocation,
+    temporary: true,
+  });
   return executor.execute(installCmd);
 };
 
 module.exports.uninstallAddon = async(driver, id) => {
   const executor = driver.getExecutor();
-  executor.defineCommand("uninstallAddon", "POST", "/session/:sessionId/moz/addon/uninstall");
+  executor.defineCommand(
+    "uninstallAddon",
+    "POST",
+    "/session/:sessionId/moz/addon/uninstall",
+  );
   const uninstallCmd = new cmd.Command("uninstallAddon");
 
   const session = await driver.getSession();
@@ -142,19 +191,27 @@ module.exports.uninstallAddon = async(driver, id) => {
   await executor.execute(uninstallCmd);
 };
 
-// Returns array of pings of type `type` in sorted order by timestamp
-// first element is most recent ping
-// as seen in shield-study-addon-util's `utils.jsm`
-module.exports.getTelemetryPings = async(driver, options) => {
+/** Returns array of pings of type `type` in reverse sorted order by timestamp
+ * first element is most recent ping
+ *
+ * as seen in shield-study-addon-util's `utils.jsm`
+ * options
+ * - type:  string or array of ping types
+ * - n:  positive integer. at most n pings.
+ * - timestamp:  only pings after this timestamp.
+ * - headersOnly: boolean, just the 'headers' for the pings, not the full bodies.
+ */
+module.exports.getTelemetryPings = async(driver, passedOptions) => {
   // callback is how you get the return back from the script
   return driver.executeAsyncScript(async(options, callback) => {
-    let {type, n, timestamp, headersOnly} = options;
+    let { type } = options;
+    const { n, timestamp, headersOnly } = options;
     Components.utils.import("resource://gre/modules/TelemetryArchive.jsm");
     // {type, id, timestampCreated}
     let pings = await TelemetryArchive.promiseArchivedPingList();
     if (type) {
       if (!(type instanceof Array)) {
-        type = [type];  // Array-ify if it's a string
+        type = [type]; // Array-ify if it's a string
       }
     }
     if (type) pings = pings.filter(p => type.includes(p.type));
@@ -163,28 +220,22 @@ module.exports.getTelemetryPings = async(driver, options) => {
 
     pings.sort((a, b) => b.timestampCreated - a.timestampCreated);
     if (n) pings = pings.slice(0, n);
-    const pingData = headersOnly ? pings : pings.map(ping => TelemetryArchive.promiseArchivedPingById(ping.id));
+    const pingData = headersOnly
+      ? pings
+      : pings.map(ping => TelemetryArchive.promiseArchivedPingById(ping.id));
 
     callback(await Promise.all(pingData));
-  }, options);
+  }, passedOptions);
 };
 
-module.exports.searchTelemetry = (conditionArray, telemetryArray) => {
-  const resultingPings = [];
-  for (const condition of conditionArray) {
-    const index = telemetryArray.findIndex(ping => condition(ping));
-    if (index === -1) {
-      throw new SearchError(condition);
-    }
-    resultingPings.push(telemetryArray[ index ]);
-  }
-  return resultingPings;
+module.exports.promiseUrlBar = driver => {
+  driver.setContext(Context.CHROME);
+  return driver.wait(until.elementLocated(By.id("urlbar")), 1000);
 };
 
-module.exports.printPings = async(pings) => {
-
+module.exports.printPings = async pings => {
   if (pings.length === 0) {
-    console.log('No pings');
+    console.log("No pings");
     return;
   }
 
@@ -199,20 +250,18 @@ study_name    ${p0.study_name}
 addon_version ${p0.addon_version}
 version       ${p0.version}
 
-    `
-  )
+    `,
+  );
 
   pings.forEach(p => {
     console.log(p.creationDate, p.payload.type);
-    console.log(JSON.stringify(p.payload.data, null, 2))
-  })
-
+    console.log(JSON.stringify(p.payload.data, null, 2));
+  });
 };
 
-module.exports.printPioneerPings = async(pings) => {
-
+module.exports.printPioneerPings = async pings => {
   if (pings.length === 0) {
-    console.log('No pings');
+    console.log("No pings");
     return;
   }
 
@@ -226,30 +275,30 @@ schemaName     ${p0.schemaName}
 schemaVersion  ${p0.schemaVersion}
 studyName      ${p0.studyName}
 
-    `
-  )
+    `,
+  );
 
   pings.forEach(p => {
     console.log(p.creationDate);
-    console.log(JSON.stringify(p.payload, null, 2))
-  })
-
+    console.log(JSON.stringify(p.payload, null, 2));
+  });
 };
 
 module.exports.writePingsJson = async(pings, filepath = "./pings.json") => {
   try {
-    return await Fs.outputFile(filepath,
-      JSON.stringify(pings, null, '\t'));
+    return Fs.outputFile(filepath, JSON.stringify(pings, null, "\t"));
   } catch (error) {
     throw error;
   }
 };
 
-module.exports.takeScreenshot = async(driver, filepath = "./screenshot.png") => {
+module.exports.takeScreenshot = async(
+  driver,
+  filepath = "./screenshot.png",
+) => {
   try {
     const data = await driver.takeScreenshot();
-    return await Fs.outputFile(filepath,
-      data, "base64");
+    return Fs.outputFile(filepath, data, "base64");
   } catch (screenshotError) {
     throw screenshotError;
   }
@@ -270,3 +319,15 @@ class SearchError extends Error {
     this.name = "SearchError";
   }
 }
+
+module.exports.searchTelemetry = (conditionArray, telemetryArray) => {
+  const resultingPings = [];
+  for (const condition of conditionArray) {
+    const index = telemetryArray.findIndex(ping => condition(ping));
+    if (index === -1) {
+      throw new SearchError(condition);
+    }
+    resultingPings.push(telemetryArray[index]);
+  }
+  return resultingPings;
+};

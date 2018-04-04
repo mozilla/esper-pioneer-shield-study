@@ -1,4 +1,5 @@
 /* eslint-env node */
+/* eslint no-console:off */
 
 /* This file is a helper script that will install the extension from the .xpi
  * file and setup useful preferences for debugging. This is the same setup
@@ -12,40 +13,45 @@ console.log("Starting up firefox");
 
 require("geckodriver");
 const firefox = require("selenium-webdriver/firefox");
-const cmd = require("selenium-webdriver/lib/command");
-const Fs = require("fs-extra");
-const FxRunnerUtils = require("fx-runner/lib/utils");
 const path = require("path");
 const webdriver = require("selenium-webdriver");
-
-const By = webdriver.By;
 const Context = firefox.Context;
-const until = webdriver.until;
+const Key = webdriver.Key;
 
 const {
-  promiseActualBinary,
   installAddon,
   promiseSetupDriver,
+  promiseUrlBar,
+  MODIFIER_KEY,
   getTelemetryPings,
   printPioneerPings,
   takeScreenshot,
-  writePingsJson
+  writePingsJson,
 } = require("./test/utils");
-
 
 const HELP = `
 env vars:
+
 - XPI (optional): path to xpi / addon
-- FIREFOX_BINARY = 'nightly'
+
+  installs $XPI as a temporary addon.
+
+  Note: must be 'legacy signed' if on Beta or Release.
+
+- FIREFOX_BINARY :  nightly | beta | firefox
+
+Future will clean up this interface a bit!
+- prefs
+- multiple addons
+- re-use or create profiles, etc.
 
 `;
 
 const minimistHandler = {
-  boolean: [ 'help' ],
-  alias: { h: 'help', v: 'version' },
-  '--': true,
+  boolean: ["help"],
+  alias: { h: "help", v: "version" },
+  "--": true,
 };
-
 
 (async() => {
   const minimist = require("minimist");
@@ -60,21 +66,32 @@ const minimistHandler = {
     console.log("Firefox started");
 
     // install the pioneer opt-in add-on
-    await installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
+    await installAddon(
+      driver,
+      path.join(process.cwd(), "dist/pioneer-opt-in.xpi"),
+    );
 
     // install the addon
     if (process.env.XPI) {
       const fileLocation = path.join(process.cwd(), process.env.XPI);
-      console.log(fileLocation)
+      console.log(fileLocation);
       await installAddon(driver, fileLocation);
       console.log("Load temporary addon.");
     }
 
-    // navigate to a regular page
+    // navigate to about:debugging
     driver.setContext(Context.CONTENT);
     driver.get("about:debugging");
 
-    console.log("The addon should now be loaded and you should be able to interact with the addon in the newly opened Firefox instance.");
+    // open the browser console
+    driver.setContext(Context.CHROME);
+    const urlBar = await promiseUrlBar(driver);
+    const openBrowserConsole = Key.chord(MODIFIER_KEY, Key.SHIFT, "j");
+    await urlBar.sendKeys(openBrowserConsole);
+
+    console.log(
+      "The addon should now be loaded and you should be able to interact with the addon in the newly opened Firefox instance.",
+    );
 
     // allow our shield study addon some time to start
     console.log("Waiting 2 seconds to allow for initial telemetry to be sent");
@@ -87,7 +104,7 @@ const minimistHandler = {
     await driver.sleep(60000);
 
     const telemetryPingsFilterOptions = {
-      type: [ "pioneer-study" ],
+      type: ["pioneer-study"],
       headersOnly: false,
     };
     const pings = await getTelemetryPings(driver, telemetryPingsFilterOptions);
@@ -96,8 +113,7 @@ const minimistHandler = {
 
     writePingsJson(pings);
     console.log("Pioneer study telemetry pings written to pings.json");
-
   } catch (e) {
-    console.error(e); // eslint-disable-line no-console
+    console.error(e);
   }
 })();

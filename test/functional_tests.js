@@ -1,4 +1,5 @@
 /* eslint-env node, mocha */
+/* eslint no-console:off */
 
 /* Purpose:
  *
@@ -10,13 +11,7 @@ process.on("unhandledRejection", r => console.log(r)); // eslint-disable-line no
 
 const assert = require("assert");
 const utils = require("./utils");
-const webdriver = require("selenium-webdriver");
-const firefox = require("selenium-webdriver/firefox");
 const path = require("path");
-
-const By = webdriver.By;
-const Context = firefox.Context;
-const until = webdriver.until;
 
 /* Part 1:  Test helpers */
 
@@ -41,14 +36,15 @@ async function postTestReset(driver) {
   });
 }
 
+/*
 const notNullAssertion = value => {
-  return value !== "null" && typeof value !== "undefined"
+  return value !== "null" && typeof value !== "undefined";
 };
 
 const nullAssertion = value => {
-  return value === "null"
+  return value === "null";
 };
-
+*/
 
 /* Part 2:  The Tests */
 
@@ -57,8 +53,6 @@ describe("preferences behavior tests", function() {
   this.timeout(5000);
 
   let driver;
-  let addonId;
-  let pings;
 
   before(async() => {
     driver = await utils.promiseSetupDriver();
@@ -70,33 +64,57 @@ describe("preferences behavior tests", function() {
   afterEach(async() => postTestReset(driver));
 
   it("preferences get behavior should be as expected", async() => {
-
-    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled");
-    console.log('basicTelemetryEnabled', basicTelemetryEnabled);
+    const basicTelemetryEnabled = await utils.getPreference(
+      driver,
+      "datareporting.healthreport.uploadEnabled",
+    );
+    console.log("basicTelemetryEnabled", basicTelemetryEnabled);
     assert(basicTelemetryEnabled === false);
 
-    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled");
-    console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
+    const extendedTelemetryEnabled = await utils.getPreference(
+      driver,
+      "toolkit.telemetry.enabled",
+    );
+    console.log("extendedTelemetryEnabled", extendedTelemetryEnabled);
     assert(extendedTelemetryEnabled === true);
 
     const nonExistantPreference = await utils.getPreference(driver, "foo.bar");
-    console.log('nonExistantPreference', nonExistantPreference);
+    console.log("nonExistantPreference", nonExistantPreference);
     assert(nonExistantPreference === null);
 
-    const basicTelemetryEnabledWithTrueAsDefault = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled", true);
-    console.log('basicTelemetryEnabledWithTrueAsDefault', basicTelemetryEnabledWithTrueAsDefault);
+    const basicTelemetryEnabledWithTrueAsDefault = await utils.getPreference(
+      driver,
+      "datareporting.healthreport.uploadEnabled",
+      true,
+    );
+    console.log(
+      "basicTelemetryEnabledWithTrueAsDefault",
+      basicTelemetryEnabledWithTrueAsDefault,
+    );
     assert(basicTelemetryEnabledWithTrueAsDefault === false);
 
-    const extendedTelemetryEnabledWithTrueAsDefault = await utils.getPreference(driver, "toolkit.telemetry.enabled", true);
-    console.log('extendedTelemetryEnabledWithTrueAsDefault', extendedTelemetryEnabledWithTrueAsDefault);
+    const extendedTelemetryEnabledWithTrueAsDefault = await utils.getPreference(
+      driver,
+      "toolkit.telemetry.enabled",
+      true,
+    );
+    console.log(
+      "extendedTelemetryEnabledWithTrueAsDefault",
+      extendedTelemetryEnabledWithTrueAsDefault,
+    );
     assert(extendedTelemetryEnabledWithTrueAsDefault === true);
 
-    const nonExistantPreferenceWithTrueAsDefault = await utils.getPreference(driver, "foo.bar", true);
-    console.log('nonExistantPreferenceWithTrueAsDefault', nonExistantPreferenceWithTrueAsDefault);
+    const nonExistantPreferenceWithTrueAsDefault = await utils.getPreference(
+      driver,
+      "foo.bar",
+      true,
+    );
+    console.log(
+      "nonExistantPreferenceWithTrueAsDefault",
+      nonExistantPreferenceWithTrueAsDefault,
+    );
     assert(nonExistantPreferenceWithTrueAsDefault === true);
-
   });
-
 });
 
 describe("no esper-specific telemetry should be sent if basic telemetry is disabled in preferences", function() {
@@ -104,16 +122,18 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
   this.timeout(15000);
 
   let driver;
-  let addonId;
   let pings;
 
   before(async() => {
     driver = await utils.promiseSetupDriver();
     await utils.disableBasicTelemetry(driver);
     // install the pioneer opt-in add-on
-    await utils.installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
+    await utils.installAddon(
+      driver,
+      path.join(process.cwd(), "dist/pioneer-opt-in.xpi"),
+    );
     // install the addon
-    addonId = await utils.installAddon(driver);
+    await utils.installAddon(driver);
     // allow our pioneer study addon some time to send initial pings
     await driver.sleep(2000);
     // collect sent pings
@@ -128,43 +148,54 @@ describe("no esper-specific telemetry should be sent if basic telemetry is disab
   afterEach(async() => postTestReset(driver));
 
   it("should send telemetry pings", async() => {
-
     assert(pings.length > 0, "at least one telemetry ping");
-
   });
 
   it("one pioneer-study telemetry ping with schema event", async() => {
-
-    const foundPings = utils.searchTelemetry([
-      ping => ping.type === "pioneer-study" && ping.payload.schemaName === "event",
-    ], pings);
+    const foundPings = utils.searchTelemetry(
+      [
+        ping =>
+          ping.type === "pioneer-study" && ping.payload.schemaName === "event",
+      ],
+      pings,
+    );
     assert(foundPings.length === 1);
-
   });
 
   it("no esper-specific pioneer-study telemetry ping", async() => {
+    const basicTelemetryEnabled = await utils.getPreference(
+      driver,
+      "datareporting.healthreport.uploadEnabled",
+    );
+    console.log("basicTelemetryEnabled", basicTelemetryEnabled);
 
-    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled");
-    console.log('basicTelemetryEnabled', basicTelemetryEnabled);
+    const extendedTelemetryEnabled = await utils.getPreference(
+      driver,
+      "toolkit.telemetry.enabled",
+    );
+    console.log("extendedTelemetryEnabled", extendedTelemetryEnabled);
 
-    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled");
-    console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
-
-    const shieldStudiesTelemetryEnabled = await utils.getPreference(driver, "app.shield.optoutstudies.enabled");
-    console.log('shieldStudiesTelemetryEnabled', shieldStudiesTelemetryEnabled);
+    const shieldStudiesTelemetryEnabled = await utils.getPreference(
+      driver,
+      "app.shield.optoutstudies.enabled",
+    );
+    console.log("shieldStudiesTelemetryEnabled", shieldStudiesTelemetryEnabled);
 
     try {
-      const foundPings = utils.searchTelemetry([
-        ping => ping.type === "pioneer-study" && ping.payload.schemaName === "esper-study-telemetry",
-      ], pings);
+      utils.searchTelemetry(
+        [
+          ping =>
+            ping.type === "pioneer-study" &&
+            ping.payload.schemaName === "esper-study-telemetry",
+        ],
+        pings,
+      );
       // should not reach this line of code
       assert(false);
     } catch (e) {
-      assert(e.name === 'SearchError');
+      assert(e.name === "SearchError");
     }
-
   });
-
 });
 
 describe("no esper-specific telemetry should be sent if shield studies telemetry is disabled in preferences", function() {
@@ -172,16 +203,18 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
   this.timeout(15000);
 
   let driver;
-  let addonId;
   let pings;
 
   before(async() => {
     driver = await utils.promiseSetupDriver();
     await utils.disableShieldStudiesTelemetry(driver);
     // install the pioneer opt-in add-on
-    await utils.installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
+    await utils.installAddon(
+      driver,
+      path.join(process.cwd(), "dist/pioneer-opt-in.xpi"),
+    );
     // install the addon
-    addonId = await utils.installAddon(driver);
+    await utils.installAddon(driver);
     // allow our pioneer study addon some time to send initial pings
     await driver.sleep(2000);
     // collect sent pings
@@ -196,43 +229,54 @@ describe("no esper-specific telemetry should be sent if shield studies telemetry
   afterEach(async() => postTestReset(driver));
 
   it("should send telemetry pings", async() => {
-
     assert(pings.length > 0, "at least one telemetry ping");
-
   });
 
   it("one pioneer-study telemetry ping with schema event", async() => {
-
-    const foundPings = utils.searchTelemetry([
-      ping => ping.type === "pioneer-study" && ping.payload.schemaName === "event",
-    ], pings);
+    const foundPings = utils.searchTelemetry(
+      [
+        ping =>
+          ping.type === "pioneer-study" && ping.payload.schemaName === "event",
+      ],
+      pings,
+    );
     assert(foundPings.length === 1);
-
   });
 
   it("no esper-specific pioneer-study telemetry ping", async() => {
+    const basicTelemetryEnabled = await utils.getPreference(
+      driver,
+      "datareporting.healthreport.uploadEnabled",
+    );
+    console.log("basicTelemetryEnabled", basicTelemetryEnabled);
 
-    const basicTelemetryEnabled = await utils.getPreference(driver, "datareporting.healthreport.uploadEnabled");
-    console.log('basicTelemetryEnabled', basicTelemetryEnabled);
+    const extendedTelemetryEnabled = await utils.getPreference(
+      driver,
+      "toolkit.telemetry.enabled",
+    );
+    console.log("extendedTelemetryEnabled", extendedTelemetryEnabled);
 
-    const extendedTelemetryEnabled = await utils.getPreference(driver, "toolkit.telemetry.enabled");
-    console.log('extendedTelemetryEnabled', extendedTelemetryEnabled);
-
-    const shieldStudiesTelemetryEnabled = await utils.getPreference(driver, "app.shield.optoutstudies.enabled");
-    console.log('shieldStudiesTelemetryEnabled', shieldStudiesTelemetryEnabled);
+    const shieldStudiesTelemetryEnabled = await utils.getPreference(
+      driver,
+      "app.shield.optoutstudies.enabled",
+    );
+    console.log("shieldStudiesTelemetryEnabled", shieldStudiesTelemetryEnabled);
 
     try {
-      const foundPings = utils.searchTelemetry([
-        ping => ping.type === "pioneer-study" && ping.payload.schemaName === "esper-study-telemetry",
-      ], pings);
+      utils.searchTelemetry(
+        [
+          ping =>
+            ping.type === "pioneer-study" &&
+            ping.payload.schemaName === "esper-study-telemetry",
+        ],
+        pings,
+      );
       // should not reach this line of code
       assert(false);
     } catch (e) {
-      assert(e.name === 'SearchError');
+      assert(e.name === "SearchError");
     }
-
   });
-
 });
 
 describe("basic functional tests", function() {
@@ -240,15 +284,17 @@ describe("basic functional tests", function() {
   this.timeout(75000);
 
   let driver;
-  let addonId;
   let pings;
 
   before(async() => {
     driver = await utils.promiseSetupDriver();
     // install the pioneer opt-in add-on
-    await utils.installAddon(driver, path.join(process.cwd(), "dist/pioneer-opt-in.xpi"));
+    await utils.installAddon(
+      driver,
+      path.join(process.cwd(), "dist/pioneer-opt-in.xpi"),
+    );
     // install the addon
-    addonId = await utils.installAddon(driver);
+    await utils.installAddon(driver);
     // allow our pioneer study addon some time to send initial pings
     await driver.sleep(2000);
     // wait for telemetry to be fully initialized
@@ -265,21 +311,23 @@ describe("basic functional tests", function() {
   afterEach(async() => postTestReset(driver));
 
   it("should send telemetry pings", async() => {
-
     assert(pings.length > 0, "at least one telemetry ping");
-
   });
 
   it("one proper pioneer-study telemetry ping for the telemetry-payload event as expected at startup with a clean profile", async() => {
-
-    const foundPings = utils.searchTelemetry([
-      ping => ping.type === "pioneer-study" && ping.payload.schemaName === "esper-study-telemetry",
-    ], pings);
+    const foundPings = utils.searchTelemetry(
+      [
+        ping =>
+          ping.type === "pioneer-study" &&
+          ping.payload.schemaName === "esper-study-telemetry",
+      ],
+      pings,
+    );
     assert(foundPings.length === 1);
 
-    const ping = foundPings[0];
-
     /*
+
+    const ping = foundPings[0];
 
     // inactivated tests against attributes since ping payload is encrypted
 
@@ -336,7 +384,5 @@ describe("basic functional tests", function() {
     assert.deepEqual(expected, actual, "only expected attributes encountered");
 
     */
-
   });
-
 });

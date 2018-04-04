@@ -1,21 +1,25 @@
-"use strict";
+"use strict" /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/; // Cu.import
 
 /* global  __SCRIPT_URI_SPEC__  */
-/* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/
-
-const { utils: Cu } = Components;
+/* global Feature, Services */ const { utils: Cu } = Components;
 Cu.import("resource://gre/modules/Console.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 XPCOMUtils.defineLazyModuleGetter(
-  this, "Config", "resource://esper-pioneer-shield-study/Config.jsm"
+  this,
+  "Config",
+  "chrome://esper-pioneer-shield-study/content/Config.jsm",
 );
 XPCOMUtils.defineLazyModuleGetter(
-  this, "StudyTelemetryCollector", "resource://esper-pioneer-shield-study/lib/StudyTelemetryCollector.jsm"
+  this,
+  "StudyTelemetryCollector",
+  "chrome://esper-pioneer-shield-study/content/lib/StudyTelemetryCollector.jsm",
 );
 XPCOMUtils.defineLazyModuleGetter(
-  this, "Pioneer", "resource://esper-pioneer-shield-study/lib/Pioneer.jsm"
+  this,
+  "Pioneer",
+  "chrome://esper-pioneer-shield-study/content/lib/Pioneer.jsm",
 );
 
 const REASONS = {
@@ -33,8 +37,7 @@ const REASONS = {
 // log("LOG started!");
 
 this.Bootstrap = {
-  install() {
-  },
+  install() {},
 
   /**
    * @param addonData Array [ "id", "version", "installPath", "resourceURI", "instanceID", "webExtension" ]
@@ -48,7 +51,9 @@ this.Bootstrap = {
 
     const isEligible = await Pioneer.utils.isUserOptedIn();
     if (!isEligible) {
-      console.log('Not eligable for Pioneer study. Will uninstall the study add-on.');
+      console.log(
+        "Not eligable for Pioneer study. Will uninstall the study add-on.",
+      );
       Pioneer.utils.endStudy(events.INELIGIBLE);
       return;
     }
@@ -61,28 +66,18 @@ this.Bootstrap = {
 
   // Unload all resources used by the add-on (even those not loaded in bootstrap.js)
   shutdown() {
-    Cu.unload("resource://esper-pioneer-shield-study/Config.jsm");
-    Cu.unload("resource://esper-pioneer-shield-study/lib/Pioneer.jsm");
-    Cu.unload("resource://esper-pioneer-shield-study/lib/StudyTelemetryCollector.jsm");
-    Cu.unload("resource://esper-pioneer-shield-study/lib/Helpers.jsm");
+    Cu.unload("chrome://esper-pioneer-shield-study/content/Config.jsm");
+    Cu.unload("chrome://esper-pioneer-shield-study/content/lib/Pioneer.jsm");
+    Cu.unload(
+      "chrome://esper-pioneer-shield-study/content/lib/StudyTelemetryCollector.jsm",
+    );
+    Cu.unload("chrome://esper-pioneer-shield-study/content/lib/Helpers.jsm");
   },
 
-  uninstall() {
-  },
+  uninstall() {},
 };
 
 // Expose bootstrap methods on the global
 for (const methodName of ["install", "startup", "shutdown", "uninstall"]) {
   this[methodName] = Bootstrap[methodName].bind(Bootstrap);
 }
-
-/** CONSTANTS and other bootstrap.js utilities */
-
-// logging
-// function createLog(name, levelWord) {
-//  Cu.import("resource://gre/modules/Log.jsm");
-//  var L = Log.repository.getLogger(name);
-//  L.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
-//  L.level = Log.Level[levelWord] || Log.Level.Debug; // should be a config / pref
-//  return L;
-// }

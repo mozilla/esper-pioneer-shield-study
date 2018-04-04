@@ -1,9 +1,8 @@
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(EXPORTED_SYMBOLS|Helpers)" }]*/
 
-const EXPORTED_SYMBOLS = this.EXPORTED_SYMBOLS = ["Helpers"];
+const EXPORTED_SYMBOLS = (this.EXPORTED_SYMBOLS = ["Helpers"]);
 
 this.Helpers = {
-
   /**
    * Converts:
    * {
@@ -27,7 +26,7 @@ this.Helpers = {
    * @param searchCountsHistogram undefined/null or as per above
    */
   searchCountsHistogramToScalarTotalCount(searchCountsHistogram) {
-    if (typeof searchCountsHistogram === 'undefined') {
+    if (typeof searchCountsHistogram === "undefined") {
       return 0;
     }
     if (searchCountsHistogram === null) {
@@ -38,7 +37,7 @@ this.Helpers = {
       if (!searchCountsHistogram.hasOwnProperty(attribute)) {
         continue;
       }
-      let attributeValue = searchCountsHistogram[attribute];
+      const attributeValue = searchCountsHistogram[attribute];
       if (attributeValue !== null && typeof attributeValue === "object") {
         if (attributeValue.hasOwnProperty("sum")) {
           totalCount += attributeValue.sum;
@@ -46,6 +45,5 @@ this.Helpers = {
       }
     }
     return totalCount;
-  }
-
+  },
 };
