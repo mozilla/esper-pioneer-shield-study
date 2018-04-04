@@ -37,14 +37,14 @@ XPCOMUtils.defineLazyServiceGetter(
 XPCOMUtils.defineLazyModuleGetter(
   this,
   "Pioneer",
-  "resource://esper-pioneer-shield-study/lib/Pioneer.jsm",
+  "chrome://esper-pioneer-shield-study/content/lib/Pioneer.jsm",
 );
 
 // unit-tested study helpers
 XPCOMUtils.defineLazyModuleGetter(
   this,
   "Helpers",
-  "resource://esper-pioneer-shield-study/lib/Helpers.jsm",
+  "chrome://esper-pioneer-shield-study/content/lib/Helpers.jsm",
 );
 
 class StudyTelemetryCollector {

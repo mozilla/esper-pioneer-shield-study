@@ -6,12 +6,12 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 XPCOMUtils.defineLazyModuleGetter(
   this,
   "Config",
-  "resource://esper-pioneer-shield-study/Config.jsm",
+  "chrome://esper-pioneer-shield-study/content/Config.jsm",
 );
 XPCOMUtils.defineLazyModuleGetter(
   this,
   "PioneerUtils",
-  "resource://esper-pioneer-shield-study/PioneerUtils.jsm",
+  "chrome://esper-pioneer-shield-study/content/PioneerUtils.jsm",
 );
 
 const Pioneer = {
