@@ -14,7 +14,7 @@
     "chromeResource": "esper-pioneer-shield-study",
     "creator": "Fredrik Wollsén <fwollsen@mozilla.com>",
     "description": "The ESPER Experiment - Firefox Pioneer Study",
-    "bugzilla": "https://bugzilla.mozilla.org/show_bug.cgi?id=1414900"
+    "bugzilla": "https://bugzilla.mozilla.org/show_bug.cgi?id=1450951"
   },
   "bugs": {
     "url": "https://github.com/motin/esper-pioneer-shield-study/issues"
