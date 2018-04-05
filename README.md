@@ -13,3 +13,8 @@ See [TESTPLAN.md](./TESTPLAN.md) for more details on how to get the add-on insta
 # Analysing Data
 
 Telemetry ping payloads are encrypted and not decrypted until it is on a server that is not connected to the wider internet. See [TELEMETRY.md](./TELEMETRY.md) for more details.
+
+# Bugzilla
+
+* [Initial launch](https://bugzilla.mozilla.org/show_bug.cgi?id=1414900)
+* [Re-launch](https://bugzilla.mozilla.org/show_bug.cgi?id=1450951)

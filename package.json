@@ -1,11 +1,11 @@
 {
   "name": "esper-pioneer-shield-study",
   "description": "The ESPER Experiment - Firefox Pioneer Study",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Fredrik Wollsén <fwollsen@mozilla.com>",
   "addon": {
     "ABOUT": "the variables fill the moustache templates",
-    "id": "esper-pioneer-shield-study@shield.mozilla.com",
+    "id": "esper-pioneer-shield-study@pioneer.mozilla.org",
     "name": "The ESPER experiment - Firefox Pioneer Study",
     "minVersion": "58.0",
     "maxVersion": "*",
@@ -14,7 +14,7 @@
     "chromeResource": "esper-pioneer-shield-study",
     "creator": "Fredrik Wollsén <fwollsen@mozilla.com>",
     "description": "The ESPER Experiment - Firefox Pioneer Study",
-    "bugzilla": "https://bugzilla.mozilla.org/show_bug.cgi?id=1414900"
+    "bugzilla": "https://bugzilla.mozilla.org/show_bug.cgi?id=1450951"
   },
   "bugs": {
     "url": "https://github.com/motin/esper-pioneer-shield-study/issues"

@@ -2,7 +2,7 @@
 
 ## Manual / QA TEST Instructions
 
-1. Install the latest signed version of the addon from https://bugzilla.mozilla.org/show_bug.cgi?id=1414900
+1. Install the latest signed version of the addon from https://bugzilla.mozilla.org/show_bug.cgi?id=1450951
 1. Go to about:telemetry -> Click "current ping" -> Archived ping data -> ping, select pioneer-study
 1. Click on "Raw Payload" and verify the ping is similar to https://github.com/motin/esper-pioneer-shield-study/blob/master/TELEMETRY.md
 1. Copy the ping (from the browser console, where the unencrypted payload is shown) to left box of http://jsondiff.com/
@@ -28,7 +28,7 @@ First, make sure you are on NPM 5+ installed so that the proper dependencies are
 
 Clone the repo:
 
-`$ git clone https://github.com/motin/esper-pioneer-shield-study.git -b prepare-for-qa`
+`$ git clone https://github.com/motin/esper-pioneer-shield-study.git`
 
 After cloning the repo, you can run the following commands from the top level directory, one after another:
 
