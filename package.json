@@ -5,7 +5,7 @@
   "author": "Fredrik Wollsén <fwollsen@mozilla.com>",
   "addon": {
     "ABOUT": "the variables fill the moustache templates",
-    "id": "esper-pioneer-shield-study@shield.mozilla.com",
+    "id": "esper-pioneer-shield-study@pioneer.mozilla.org",
     "name": "The ESPER experiment - Firefox Pioneer Study",
     "minVersion": "58.0",
     "maxVersion": "*",

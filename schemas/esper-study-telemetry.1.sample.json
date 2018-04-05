@@ -34,7 +34,7 @@
     "packetVersion": "esper1",
     "studyName": "esper-pioneer-shield-study",
     "branch": "pioneer",
-    "addonId": "esper-pioneer-shield-study@shield.mozilla.com",
+    "addonId": "esper-pioneer-shield-study@pioneer.mozilla.org",
     "addonVersion": "1.0.0",
     "pioneerUtilsVersion": "1.0.9",
     "type": "pioneer-study-addon",
