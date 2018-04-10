@@ -54,7 +54,7 @@
     "pioneer",
     "shield-study"
   ],
-  "license": "ISC",
+  "license": "MPL-2.0",
   "main": "index.js",
   "repository": {
     "type": "git",
