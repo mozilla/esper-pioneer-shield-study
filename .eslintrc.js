@@ -7,17 +7,8 @@
  */
 
 module.exports = {
-  parserOptions: {
-    ecmaVersion: 8,
-    sourceType: "module",
-    ecmaFeatures: {
-      jsx: false,
-      experimentalObjectRestSpread: true,
-    },
-  },
   env: {
     es6: true,
-    // 'browser-window': false
   },
   extends: [
     "eslint:recommended",
@@ -26,16 +17,23 @@ module.exports = {
      */
     "plugin:mozilla/recommended",
   ],
-
+  parserOptions: {
+    ecmaVersion: 8,
+    sourceType: "module",
+    ecmaFeatures: {
+      jsx: false,
+      experimentalObjectRestSpread: true,
+    },
+  },
   plugins: ["json", "mozilla"],
-
+  root: true,
   rules: {
     "babel/new-cap": "off",
+    "mozilla/balanced-listeners": "off",
+    "mozilla/no-aArgs": "warn",
     "comma-dangle": ["error", "always-multiline"],
     eqeqeq: "error",
     indent: ["warn", 2, { SwitchCase: 1 }],
-    "mozilla/no-aArgs": "warn",
-    "mozilla/balanced-listeners": 0,
     "no-console": "warn",
     "no-shadow": ["error"],
     "no-unused-vars": "error",

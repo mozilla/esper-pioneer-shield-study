@@ -1,5 +1,3 @@
-/* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(EXPORTED_SYMBOLS|Helpers)" }]*/
-
 const EXPORTED_SYMBOLS = (this.EXPORTED_SYMBOLS = ["Helpers"]);
 
 this.Helpers = {

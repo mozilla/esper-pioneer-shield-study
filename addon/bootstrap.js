@@ -1,7 +1,6 @@
-"use strict" /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(startup|shutdown|install|uninstall)" }]*/; // Cu.import
+"use strict";
 
-/* global  __SCRIPT_URI_SPEC__  */
-/* global Feature, Services */ const { utils: Cu } = Components;
+const { utils: Cu } = Components;
 Cu.import("resource://gre/modules/Console.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -51,6 +50,7 @@ this.Bootstrap = {
 
     const isEligible = await Pioneer.utils.isUserOptedIn();
     if (!isEligible) {
+      // eslint-disable-next-line no-console
       console.log(
         "Not eligable for Pioneer study. Will uninstall the study add-on.",
       );

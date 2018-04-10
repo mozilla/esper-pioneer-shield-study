@@ -1,6 +1,6 @@
 "use strict";
 
-/* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(EXPORTED_SYMBOLS|StudyTelemetryCollector)" }]*/
+/* eslint-disable no-console */
 
 const { utils: Cu } = Components;
 Cu.import("resource://gre/modules/Console.jsm");
@@ -47,6 +47,7 @@ XPCOMUtils.defineLazyModuleGetter(
   "chrome://esper-pioneer-shield-study/content/lib/Helpers.jsm",
 );
 
+// eslint-disable-next-line no-unused-vars
 class StudyTelemetryCollector {
   constructor() {}
 
@@ -215,6 +216,7 @@ class StudyTelemetryCollector {
 
     // firefox/browser/modules/test/browser/head.js
 
+    // eslint-disable-next-line mozilla/no-aArgs
     function getParentProcessScalars(aChannel, aKeyed = false, aClear = false) {
       const scalars = aKeyed
         ? Services.telemetry.snapshotKeyedScalars(aChannel, aClear).parent
