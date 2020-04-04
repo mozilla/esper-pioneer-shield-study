@@ -32,7 +32,7 @@
     "fx-runner": "^1.0.8",
     "geckodriver": "^1.9.0",
     "get-firefox": "^2.0.0",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.3",
     "mocha": "^3.4.2",
     "moustache": "0.0.2",
     "npm-run-all": "^4.1.1",
