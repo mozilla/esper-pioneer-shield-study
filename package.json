@@ -40,7 +40,7 @@
     "onchange": "^3.2.1",
     "pioneer-utils": "^1.0.10",
     "prettier": "^1.10.2",
-    "selenium-webdriver": "^3.5.0"
+    "selenium-webdriver": "^4.8.2"
   },
   "homepage": "https://github.com/motin/esper-pioneer-shield-study",
   "keywords": [
